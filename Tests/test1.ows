@@ -1,0 +1,7 @@
+health -> H
+health_start -> health
+Rule "Variable Mapping"
+    Actions
+        health = 1
+        H = 2
+        health_start = 3

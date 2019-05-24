@@ -1,0 +1,9 @@
+rule("Variable Mapping")
+{
+	actions
+	{
+		Set Global Variable(H, 1)
+		Set Global Variable(H, 2)
+		Set Global Variable(H, 3)
+	}
+}

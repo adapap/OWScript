@@ -43,15 +43,29 @@ class Players(Syntax):
             'Hero': Hero
         }
 
+class Button(Syntax):
+    def __init__(self):
+        self.definitions = {}
+
 class Event(Syntax):
     def __init__(self):
         self.definitions = {
             'Ongoing - Global': None,
-            'Ongoing - Each Player': Tuple[Team, Players]
+            'Ongoing - Each Player': Tuple[Team, Players],
+            'Player Earned Elimination': Tuple[Team, Players],
+            'Player Dealt Final Blow': Tuple[Team, Players],
+            'Player Dealt Damage': Tuple[Team, Players],
+            'Player Took Damage': Tuple[Team, Players],
+            'Player Died': Tuple[Team, Players]
         }
         self.aliases = {
             'Global': 'Ongoing - Global',
-            'Each Player': 'Ongoing - Each Player'
+            'Each Player': 'Ongoing - Each Player',
+            'On Kill': 'Player Earned Elimination',
+            'On Final Blow': 'Player Dealt Final Blow',
+            'On Damage': 'Player Dealt Damage',
+            'On Damaged': 'Player Took Damage',
+            'On Death': 'Player Died'
         }
 
 class Array(Syntax):
@@ -73,7 +87,13 @@ class Value(Syntax):
 
 class Action(Syntax):
     def __init__(self):
-        self.definitions = {}
+        self.definitions = {
+            'Abort': None,
+            'Abort If': Condition,
+            'Abort If Condition Is False': None,
+            'Abort If Condition Is True': None,
+            'Allow Button': Tuple[Player, Button]
+        }
 
 Entity = Union[Value, Player] #Icon, Effect
 Condition = Value

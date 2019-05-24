@@ -2,7 +2,7 @@ from Lexer import Lexer
 from Parser import Parser
 from Transpiler import Transpiler
 
-file = 'Tests/test0'
+file = 'Tests/test1'
 with open(file + '.ows') as f:
     text = f.read()
 

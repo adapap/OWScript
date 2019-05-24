@@ -42,13 +42,16 @@ class Parser:
         """ruleset: maps* rule*"""
         maps = []
         while self.cur_token.type == 'NAME':
+            if not self.peek == 'MAP':
+                break
             name = self.cur_token.value
             self.eat('NAME')
             self.eat('MAP')
             value = self.cur_token.value
             self.eat('NAME')
             self.eat('NEWLINE')
-            node = Map(name=self.cur_token.value, value=value)
+            map_ = Map(name=name, value=value)
+            maps.append(map_)
         ruleset = []
         while self.cur_token.type != 'EOF':
             rule = self.rule()

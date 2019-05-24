@@ -47,8 +47,8 @@ class Lexer:
         expressions = [
             (r'\Z', 'EOF'),
             (r'^\s*.*:', 'COMMENT'),
-            (r'->', 'MAP'),
-            (r'[_a-zA-Z][_a-zA-Z0-9 \-]*', 'NAME'),
+            (r'\->', 'MAP'),
+            (r'[_a-zA-Z0-9 \-]*[_a-zA-Z]', 'NAME'),
             (r'\(', 'LPAREN'),
             (r'\)', 'RPAREN'),
             (r'\[', 'LBRACK'),

@@ -4,6 +4,7 @@ class Transpiler:
         self.tree = tree
         self.code = ''
         self.indent_level = 0
+        self.maps = {}
 
     @property
     def tabs(self):
@@ -29,7 +30,7 @@ class Transpiler:
             self.visit(rule, inline)
 
     def visit_Map(self, node, inline):
-        print(node)
+        self.maps[node.name] = node.value
 
     def visit_Rule(self, node, inline):
         self.code += f'rule({node.name})\n{self.tabs}' + '{\n'
@@ -60,7 +61,7 @@ class Transpiler:
     def visit_Actions(self, node, inline):
         self.code += f'{self.tabs}actions\n{self.tabs}' + '{\n'
         self.visit(node.block, inline)
-        self.code += '\n' + self.tabs + '}'
+        self.code += self.tabs + '}'
 
     def visit_Condition(self, node, inline):
         self.code += node.cond + '('
@@ -79,7 +80,10 @@ class Transpiler:
         self.visit(node.right, inline=True)
 
     def visit_Variable(self, node, inline):
-        self.code += node.value
+        value = node.value
+        while value in self.maps:
+            value = self.maps.get(value)
+        self.code += value
 
     def visit_Integer(self, node, inline):
         self.code += node.value
@@ -90,7 +94,7 @@ class Transpiler:
             self.visit(node.left, inline)
             self.code += ', '
             self.visit(node.right, inline)
-            self.code += ')'
+            self.code += ')\n'
 
     def visit_Name(self, node, inline):
         if not inline:

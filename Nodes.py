@@ -37,11 +37,9 @@ class Conditions(Rulegroup):
     pass
 
 class Condition(AST):
-    def __init__(self, cond, comp_op, value, block):
+    def __init__(self, cond, value):
         self.cond = cond
-        self.comp_op = comp_op
         self.value = value
-        self.block = block
 
 class Actions(Rulegroup):
     pass
@@ -58,6 +56,24 @@ class Name(AST):
     def __repr__(self):
         return f'<{self.__class__.__name__}: {self.value}>'
 
+class Value(AST):
+    def __init__(self, value, params=[]):
+        self.value = value
+        self.params = params
+
+class Number(AST):
+    def __init__(self, value):
+        self.value = value
+
+class Integer(Number):
+    pass
+
+class Float(Number):
+    pass
+
+class Boolean(Name):
+    pass
+
 class BinaryOp(AST):
     def __init__(self, left, op, right):
         self.left = left
@@ -68,4 +84,7 @@ class BinaryOp(AST):
         return f'<{self.left} {self.op} {self.right}>'
 
 class Compare(BinaryOp):
+    pass
+
+class Assign(BinaryOp):
     pass

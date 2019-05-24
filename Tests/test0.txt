@@ -1,0 +1,19 @@
+rule("My First Rule")
+{
+	event
+	{
+		Ongoing - Global
+		Team 2
+		All
+	}
+
+	conditions
+	{
+		All True(All Players(Team 2), Has Spawned(Current Array Element)) == True
+	}
+
+	actions
+	{
+
+	}
+}

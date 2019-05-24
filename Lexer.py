@@ -8,7 +8,7 @@ class Token:
 
     def __str__(self):
         if self.type in ['NEWLINE', 'INDENT', 'DEDENT']:
-            return f'{self.value}'
+            return f'<{self.type}>'
         return f'<{self.type}: {self.value}>'
     __repr__ = __str__
 
@@ -41,12 +41,14 @@ class Lexer:
         """Generates the tokens by using regular expressions."""
         keywords = ['Rule', 'Event', 'Conditions', 'Actions']
         event_types = []#['Ongoing - Global', 'Ongoing - Each Player']
-        conditions = ['All True', 'Has Spawned']
+        conditions = ['Has Spawned']
         arrays = ['All Players']
+        values = ['All True', 'True']
         expressions = [
             (r'\Z', 'EOF'),
             (r'^\s*.*:', 'COMMENT'),
-            (r'[_a-zA-Z][_a-zA-Z0-9 \-]*[a-zA-Z0-9]', 'NAME'),
+            (r'->', 'MAP'),
+            (r'[_a-zA-Z][_a-zA-Z0-9 \-]*', 'NAME'),
             (r'\(', 'LPAREN'),
             (r'\)', 'RPAREN'),
             (r'\[', 'LBRACK'),
@@ -77,7 +79,7 @@ class Lexer:
                 match = regex.match(self.text, self.cursor)
                 if match:
                     self.cursor = match.end()
-                    value = match.group(0)
+                    value = match.group(0).strip()
                     token = Token(tag, value)
                     if tag == 'NEWLINE':
                         self.tokens.append(token)
@@ -92,13 +94,14 @@ class Lexer:
                             token = Token('CONDITION', value)
                         elif value in arrays:
                             token = Token('ARRAY', value)
+                        elif value in values:
+                            token = Token('VALUE', value)
                     if tag not in ('COMMENT', 'WHITESPACE'):
                         self.tokens.append(token)
                     break
             else:
                 print('No match.')
                 self.cursor += 1
-                self.column += 1
         while self.indents[-1] > 0:
             self.indents.pop()
             self.tokens.append(DEDENT)

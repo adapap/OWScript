@@ -97,6 +97,8 @@ class Parser:
 
     def expr(self):
         """expr: compare"""
+        if self.cur_token.type == 'ASSIGN':
+            self.assign()
         node = self.compare()
         return node
 
@@ -115,28 +117,49 @@ class Parser:
                   | BOOLEAN
                   | ARRAY
         """
+        #print(self.cur_token)
         token = self.cur_token.value
         if self.cur_token.type == 'NAME':
             if self.peek == 'COLON':
                 self.eat('NAME')
                 self.eat('COLON')
                 node = self.expr()
+            elif self.peek == 'ASSIGN':
+                name = token
+                self.eat('NAME')
+                op = self.cur_token.value
+                self.eat('ASSIGN')
+                value = self.expr()
+                node = Assign(left=name, op=op, right=value)
             else:
                 node = Name(token)
                 self.eat('NAME')
-        elif self.cur_token.type == 'NUMBER':
-            node = Number(token)
-            self.eat('NUMBER')
-        elif self.cur_token.type == 'BOOLEAN':
-            node = Boolean(token)
-            self.eat('BOOLEAN')
+        elif self.cur_token.type == 'INTEGER':
+            node = Integer(token)
+            self.eat('INTEGER')
+        # elif self.cur_token.type == 'BOOLEAN':
+        #     node = Boolean(token)
+        #     self.eat('BOOLEAN')
+        elif self.cur_token.type == 'VALUE':
+            value_node = Value(value=token)
+            self.eat('VALUE')
+            # Booleans
+            if self.cur_token.type == 'COMPARE':
+                op = self.cur_token.value
+                self.eat('COMPARE')
+                compare_value = self.expr()
+                # List[Array, Condition]
+                if token == 'All True':
+                    array, condition = self.block().statements
+                    value_node.params = [array, condition]
+                node = Compare(left=value_node, op=op, right=compare_value)
+            else:
+                node = value_node
         elif self.cur_token.type == 'CONDITION':
             cond = self.cur_token.value
             self.eat('CONDITION')
-            comp_op = self.cur_token.value
-            self.eat('COMPARE')
-            value = self.expr()
-            node = Condition(cond=cond, comp_op=comp_op, value=value, block=self.block())
+            value = self.block()
+            node = Condition(cond=cond, value=value)
         elif self.cur_token.type == 'ARRAY':
             if token == 'All Players':
                 self.eat('ARRAY')

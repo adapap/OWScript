@@ -10,39 +10,98 @@ class Transpiler:
         return '\t' * self.indent_level
 
     def run(self):
-        self.visit(self.tree)
-        print(self.code)
+        self.visit(self.tree, inline=False)
+        #print(self.code)
+        return self.code
 
-    def visit(self, node):
+    def visit(self, node, inline):
         method_name = 'visit_' + type(node).__name__
         visitor = getattr(self, method_name, self.generic_visit)
-        return visitor(node)
+        return visitor(node, inline)
 
-    def generic_visit(self, node):
+    def generic_visit(self, node, inline):
         raise Exception(f'No visit_{type(node).__name__} method')
 
-    def visit_Ruleset(self, node):
+    def visit_Ruleset(self, node, inline):
         for map_ in node.maps:
-            self.visit(map_)
+            self.visit(map_, inline)
         for rule in node.rules:
-            self.visit(rule)
+            self.visit(rule, inline)
 
-    def visit_Map(self, node):
+    def visit_Map(self, node, inline):
         print(node)
 
-    def visit_Rule(self, node):
-        self.code += f'rule({node.name})\n{self.tabs}' + '{\n\t'
+    def visit_Rule(self, node, inline):
+        self.code += f'rule({node.name})\n{self.tabs}' + '{\n'
         self.indent_level += 1
-        self.visit(node.event)
+        if node.event:
+            self.visit(node.event, inline)
+            if node.conditions or node.actions:
+                self.code += '\n\n'
+        if node.conditions:
+            self.visit(node.conditions, inline)
+            if node.actions:
+                self.code += '\n\n'
+        if node.actions:
+            self.visit(node.actions, inline)
         self.indent_level -= 1
         self.code += '\n}'
 
-    def visit_Event(self, node):
-        self.code += f'event\n{self.tabs}' + '{\n'
-        self.indent_level += 1
-        self.visit(node.block)
-        self.indent_level -= 1
-        self.code += f'\n{self.tabs}' + '}'
+    def visit_Event(self, node, inline):
+        self.code += f'{self.tabs}event\n{self.tabs}' + '{\n'
+        self.visit(node.block, inline)
+        self.code += self.tabs + '}'
 
-    def visit_Block(self, node):
-        self.code += self.tabs + str(node.statements)
+    def visit_Conditions(self, node, inline):
+        self.code += f'{self.tabs}conditions\n{self.tabs}' + '{\n'
+        self.visit(node.block, inline)
+        self.code += '\n' + self.tabs + '}'
+
+    def visit_Actions(self, node, inline):
+        self.code += f'{self.tabs}actions\n{self.tabs}' + '{\n'
+        self.visit(node.block, inline)
+        self.code += '\n' + self.tabs + '}'
+
+    def visit_Condition(self, node, inline):
+        self.code += node.cond + '('
+        self.visit(node.value, inline)
+        self.code += ')'
+
+    def visit_Block(self, node, inline):
+        self.indent_level += 1
+        for statement in node.statements:
+            self.visit(statement, inline)
+        self.indent_level -= 1
+
+    def visit_Compare(self, node, inline):
+        self.visit(node.left, inline)
+        self.code += f' {node.op} '
+        self.visit(node.right, inline=True)
+
+    def visit_Assign(self, node, inline):
+        pass
+
+    def visit_Name(self, node, inline):
+        if not inline:
+            self.code += self.tabs + node.value + '\n'
+        else:
+            self.code += node.value
+
+    def visit_Value(self, node, inline):
+        if not inline:
+            self.code += self.tabs + node.value
+        else:
+            self.code += node.value
+        if node.params:
+            self.code += '('
+            for param in node.params:
+                self.visit(param, inline=True)
+                if param != node.params[-1]:
+                    self.code += ', '
+            self.code += ')'
+
+    def visit_Array(self, node, inline):
+        self.code += node.value + '('
+        if node.value == 'All Players':
+            self.visit(node.block, inline)
+        self.code += ')'

@@ -8,5 +8,8 @@ Rule "My First Rule"
         All True == True
             Array: All Players
                 Team: Team 2
-            Condition: Has Spawned == True
+            Condition: Has Spawned
                 Element: Current Array Element
+
+    Actions
+        H = 0

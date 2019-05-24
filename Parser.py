@@ -116,7 +116,7 @@ class Parser:
         while self.cur_token.type == 'COMPARE':
             op = self.cur_token
             self.eat('COMPARE')
-            node = Compare(left=node, op=op, right=self.compare())
+            node = Compare(left=node, op=op, right=self.block())
         return node
 
     def primary(self):
@@ -134,7 +134,6 @@ class Parser:
             self.eat('VALUE')
             # First Param
             if defs and defs.__origin__ is typing.Union:
-                print('union:', self.cur_token)
                 if self.cur_token.type == 'NEWLINE':
                     self.eat('NEWLINE')
                 self.eat('INDENT')
@@ -151,7 +150,6 @@ class Parser:
                     self.eat('NEWLINE')
                 self.eat('DEDENT')
             elif defs and defs.__origin__ is tuple: #please send help
-                print('tuple oring')
                 for arg in defs.__args__:
                     name = arg.__name__.upper()
                     if self.cur_token.type == 'NEWLINE':
@@ -161,17 +159,16 @@ class Parser:
                     if self.cur_token.type == 'NAME':
                         self.eat('NAME')
                         self.eat('COLON')
-                    print('primary token:', self.cur_token)
                     param = self.primary()
-                    print('PARAM TO ADD:', param, 'TO NODE:', node)
                     node.params.append(param)
                     if self.cur_token.type == 'DEDENT':
                         self.eat('DEDENT')
             else:
-                print(self.tokens[:self.index])
-                print(defs.__origin__)
-                print('not typing union', self.cur_token, defs)
-                sys.exit(0)
+                pass
+                # print(self.tokens[:self.index])
+                # print(defs.__origin__)
+                # print('not typing union', self.cur_token, defs)
+                # sys.exit(0)
                 #param = self.block()
                 #node.params.append(param)
         elif self.cur_token.type == 'ARRAY':
@@ -199,8 +196,8 @@ class Parser:
                 self.eat('NAME')
                 self.eat('COLON')
                 node = self.expr()
-            elif self.peek == 'ASSIGN':
-                name = token
+            elif self.peek == 'ASSIGN': # Variable Assign
+                name = Variable(value=token)
                 self.eat('NAME')
                 op = self.cur_token.value
                 self.eat('ASSIGN')

@@ -10,3 +10,8 @@ Rule "My First Rule"
                 Team: Team 2
             Condition: Has Spawned
                 Element: Current Array Element
+        ==
+            True
+
+    Actions
+        H = 1

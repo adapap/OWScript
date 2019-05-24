@@ -9,6 +9,11 @@ rule("My First Rule")
 
 	conditions
 	{
-		Is True For All(All Players(Team 2))
+		Is True For All(All Players(Team 2), Has Spawned(Current Array Element)) == True
+	}
+
+	actions
+	{
+		Set Global Variable(H, 1)
 	}
 }

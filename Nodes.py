@@ -72,10 +72,10 @@ class Group(AST):
         return f'<Group: {self.value} : {self.children}>'
 
 class Value(AST):
-    def __init__(self, value, params=[]):
+    def __init__(self, value, params=None):
         """Parameters are indented line by line."""
         self.value = value
-        self.params = params
+        self.params = params or []
 
     def __repr__(self):
         return f'<Value: {self.value} : {self.params}>'
@@ -91,6 +91,9 @@ class Float(Number):
     pass
 
 class Boolean(Name):
+    pass
+
+class Variable(Name):
     pass
 
 class BinaryOp(AST):

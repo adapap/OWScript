@@ -75,11 +75,22 @@ class Transpiler:
 
     def visit_Compare(self, node, inline):
         self.visit(node.left, inline)
-        self.code += f' {node.op} '
+        self.code += f' {node.op.value} '
         self.visit(node.right, inline=True)
 
+    def visit_Variable(self, node, inline):
+        self.code += node.value
+
+    def visit_Integer(self, node, inline):
+        self.code += node.value
+
     def visit_Assign(self, node, inline):
-        pass
+        if node.op == '=':
+            self.code += self.tabs + 'Set Global Variable('
+            self.visit(node.left, inline)
+            self.code += ', '
+            self.visit(node.right, inline)
+            self.code += ')'
 
     def visit_Name(self, node, inline):
         if not inline:

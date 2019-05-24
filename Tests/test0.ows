@@ -1,0 +1,12 @@
+Rule "My First Rule"
+    Event
+        Type: Ongoing - Global
+        Team: Team 2
+        Player: All
+    
+    Conditions
+        All True == True
+            Array: All Players
+                Team: Team 2
+            Condition: Has Spawned == True
+                Element: Current Array Element

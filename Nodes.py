@@ -30,6 +30,9 @@ class Block(AST):
     def __init__(self, statements=[]):
         self.statements = statements
 
+    def __repr__(self):
+        return f'<Block: {self.statements}>'
+
 class Event(Rulegroup):
     pass
 
@@ -49,6 +52,9 @@ class Array(AST):
         self.value = value
         self.block = block
 
+    def __repr__(self):
+        return f'<Array: {self.value} : {self.block}>'
+
 class Name(AST):
     def __init__(self, value):
         self.value = value
@@ -56,10 +62,23 @@ class Name(AST):
     def __repr__(self):
         return f'<{self.__class__.__name__}: {self.value}>'
 
+class Group(AST):
+    def __init__(self, value, children=[]):
+        """Children are placed line by line with no indentation."""
+        self.value = value
+        self.children = children
+
+    def __repr__(self):
+        return f'<Group: {self.value} : {self.children}>'
+
 class Value(AST):
     def __init__(self, value, params=[]):
+        """Parameters are indented line by line."""
         self.value = value
         self.params = params
+
+    def __repr__(self):
+        return f'<Value: {self.value} : {self.params}>'
 
 class Number(AST):
     def __init__(self, value):

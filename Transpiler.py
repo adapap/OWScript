@@ -83,7 +83,7 @@ class Transpiler:
 
     def visit_Name(self, node, inline):
         if not inline:
-            self.code += self.tabs + node.value + '\n'
+            self.code += self.tabs + node.value
         else:
             self.code += node.value
 
@@ -99,6 +99,13 @@ class Transpiler:
                 if param != node.params[-1]:
                     self.code += ', '
             self.code += ')'
+
+    def visit_Group(self, node, inline):
+        self.code += self.tabs + node.value
+        for child in node.children:
+            self.code += '\n'
+            self.visit(child, inline)
+        self.code += '\n'
 
     def visit_Array(self, node, inline):
         self.code += node.value + '('

@@ -1,10 +1,13 @@
 import re
+import Definitions
+from Definitions import Entity, Condition
 
 class Token:
     """Raw tokens extracted from input stream."""
-    def __init__(self, type_, value=''):
+    def __init__(self, type_, value='', definitions=[]):
         self.type = type_
         self.value = value
+        self.definitions = definitions
 
     def __str__(self):
         if self.type in ['NEWLINE', 'INDENT', 'DEDENT']:
@@ -22,6 +25,8 @@ class Lexer:
         self.cursor = 0
         self.tokens = []
         self.indents = []
+        self.keywords = ['Rule', 'Event', 'Conditions', 'Actions']
+        self.definitions = {cls: cls() for cls in Definitions.types}
 
     def find_indentation(self):
         """Parses the input text to find indents and dedents."""
@@ -39,11 +44,6 @@ class Lexer:
 
     def lex(self):
         """Generates the tokens by using regular expressions."""
-        keywords = ['Rule', 'Event', 'Conditions', 'Actions']
-        event_types = []#['Ongoing - Global', 'Ongoing - Each Player']
-        conditions = ['Has Spawned']
-        arrays = ['All Players']
-        values = ['All True', 'True']
         expressions = [
             (r'\Z', 'EOF'),
             (r'^\s*.*:', 'COMMENT'),
@@ -86,16 +86,21 @@ class Lexer:
                         self.find_indentation()
                         break
                     elif tag == 'NAME':
-                        if value in keywords:
+                        if value in self.keywords:
                             token = Token('KEYWORD', value)
-                        elif value in event_types:
-                            token = Token('EVENT_TYPE', value)
-                        elif value in conditions:
-                            token = Token('CONDITION', value)
-                        elif value in arrays:
-                            token = Token('ARRAY', value)
-                        elif value in values:
-                            token = Token('VALUE', value)
+                        for class_, obj in self.definitions.items():
+                            params = obj.definitions
+                            name = class_.__name__.upper()
+                            if value in params.keys():
+                                token = Token(type_=name,
+                                    value=value,
+                                    definitions=params.get(value))
+                                break
+                            elif value in obj.aliases.keys():
+                                token = Token(type_=name,
+                                    value=obj.aliases.get(value),
+                                    definitions=params.get(obj.aliases.get(value)))
+                                break
                     if tag not in ('COMMENT', 'WHITESPACE'):
                         self.tokens.append(token)
                     break

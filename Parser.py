@@ -1,3 +1,7 @@
+import sys
+import typing
+
+import Definitions
 from Nodes import *
 
 class Parser:
@@ -14,6 +18,10 @@ class Parser:
     def peek(self):
         """Checks to see the next token."""
         return self.tokens[self.index + 1].type
+
+    def ahead(self, n=1):
+        """Checks n tokens ahead."""
+        return self.tokens[self.index + n].type
 
     def get_token(self):
         """Retrieves the current token."""
@@ -80,7 +88,7 @@ class Parser:
         return node
 
     def statement(self):
-        """statement: event? conditions? actions?"""
+        """statement: (event? conditions? actions?|expr?)"""
         if self.cur_token.type == 'KEYWORD':
             keyword = self.cur_token.value
             self.eat('KEYWORD')
@@ -116,10 +124,77 @@ class Parser:
                   | NUMBER
                   | BOOLEAN
                   | ARRAY
+                  | VALUE
+                  | CONDITION
         """
-        #print(self.cur_token)
         token = self.cur_token.value
-        if self.cur_token.type == 'NAME':
+        if self.cur_token.type == 'VALUE':
+            node = Value(value=token)
+            defs = self.cur_token.definitions
+            self.eat('VALUE')
+            # First Param
+            if defs and defs.__origin__ is typing.Union:
+                print('union:', self.cur_token)
+                if self.cur_token.type == 'NEWLINE':
+                    self.eat('NEWLINE')
+                self.eat('INDENT')
+                if self.cur_token.type == 'NAME':
+                    self.eat('NAME')
+                    self.eat('COLON')
+                for value in defs.__args__:
+                    if value.__name__.upper() == self.cur_token.type:
+                        param = Value(value=self.cur_token.value)
+                        self.eat(self.cur_token.type)
+                        break
+                node.params.append(param)
+                if self.cur_token.type == 'NEWLINE':
+                    self.eat('NEWLINE')
+                self.eat('DEDENT')
+            elif defs and defs.__origin__ is tuple: #please send help
+                print('tuple oring')
+                for arg in defs.__args__:
+                    name = arg.__name__.upper()
+                    if self.cur_token.type == 'NEWLINE':
+                        self.eat('NEWLINE')
+                    if self.cur_token.type == 'INDENT':
+                        self.eat('INDENT')
+                    if self.cur_token.type == 'NAME':
+                        self.eat('NAME')
+                        self.eat('COLON')
+                    print('primary token:', self.cur_token)
+                    param = self.primary()
+                    print('PARAM TO ADD:', param, 'TO NODE:', node)
+                    node.params.append(param)
+                    if self.cur_token.type == 'DEDENT':
+                        self.eat('DEDENT')
+            else:
+                print(self.tokens[:self.index])
+                print(defs.__origin__)
+                print('not typing union', self.cur_token, defs)
+                sys.exit(0)
+                #param = self.block()
+                #node.params.append(param)
+        elif self.cur_token.type == 'ARRAY':
+            self.eat('ARRAY')
+            node = Array(token, block=self.block())
+        elif self.cur_token.type == 'CONDITION':
+            self.eat('CONDITION')
+            node = Condition(cond=token, value=self.block())
+        elif self.cur_token.type in Definitions.type_names:
+            node = Name(value=token)
+            defs = self.cur_token.definitions
+            self.eat(self.cur_token.type)
+            self.eat('NEWLINE')
+            if defs and hasattr(defs, '__args__'):
+                node = Group(value=token)
+                for d in defs.__args__:
+                    if self.cur_token.type == 'NAME':
+                        # Eat comment
+                        self.eat('NAME')
+                        self.eat('COLON')
+                    child_node = self.expr()
+                    node.children.append(child_node)
+        elif self.cur_token.type == 'NAME':
             if self.peek == 'COLON':
                 self.eat('NAME')
                 self.eat('COLON')
@@ -140,30 +215,6 @@ class Parser:
         # elif self.cur_token.type == 'BOOLEAN':
         #     node = Boolean(token)
         #     self.eat('BOOLEAN')
-        elif self.cur_token.type == 'VALUE':
-            value_node = Value(value=token)
-            self.eat('VALUE')
-            # Booleans
-            if self.cur_token.type == 'COMPARE':
-                op = self.cur_token.value
-                self.eat('COMPARE')
-                compare_value = self.expr()
-                # List[Array, Condition]
-                if token == 'All True':
-                    array, condition = self.block().statements
-                    value_node.params = [array, condition]
-                node = Compare(left=value_node, op=op, right=compare_value)
-            else:
-                node = value_node
-        elif self.cur_token.type == 'CONDITION':
-            cond = self.cur_token.value
-            self.eat('CONDITION')
-            value = self.block()
-            node = Condition(cond=cond, value=value)
-        elif self.cur_token.type == 'ARRAY':
-            if token == 'All Players':
-                self.eat('ARRAY')
-                node = Array(token, block=self.block())
         else:
             print('No token found:', self.cur_token)
         return node

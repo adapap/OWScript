@@ -2,18 +2,13 @@ rule("My First Rule")
 {
 	event
 	{
-		Ongoing - Global
+		Ongoing - Each Player
 		Team 2
 		All
 	}
 
 	conditions
 	{
-		All True(All Players(Team 2), Has Spawned(Current Array Element)) == True
-	}
-
-	actions
-	{
-
+		Is True For All(All Players(Team 2))
 	}
 }

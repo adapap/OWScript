@@ -1,4 +1,4 @@
-Rule "Variables & Vectors" {
+rule("Variables & Vectors") {
 	actions {
 		Set Global Variable(A, Empty Array)
 		Modify Global Variable(A, Append To Array, Vector(1, 2, 3))

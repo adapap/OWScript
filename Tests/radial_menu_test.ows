@@ -1,0 +1,17 @@
+Rule "Reset menu positions (trigger: game start || num of allowed heroes changed)"
+    event
+        ongoing - each player
+        all /* support for comments now */
+        comment_tag: all
+
+    actions
+        pVar heroes = []
+        num_heroes = 1
+
+    conditions
+        /* Check if player does not have all heroes */
+        Count of
+            pVar heroes
+        != count of
+            allowed heroes
+                event player

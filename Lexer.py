@@ -7,7 +7,7 @@ from Workshop import actions, values, types
 reserved_list = []
 reserved_list.extend([(x, 'ACTION') for x in actions])
 reserved_list.extend([(x, 'VALUE') for x in values])
-reserved_list.extend([(x, 'EVENT_TYPE') for x in types.get('EVENT').get('values')])
+reserved_list.extend([(x, 'NAME') for x in types.get('EVENT').get('values')])
 reserved_list.extend([(x, 'NUMBER') for x in types.get('NUMBER').get('values')])
 reserved_list.extend([('EVENT', 'EVENT'), ('CONDITIONS', 'CONDITIONS'), ('ACTIONS', 'ACTIONS')])
 reserved = dict(reserved_list)
@@ -20,6 +20,7 @@ reserved.update(aliases)
 # Token Names
 tokens = (
     'COMMENT',
+    'COMMENT_TAG',
     'ASSIGN',
     'MAP',
     'RULE',
@@ -40,7 +41,7 @@ tokens = (
     'EVENT', 'CONDITIONS', 'ACTIONS'
 )
 
-literals = '+-*/%^:(),'
+literals = '+-*/%^:(),[]'
 
 t_ASSIGN = r'(?<!=)=(?!=)|\+=|-=|\*=|\/=|\^='
 t_MAP = r'\->'
@@ -68,6 +69,10 @@ def t_RULE(t):
     return t
 
 def t_COMMENT(t):
+    r'\/\*(.|\n)*?\*\/'
+    return None
+
+def t_COMMENT_TAG(t):
     r'[^:\s]+:\s*'
     return t
 

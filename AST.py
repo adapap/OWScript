@@ -48,26 +48,50 @@ class Value(AST):
         self.args = args or []
 
     def __repr__(self):
-        return f'{self.name}: {self.args}'
+        if self.args:
+            return f'{self.name}: {self.args}'
+        return f'{self.name}'
 
 class GlobalVar(Value):
     def __repr__(self):
         return f'gVar {self.name}'
 
 class PlayerVar(Value):
+    def __init__(self, name, player='Event Player'):
+        self.name = name
+        self.player = 'Event Player'
+
     def __repr__(self):
-        return f'pVar {self.name}'
+        return f'pVar@({self.player}) {self.name}'
 
 class Type(AST):
-    def __init__(self, value, args=None):
+    def __init__(self, value, block=None):
         self.value = value
-        self.args = args or []
+        self.block = block
 
     def __repr__(self):
-        return f'{self.value} {self.args}'
+        if self.block:
+            return f'{self.value} {self.block}'
+        return f'{self.value}'
 
 class Number(Type):
     pass
+
+class NumberConst(Type):
+    pass
+
+class Name(Type):
+    pass
+
+class Comment(Type):
+    pass
+
+class Array(AST):
+    def __init__(self, values=None):
+        self.values = values or []
+
+    def __repr__(self):
+        return f'Array: {self.values}'
 
 class BinaryOp(AST):
     def __init__(self, left, op, right):
@@ -76,10 +100,14 @@ class BinaryOp(AST):
         self.right = right
 
     def __repr__(self):
-        return f'<{self.left} {self.op} {self.right}>'
+        return f'{self.left} {self.op} {self.right}'
 
 class Assign(BinaryOp):
     pass
 
 class Compare(BinaryOp):
     pass
+
+class Empty(AST):
+    def __repr__(self):
+        return f'Empty'

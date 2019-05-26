@@ -1,114 +1,156 @@
+"""Lexer rules to be interpreted by PLY."""
 import re
-import Definitions
-from Definitions import Entity, Condition
+from ply import lex
 
-class Token:
-    """Raw tokens extracted from input stream."""
-    def __init__(self, type_, value='', definitions=[]):
-        self.type = type_
-        self.value = value
-        self.definitions = definitions
+# Reserved
+from Workshop import actions, values, types
+reserved_list = []
+reserved_list.extend([(x, 'ACTION') for x in actions])
+reserved_list.extend([(x, 'VALUE') for x in values])
+reserved_list.extend([(x, 'EVENT_TYPE') for x in types.get('EVENT').get('values')])
+reserved_list.extend([(x, 'NUMBER') for x in types.get('NUMBER').get('values')])
+reserved_list.extend([('EVENT', 'EVENT'), ('CONDITIONS', 'CONDITIONS'), ('ACTIONS', 'ACTIONS')])
+reserved = dict(reserved_list)
+aliases_list = [
+    ('ROUND', 'ROUND TO INTEGER')
+]
+aliases = {k: reserved.get(v) for k, v in dict(aliases_list).items()}
+reserved.update(aliases)
 
-    def __str__(self):
-        if self.type in ['NEWLINE', 'INDENT', 'DEDENT']:
-            return f'<{self.type}>'
-        return f'<{self.type}: {self.value}>'
-    __repr__ = __str__
+# Token Names
+tokens = (
+    'COMMENT',
+    'ASSIGN',
+    'MAP',
+    'RULE',
+    'QUOTE',
+    'NAME',
+    'BOOLEAN',
+    'FLOAT',
+    'INTEGER',
+    'COMPARE',
+    'WHITESPACE',
+    'NEWLINE',
+    'INDENT',
+    'DEDENT',
+    'EOF'
+) + (
+    'ACTION', 'VALUE', 'EVENT_TYPE', 'NUMBER',
+    'FUNC', 'GLOBAL_VAR', 'PLAYER_VAR',
+    'EVENT', 'CONDITIONS', 'ACTIONS'
+)
 
-INDENT = Token('INDENT', 'Indent')
-DEDENT = Token('DEDENT', 'Dedent')
+literals = '+-*/%^:(),'
 
-class Lexer:
-    """Generates a list of tokens to be parsed."""
-    def __init__(self, text):
-        self.text = text
-        self.cursor = 0
-        self.tokens = []
-        self.indents = []
-        self.keywords = ['Rule', 'Event', 'Conditions', 'Actions']
-        self.definitions = {cls: cls() for cls in Definitions.types}
+t_ASSIGN = r'(?<!=)=(?!=)|\+=|-=|\*=|\/=|\^='
+t_MAP = r'\->'
+t_QUOTE = r'(\'|\")'
+t_BOOLEAN = r'(True|False)'
+t_FLOAT = r'\d+\.\d*'
+t_INTEGER = r'\d+'
+t_COMPARE = r'(<=?|>=?|!=|==)'
+t_WHITESPACE = r'[ \t]+'
+t_NEWLINE = r'\n+'
+# Ignore Whitespace
+# t_ignore = r'[ \t\r]+'
 
-    def find_indentation(self):
-        """Parses the input text to find indents and dedents."""
-        regex = re.compile(r'[ \t]+')
-        match = regex.match(self.text, self.cursor)
-        spaces = len(match.group(0)) if match else 0
-        if spaces > self.indents[-1]:
-            self.indents.append(spaces)
-            self.tokens.append(INDENT)
-        elif spaces < self.indents[-1]:
-            while spaces < self.indents[-1]:
-                self.indents.pop()
-                self.tokens.append(DEDENT)
-        self.cursor += spaces
+def _new_token(type_, lineno, lexpos, value=None):
+    tok = lex.LexToken()
+    tok.type = type_
+    tok.value = value
+    tok.lineno = lineno
+    tok.lexpos = lexpos
+    return tok
 
-    def lex(self):
-        """Generates the tokens by using regular expressions."""
-        expressions = [
-            (r'\Z', 'EOF'),
-            (r'^\s*.*:', 'COMMENT'),
-            (r'\->', 'MAP'),
-            (r'[_a-zA-Z0-9 \-]*[_a-zA-Z]', 'NAME'),
-            (r'\(', 'LPAREN'),
-            (r'\)', 'RPAREN'),
-            (r'\[', 'LBRACK'),
-            (r'\]', 'RBRACK'),
-            (r'\{', 'LBRACE'),
-            (r'\}', 'RBRACE'),
-            (r':', 'COLON'),
-            (r',', 'COMMA'),
-            (r'(?<!=)=(?!=)|\+=|-=|\*=|\/=', 'ASSIGN'),
-            (r'\+', 'PLUS'),
-            (r'-', 'MINUS'),
-            (r'\*', 'MUL'),
-            (r'\/', 'DIV'),
-            (r'(<=?|>=?|!=|==)', 'COMPARE'),
-            (r'(\"|\')((?<!\\)\\\1|.)*?\1', 'STRING'),
-            (r'(True|False)', 'BOOLEAN'),
-            (r'\d+\.\d*', 'FLOAT'),
-            (r'\d+', 'INTEGER'),
-            (r'[ \t]+', 'WHITESPACE'),
-            (r'\n+', 'NEWLINE')
-        ]
-        assert not re.match(r'^[ \t]+', self.text)
-        self.indents.append(0)
-        while self.cursor < len(self.text):
-            for expr in expressions:
-                pattern, tag = expr
-                regex = re.compile(pattern)
-                match = regex.match(self.text, self.cursor)
-                if match:
-                    self.cursor = match.end()
-                    value = match.group(0).strip()
-                    token = Token(tag, value)
-                    if tag == 'NEWLINE':
-                        self.tokens.append(token)
-                        self.find_indentation()
-                        break
-                    elif tag == 'NAME':
-                        if value in self.keywords:
-                            token = Token('KEYWORD', value)
-                        for class_, obj in self.definitions.items():
-                            params = obj.definitions
-                            name = class_.__name__.upper()
-                            if value in params.keys():
-                                token = Token(type_=name,
-                                    value=value,
-                                    definitions=params.get(value))
-                                break
-                            elif value in obj.aliases.keys():
-                                token = Token(type_=name,
-                                    value=obj.aliases.get(value),
-                                    definitions=params.get(obj.aliases.get(value)))
-                                break
-                    if tag not in ('COMMENT', 'WHITESPACE'):
-                        self.tokens.append(token)
-                    break
+def t_RULE(t):
+    r'Rule\s+("[^"]+")'
+    t.value = t.lexer.lexmatch.group(2)
+    return t
+
+def t_COMMENT(t):
+    r'[^:\s]+:\s*'
+    return t
+
+def t_NAME(t):
+    r'([_a-zA-Z][_a-zA-Z0-9\- ]*)\b'
+    match = t.lexer.lexmatch.group(0)
+    if match.startswith('gVar'):
+        _, var = re.split(r'\s+', match)
+        return _new_token('GLOBAL_VAR', t.lineno, t.lexpos, value=var)
+    if match.startswith('pVar'):
+        _, var = re.split(r'\s+', match)
+        return _new_token('PLAYER_VAR', t.lineno, t.lexpos, value=var)
+    t.type = reserved.get(t.value.upper(), 'NAME')
+    return t
+
+def t_eof(t):
+    #if not t.lexer.eof:
+    if t.lexer.indents[-1] > 0:
+        t.lexer.indents.pop()
+        return _new_token('DEDENT', t.lineno, t.lexpos)
+        # t.lexer.eof = True
+        # return _new_token('EOF', t.lineno, t.lexpos)
+    return None
+
+def t_error(t):
+    print(f'Unrecognized character "{t.value[0]}"')
+    t.lexer.skip(1)
+
+class IndentLexer:
+    def __init__(self, debug=0, optimize=0, lextab='lextab', reflags=0):
+        self.lexer = lex.lex(debug=debug, optimize=optimize,
+                             lextab=lextab, reflags=reflags)
+        self.token_stream = None
+        self.lexer.indents = [0]
+        #self.lexer.eof = False
+
+    def input(self, s):
+        self.lexer.paren_count = 0
+        self.lexer.input(s)
+        self.token_stream = self.indentation()
+
+    def indentation(self):
+        tokens = iter(self.lexer.token, None)
+        token_list = []
+        for t in tokens:
+            if t.type == 'NEWLINE':
+                t.value = '\n'
+                token_list.append(t)
+                remaining = self.lexer.lexdata[self.lexer.lexpos:]
+                whitespace = re.match(r'[ \t]+', remaining)
+                if not whitespace and self.lexer.indents[-1] > 0:
+                    while self.lexer.indents[-1] > 0:
+                        self.lexer.indents.pop()
+                        token_list.append(_new_token('DEDENT', t.lineno, t.lexpos))
+            elif t.type == 'WHITESPACE' and token_list[-1].type == 'NEWLINE':
+                indent = len(t.value)
+                if indent > self.lexer.indents[-1]:
+                    self.lexer.indents.append(indent)
+                    token_list.append(_new_token('INDENT', t.lineno, t.lexpos))
+                elif indent < self.lexer.indents[-1]:
+                    while indent < self.lexer.indents[-1]:
+                        self.lexer.indents.pop()
+                        token_list.append(_new_token('DEDENT', t.lineno, t.lexpos))
+            elif t.type == 'WHITESPACE':
+                continue
             else:
-                print('No match.')
-                self.cursor += 1
-        while self.indents[-1] > 0:
-            self.indents.pop()
-            self.tokens.append(DEDENT)
-        self.tokens.append(Token('EOF', None))
-        return self.tokens
+                token_list.append(t)
+        for token in token_list:
+            yield token
+
+    def token(self):
+        try:
+            return next(self.token_stream)
+        except StopIteration:
+            return None
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        t = self.token()
+        if t is None:
+            raise StopIteration
+        return t
+    __next__ = next
+Lexer = IndentLexer()

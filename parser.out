@@ -1,0 +1,2388 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    ACTION
+    BOOLEAN
+    EOF
+    FUNC
+    MAP
+    QUOTE
+    WHITESPACE
+
+Grammar
+
+Rule 0     S' -> ruleset
+Rule 1     ruleset -> rule
+Rule 2     ruleset -> rule ruleset
+Rule 3     rule -> RULE
+Rule 4     rule -> RULE NEWLINE INDENT ruleblock DEDENT
+Rule 5     ruleblock -> event
+Rule 6     ruleblock -> conditions
+Rule 7     ruleblock -> actions
+Rule 8     ruleblock -> NEWLINE ruleblock
+Rule 9     event -> EVENT block
+Rule 10    conditions -> CONDITIONS block
+Rule 11    actions -> ACTIONS block
+Rule 12    statements -> statements statement
+Rule 13    statements -> statement
+Rule 14    statement -> simple_stmt
+Rule 15    simple_stmt -> expr_list NEWLINE
+Rule 16    simple_stmt -> expr_list
+Rule 17    compound_stmt -> number_expr
+Rule 18    compound_stmt -> value_expr
+Rule 19    block -> NEWLINE INDENT statements DEDENT
+Rule 20    block -> simple_stmt
+Rule 21    expr_list -> compare_expr
+Rule 22    expr_list -> assign_expr
+Rule 23    expr_list -> COMMENT expr_list
+Rule 24    expr -> compare
+Rule 25    compare -> value
+Rule 26    compare -> value COMPARE compare
+Rule 27    value -> EVENT_TYPE
+Rule 28    value -> variable
+Rule 29    value -> compound_stmt
+Rule 30    value -> number
+Rule 31    value -> vector
+Rule 32    value -> empty
+Rule 33    after_expr -> ( value_list )
+Rule 34    after_expr -> block
+Rule 35    after_expr -> NEWLINE
+Rule 36    value_list -> value
+Rule 37    value_list -> value , value_list
+Rule 38    compare_expr -> expr
+Rule 39    compare_expr -> expr COMPARE compare_expr
+Rule 40    assign_expr -> value ASSIGN value
+Rule 41    number_expr -> NUMBER after_expr
+Rule 42    value_expr -> VALUE after_expr
+Rule 43    number -> INTEGER
+Rule 44    number -> FLOAT
+Rule 45    variable -> NAME
+Rule 46    variable -> global_var
+Rule 47    variable -> player_var
+Rule 48    global_var -> GLOBAL_VAR
+Rule 49    player_var -> PLAYER_VAR
+Rule 50    vector -> COMPARE value , value , value COMPARE
+Rule 51    empty -> <empty>
+
+Terminals, with rules where they appear
+
+(                    : 33
+)                    : 33
+,                    : 37 50 50
+ACTION               : 
+ACTIONS              : 11
+ASSIGN               : 40
+BOOLEAN              : 
+COMMENT              : 23
+COMPARE              : 26 39 50 50
+CONDITIONS           : 10
+DEDENT               : 4 19
+EOF                  : 
+EVENT                : 9
+EVENT_TYPE           : 27
+FLOAT                : 44
+FUNC                 : 
+GLOBAL_VAR           : 48
+INDENT               : 4 19
+INTEGER              : 43
+MAP                  : 
+NAME                 : 45
+NEWLINE              : 4 8 15 19 35
+NUMBER               : 41
+PLAYER_VAR           : 49
+QUOTE                : 
+RULE                 : 3 4
+VALUE                : 42
+WHITESPACE           : 
+error                : 
+
+Nonterminals, with rules where they appear
+
+actions              : 7
+after_expr           : 41 42
+assign_expr          : 22
+block                : 9 10 11 34
+compare              : 24 26
+compare_expr         : 21 39
+compound_stmt        : 29
+conditions           : 6
+empty                : 32
+event                : 5
+expr                 : 38 39
+expr_list            : 15 16 23
+global_var           : 46
+number               : 30
+number_expr          : 17
+player_var           : 47
+rule                 : 1 2
+ruleblock            : 4 8
+ruleset              : 2 0
+simple_stmt          : 14 20
+statement            : 12 13
+statements           : 12 19
+value                : 25 26 36 37 40 40 50 50 50
+value_expr           : 18
+value_list           : 33 37
+variable             : 28
+vector               : 31
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . ruleset
+    (1) ruleset -> . rule
+    (2) ruleset -> . rule ruleset
+    (3) rule -> . RULE
+    (4) rule -> . RULE NEWLINE INDENT ruleblock DEDENT
+
+    RULE            shift and go to state 3
+
+    ruleset                        shift and go to state 1
+    rule                           shift and go to state 2
+
+state 1
+
+    (0) S' -> ruleset .
+
+
+
+state 2
+
+    (1) ruleset -> rule .
+    (2) ruleset -> rule . ruleset
+    (1) ruleset -> . rule
+    (2) ruleset -> . rule ruleset
+    (3) rule -> . RULE
+    (4) rule -> . RULE NEWLINE INDENT ruleblock DEDENT
+
+    $end            reduce using rule 1 (ruleset -> rule .)
+    RULE            shift and go to state 3
+
+    rule                           shift and go to state 2
+    ruleset                        shift and go to state 4
+
+state 3
+
+    (3) rule -> RULE .
+    (4) rule -> RULE . NEWLINE INDENT ruleblock DEDENT
+
+    RULE            reduce using rule 3 (rule -> RULE .)
+    $end            reduce using rule 3 (rule -> RULE .)
+    NEWLINE         shift and go to state 5
+
+
+state 4
+
+    (2) ruleset -> rule ruleset .
+
+    $end            reduce using rule 2 (ruleset -> rule ruleset .)
+
+
+state 5
+
+    (4) rule -> RULE NEWLINE . INDENT ruleblock DEDENT
+
+    INDENT          shift and go to state 6
+
+
+state 6
+
+    (4) rule -> RULE NEWLINE INDENT . ruleblock DEDENT
+    (5) ruleblock -> . event
+    (6) ruleblock -> . conditions
+    (7) ruleblock -> . actions
+    (8) ruleblock -> . NEWLINE ruleblock
+    (9) event -> . EVENT block
+    (10) conditions -> . CONDITIONS block
+    (11) actions -> . ACTIONS block
+
+    NEWLINE         shift and go to state 7
+    EVENT           shift and go to state 12
+    CONDITIONS      shift and go to state 13
+    ACTIONS         shift and go to state 14
+
+    ruleblock                      shift and go to state 8
+    event                          shift and go to state 9
+    conditions                     shift and go to state 10
+    actions                        shift and go to state 11
+
+state 7
+
+    (8) ruleblock -> NEWLINE . ruleblock
+    (5) ruleblock -> . event
+    (6) ruleblock -> . conditions
+    (7) ruleblock -> . actions
+    (8) ruleblock -> . NEWLINE ruleblock
+    (9) event -> . EVENT block
+    (10) conditions -> . CONDITIONS block
+    (11) actions -> . ACTIONS block
+
+    NEWLINE         shift and go to state 7
+    EVENT           shift and go to state 12
+    CONDITIONS      shift and go to state 13
+    ACTIONS         shift and go to state 14
+
+    ruleblock                      shift and go to state 15
+    event                          shift and go to state 9
+    conditions                     shift and go to state 10
+    actions                        shift and go to state 11
+
+state 8
+
+    (4) rule -> RULE NEWLINE INDENT ruleblock . DEDENT
+
+    DEDENT          shift and go to state 16
+
+
+state 9
+
+    (5) ruleblock -> event .
+
+    DEDENT          reduce using rule 5 (ruleblock -> event .)
+
+
+state 10
+
+    (6) ruleblock -> conditions .
+
+    DEDENT          reduce using rule 6 (ruleblock -> conditions .)
+
+
+state 11
+
+    (7) ruleblock -> actions .
+
+    DEDENT          reduce using rule 7 (ruleblock -> actions .)
+
+
+state 12
+
+    (9) event -> EVENT . block
+    (19) block -> . NEWLINE INDENT statements DEDENT
+    (20) block -> . simple_stmt
+    (15) simple_stmt -> . expr_list NEWLINE
+    (16) simple_stmt -> . expr_list
+    (21) expr_list -> . compare_expr
+    (22) expr_list -> . assign_expr
+    (23) expr_list -> . COMMENT expr_list
+    (38) compare_expr -> . expr
+    (39) compare_expr -> . expr COMPARE compare_expr
+    (40) assign_expr -> . value ASSIGN value
+    (24) expr -> . compare
+    (27) value -> . EVENT_TYPE
+    (28) value -> . variable
+    (29) value -> . compound_stmt
+    (30) value -> . number
+    (31) value -> . vector
+    (32) value -> . empty
+    (25) compare -> . value
+    (26) compare -> . value COMPARE compare
+    (45) variable -> . NAME
+    (46) variable -> . global_var
+    (47) variable -> . player_var
+    (17) compound_stmt -> . number_expr
+    (18) compound_stmt -> . value_expr
+    (43) number -> . INTEGER
+    (44) number -> . FLOAT
+    (50) vector -> . COMPARE value , value , value COMPARE
+    (51) empty -> .
+    (48) global_var -> . GLOBAL_VAR
+    (49) player_var -> . PLAYER_VAR
+    (41) number_expr -> . NUMBER after_expr
+    (42) value_expr -> . VALUE after_expr
+
+  ! shift/reduce conflict for COMPARE resolved as shift
+  ! shift/reduce conflict for NEWLINE resolved as shift
+    NEWLINE         shift and go to state 18
+    COMMENT         shift and go to state 23
+    EVENT_TYPE      shift and go to state 28
+    NAME            shift and go to state 34
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    COMPARE         shift and go to state 25
+    ASSIGN          reduce using rule 51 (empty -> .)
+    DEDENT          reduce using rule 51 (empty -> .)
+    GLOBAL_VAR      shift and go to state 41
+    PLAYER_VAR      shift and go to state 42
+    NUMBER          shift and go to state 43
+    VALUE           shift and go to state 44
+
+  ! COMPARE         [ reduce using rule 51 (empty -> .) ]
+  ! NEWLINE         [ reduce using rule 51 (empty -> .) ]
+
+    block                          shift and go to state 17
+    simple_stmt                    shift and go to state 19
+    expr_list                      shift and go to state 20
+    compare_expr                   shift and go to state 21
+    assign_expr                    shift and go to state 22
+    expr                           shift and go to state 24
+    value                          shift and go to state 26
+    compare                        shift and go to state 27
+    variable                       shift and go to state 29
+    compound_stmt                  shift and go to state 30
+    number                         shift and go to state 31
+    vector                         shift and go to state 32
+    empty                          shift and go to state 33
+    global_var                     shift and go to state 35
+    player_var                     shift and go to state 36
+    number_expr                    shift and go to state 37
+    value_expr                     shift and go to state 38
+
+state 13
+
+    (10) conditions -> CONDITIONS . block
+    (19) block -> . NEWLINE INDENT statements DEDENT
+    (20) block -> . simple_stmt
+    (15) simple_stmt -> . expr_list NEWLINE
+    (16) simple_stmt -> . expr_list
+    (21) expr_list -> . compare_expr
+    (22) expr_list -> . assign_expr
+    (23) expr_list -> . COMMENT expr_list
+    (38) compare_expr -> . expr
+    (39) compare_expr -> . expr COMPARE compare_expr
+    (40) assign_expr -> . value ASSIGN value
+    (24) expr -> . compare
+    (27) value -> . EVENT_TYPE
+    (28) value -> . variable
+    (29) value -> . compound_stmt
+    (30) value -> . number
+    (31) value -> . vector
+    (32) value -> . empty
+    (25) compare -> . value
+    (26) compare -> . value COMPARE compare
+    (45) variable -> . NAME
+    (46) variable -> . global_var
+    (47) variable -> . player_var
+    (17) compound_stmt -> . number_expr
+    (18) compound_stmt -> . value_expr
+    (43) number -> . INTEGER
+    (44) number -> . FLOAT
+    (50) vector -> . COMPARE value , value , value COMPARE
+    (51) empty -> .
+    (48) global_var -> . GLOBAL_VAR
+    (49) player_var -> . PLAYER_VAR
+    (41) number_expr -> . NUMBER after_expr
+    (42) value_expr -> . VALUE after_expr
+
+  ! shift/reduce conflict for COMPARE resolved as shift
+  ! shift/reduce conflict for NEWLINE resolved as shift
+    NEWLINE         shift and go to state 18
+    COMMENT         shift and go to state 23
+    EVENT_TYPE      shift and go to state 28
+    NAME            shift and go to state 34
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    COMPARE         shift and go to state 25
+    ASSIGN          reduce using rule 51 (empty -> .)
+    DEDENT          reduce using rule 51 (empty -> .)
+    GLOBAL_VAR      shift and go to state 41
+    PLAYER_VAR      shift and go to state 42
+    NUMBER          shift and go to state 43
+    VALUE           shift and go to state 44
+
+  ! COMPARE         [ reduce using rule 51 (empty -> .) ]
+  ! NEWLINE         [ reduce using rule 51 (empty -> .) ]
+
+    block                          shift and go to state 45
+    simple_stmt                    shift and go to state 19
+    expr_list                      shift and go to state 20
+    compare_expr                   shift and go to state 21
+    assign_expr                    shift and go to state 22
+    expr                           shift and go to state 24
+    value                          shift and go to state 26
+    compare                        shift and go to state 27
+    variable                       shift and go to state 29
+    compound_stmt                  shift and go to state 30
+    number                         shift and go to state 31
+    vector                         shift and go to state 32
+    empty                          shift and go to state 33
+    global_var                     shift and go to state 35
+    player_var                     shift and go to state 36
+    number_expr                    shift and go to state 37
+    value_expr                     shift and go to state 38
+
+state 14
+
+    (11) actions -> ACTIONS . block
+    (19) block -> . NEWLINE INDENT statements DEDENT
+    (20) block -> . simple_stmt
+    (15) simple_stmt -> . expr_list NEWLINE
+    (16) simple_stmt -> . expr_list
+    (21) expr_list -> . compare_expr
+    (22) expr_list -> . assign_expr
+    (23) expr_list -> . COMMENT expr_list
+    (38) compare_expr -> . expr
+    (39) compare_expr -> . expr COMPARE compare_expr
+    (40) assign_expr -> . value ASSIGN value
+    (24) expr -> . compare
+    (27) value -> . EVENT_TYPE
+    (28) value -> . variable
+    (29) value -> . compound_stmt
+    (30) value -> . number
+    (31) value -> . vector
+    (32) value -> . empty
+    (25) compare -> . value
+    (26) compare -> . value COMPARE compare
+    (45) variable -> . NAME
+    (46) variable -> . global_var
+    (47) variable -> . player_var
+    (17) compound_stmt -> . number_expr
+    (18) compound_stmt -> . value_expr
+    (43) number -> . INTEGER
+    (44) number -> . FLOAT
+    (50) vector -> . COMPARE value , value , value COMPARE
+    (51) empty -> .
+    (48) global_var -> . GLOBAL_VAR
+    (49) player_var -> . PLAYER_VAR
+    (41) number_expr -> . NUMBER after_expr
+    (42) value_expr -> . VALUE after_expr
+
+  ! shift/reduce conflict for COMPARE resolved as shift
+  ! shift/reduce conflict for NEWLINE resolved as shift
+    NEWLINE         shift and go to state 18
+    COMMENT         shift and go to state 23
+    EVENT_TYPE      shift and go to state 28
+    NAME            shift and go to state 34
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    COMPARE         shift and go to state 25
+    ASSIGN          reduce using rule 51 (empty -> .)
+    DEDENT          reduce using rule 51 (empty -> .)
+    GLOBAL_VAR      shift and go to state 41
+    PLAYER_VAR      shift and go to state 42
+    NUMBER          shift and go to state 43
+    VALUE           shift and go to state 44
+
+  ! COMPARE         [ reduce using rule 51 (empty -> .) ]
+  ! NEWLINE         [ reduce using rule 51 (empty -> .) ]
+
+    block                          shift and go to state 46
+    simple_stmt                    shift and go to state 19
+    expr_list                      shift and go to state 20
+    compare_expr                   shift and go to state 21
+    assign_expr                    shift and go to state 22
+    expr                           shift and go to state 24
+    value                          shift and go to state 26
+    compare                        shift and go to state 27
+    variable                       shift and go to state 29
+    compound_stmt                  shift and go to state 30
+    number                         shift and go to state 31
+    vector                         shift and go to state 32
+    empty                          shift and go to state 33
+    global_var                     shift and go to state 35
+    player_var                     shift and go to state 36
+    number_expr                    shift and go to state 37
+    value_expr                     shift and go to state 38
+
+state 15
+
+    (8) ruleblock -> NEWLINE ruleblock .
+
+    DEDENT          reduce using rule 8 (ruleblock -> NEWLINE ruleblock .)
+
+
+state 16
+
+    (4) rule -> RULE NEWLINE INDENT ruleblock DEDENT .
+
+    RULE            reduce using rule 4 (rule -> RULE NEWLINE INDENT ruleblock DEDENT .)
+    $end            reduce using rule 4 (rule -> RULE NEWLINE INDENT ruleblock DEDENT .)
+
+
+state 17
+
+    (9) event -> EVENT block .
+
+    DEDENT          reduce using rule 9 (event -> EVENT block .)
+
+
+state 18
+
+    (19) block -> NEWLINE . INDENT statements DEDENT
+
+    INDENT          shift and go to state 47
+
+
+state 19
+
+    (20) block -> simple_stmt .
+
+    DEDENT          reduce using rule 20 (block -> simple_stmt .)
+    NEWLINE         reduce using rule 20 (block -> simple_stmt .)
+    ASSIGN          reduce using rule 20 (block -> simple_stmt .)
+    COMPARE         reduce using rule 20 (block -> simple_stmt .)
+    ,               reduce using rule 20 (block -> simple_stmt .)
+    COMMENT         reduce using rule 20 (block -> simple_stmt .)
+    EVENT_TYPE      reduce using rule 20 (block -> simple_stmt .)
+    NAME            reduce using rule 20 (block -> simple_stmt .)
+    INTEGER         reduce using rule 20 (block -> simple_stmt .)
+    FLOAT           reduce using rule 20 (block -> simple_stmt .)
+    GLOBAL_VAR      reduce using rule 20 (block -> simple_stmt .)
+    PLAYER_VAR      reduce using rule 20 (block -> simple_stmt .)
+    NUMBER          reduce using rule 20 (block -> simple_stmt .)
+    VALUE           reduce using rule 20 (block -> simple_stmt .)
+    )               reduce using rule 20 (block -> simple_stmt .)
+
+
+state 20
+
+    (15) simple_stmt -> expr_list . NEWLINE
+    (16) simple_stmt -> expr_list .
+
+  ! shift/reduce conflict for NEWLINE resolved as shift
+    NEWLINE         shift and go to state 48
+    DEDENT          reduce using rule 16 (simple_stmt -> expr_list .)
+    ASSIGN          reduce using rule 16 (simple_stmt -> expr_list .)
+    COMPARE         reduce using rule 16 (simple_stmt -> expr_list .)
+    ,               reduce using rule 16 (simple_stmt -> expr_list .)
+    COMMENT         reduce using rule 16 (simple_stmt -> expr_list .)
+    EVENT_TYPE      reduce using rule 16 (simple_stmt -> expr_list .)
+    NAME            reduce using rule 16 (simple_stmt -> expr_list .)
+    INTEGER         reduce using rule 16 (simple_stmt -> expr_list .)
+    FLOAT           reduce using rule 16 (simple_stmt -> expr_list .)
+    GLOBAL_VAR      reduce using rule 16 (simple_stmt -> expr_list .)
+    PLAYER_VAR      reduce using rule 16 (simple_stmt -> expr_list .)
+    NUMBER          reduce using rule 16 (simple_stmt -> expr_list .)
+    VALUE           reduce using rule 16 (simple_stmt -> expr_list .)
+    )               reduce using rule 16 (simple_stmt -> expr_list .)
+
+  ! NEWLINE         [ reduce using rule 16 (simple_stmt -> expr_list .) ]
+
+
+state 21
+
+    (21) expr_list -> compare_expr .
+
+    NEWLINE         reduce using rule 21 (expr_list -> compare_expr .)
+    DEDENT          reduce using rule 21 (expr_list -> compare_expr .)
+    ASSIGN          reduce using rule 21 (expr_list -> compare_expr .)
+    COMPARE         reduce using rule 21 (expr_list -> compare_expr .)
+    ,               reduce using rule 21 (expr_list -> compare_expr .)
+    COMMENT         reduce using rule 21 (expr_list -> compare_expr .)
+    EVENT_TYPE      reduce using rule 21 (expr_list -> compare_expr .)
+    NAME            reduce using rule 21 (expr_list -> compare_expr .)
+    INTEGER         reduce using rule 21 (expr_list -> compare_expr .)
+    FLOAT           reduce using rule 21 (expr_list -> compare_expr .)
+    GLOBAL_VAR      reduce using rule 21 (expr_list -> compare_expr .)
+    PLAYER_VAR      reduce using rule 21 (expr_list -> compare_expr .)
+    NUMBER          reduce using rule 21 (expr_list -> compare_expr .)
+    VALUE           reduce using rule 21 (expr_list -> compare_expr .)
+    )               reduce using rule 21 (expr_list -> compare_expr .)
+
+
+state 22
+
+    (22) expr_list -> assign_expr .
+
+    NEWLINE         reduce using rule 22 (expr_list -> assign_expr .)
+    DEDENT          reduce using rule 22 (expr_list -> assign_expr .)
+    ASSIGN          reduce using rule 22 (expr_list -> assign_expr .)
+    COMPARE         reduce using rule 22 (expr_list -> assign_expr .)
+    ,               reduce using rule 22 (expr_list -> assign_expr .)
+    COMMENT         reduce using rule 22 (expr_list -> assign_expr .)
+    EVENT_TYPE      reduce using rule 22 (expr_list -> assign_expr .)
+    NAME            reduce using rule 22 (expr_list -> assign_expr .)
+    INTEGER         reduce using rule 22 (expr_list -> assign_expr .)
+    FLOAT           reduce using rule 22 (expr_list -> assign_expr .)
+    GLOBAL_VAR      reduce using rule 22 (expr_list -> assign_expr .)
+    PLAYER_VAR      reduce using rule 22 (expr_list -> assign_expr .)
+    NUMBER          reduce using rule 22 (expr_list -> assign_expr .)
+    VALUE           reduce using rule 22 (expr_list -> assign_expr .)
+    )               reduce using rule 22 (expr_list -> assign_expr .)
+
+
+state 23
+
+    (23) expr_list -> COMMENT . expr_list
+    (21) expr_list -> . compare_expr
+    (22) expr_list -> . assign_expr
+    (23) expr_list -> . COMMENT expr_list
+    (38) compare_expr -> . expr
+    (39) compare_expr -> . expr COMPARE compare_expr
+    (40) assign_expr -> . value ASSIGN value
+    (24) expr -> . compare
+    (27) value -> . EVENT_TYPE
+    (28) value -> . variable
+    (29) value -> . compound_stmt
+    (30) value -> . number
+    (31) value -> . vector
+    (32) value -> . empty
+    (25) compare -> . value
+    (26) compare -> . value COMPARE compare
+    (45) variable -> . NAME
+    (46) variable -> . global_var
+    (47) variable -> . player_var
+    (17) compound_stmt -> . number_expr
+    (18) compound_stmt -> . value_expr
+    (43) number -> . INTEGER
+    (44) number -> . FLOAT
+    (50) vector -> . COMPARE value , value , value COMPARE
+    (51) empty -> .
+    (48) global_var -> . GLOBAL_VAR
+    (49) player_var -> . PLAYER_VAR
+    (41) number_expr -> . NUMBER after_expr
+    (42) value_expr -> . VALUE after_expr
+
+  ! shift/reduce conflict for COMPARE resolved as shift
+  ! shift/reduce conflict for COMMENT resolved as shift
+  ! shift/reduce conflict for EVENT_TYPE resolved as shift
+  ! shift/reduce conflict for NAME resolved as shift
+  ! shift/reduce conflict for INTEGER resolved as shift
+  ! shift/reduce conflict for FLOAT resolved as shift
+  ! shift/reduce conflict for GLOBAL_VAR resolved as shift
+  ! shift/reduce conflict for PLAYER_VAR resolved as shift
+  ! shift/reduce conflict for NUMBER resolved as shift
+  ! shift/reduce conflict for VALUE resolved as shift
+    COMMENT         shift and go to state 23
+    EVENT_TYPE      shift and go to state 28
+    NAME            shift and go to state 34
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    COMPARE         shift and go to state 25
+    NEWLINE         reduce using rule 51 (empty -> .)
+    DEDENT          reduce using rule 51 (empty -> .)
+    ASSIGN          reduce using rule 51 (empty -> .)
+    ,               reduce using rule 51 (empty -> .)
+    )               reduce using rule 51 (empty -> .)
+    GLOBAL_VAR      shift and go to state 41
+    PLAYER_VAR      shift and go to state 42
+    NUMBER          shift and go to state 43
+    VALUE           shift and go to state 44
+
+  ! COMPARE         [ reduce using rule 51 (empty -> .) ]
+  ! COMMENT         [ reduce using rule 51 (empty -> .) ]
+  ! EVENT_TYPE      [ reduce using rule 51 (empty -> .) ]
+  ! NAME            [ reduce using rule 51 (empty -> .) ]
+  ! INTEGER         [ reduce using rule 51 (empty -> .) ]
+  ! FLOAT           [ reduce using rule 51 (empty -> .) ]
+  ! GLOBAL_VAR      [ reduce using rule 51 (empty -> .) ]
+  ! PLAYER_VAR      [ reduce using rule 51 (empty -> .) ]
+  ! NUMBER          [ reduce using rule 51 (empty -> .) ]
+  ! VALUE           [ reduce using rule 51 (empty -> .) ]
+
+    expr_list                      shift and go to state 49
+    compare_expr                   shift and go to state 21
+    assign_expr                    shift and go to state 22
+    expr                           shift and go to state 24
+    value                          shift and go to state 26
+    compare                        shift and go to state 27
+    variable                       shift and go to state 29
+    compound_stmt                  shift and go to state 30
+    number                         shift and go to state 31
+    vector                         shift and go to state 32
+    empty                          shift and go to state 33
+    global_var                     shift and go to state 35
+    player_var                     shift and go to state 36
+    number_expr                    shift and go to state 37
+    value_expr                     shift and go to state 38
+
+state 24
+
+    (38) compare_expr -> expr .
+    (39) compare_expr -> expr . COMPARE compare_expr
+
+  ! shift/reduce conflict for COMPARE resolved as shift
+    NEWLINE         reduce using rule 38 (compare_expr -> expr .)
+    DEDENT          reduce using rule 38 (compare_expr -> expr .)
+    ASSIGN          reduce using rule 38 (compare_expr -> expr .)
+    ,               reduce using rule 38 (compare_expr -> expr .)
+    COMMENT         reduce using rule 38 (compare_expr -> expr .)
+    EVENT_TYPE      reduce using rule 38 (compare_expr -> expr .)
+    NAME            reduce using rule 38 (compare_expr -> expr .)
+    INTEGER         reduce using rule 38 (compare_expr -> expr .)
+    FLOAT           reduce using rule 38 (compare_expr -> expr .)
+    GLOBAL_VAR      reduce using rule 38 (compare_expr -> expr .)
+    PLAYER_VAR      reduce using rule 38 (compare_expr -> expr .)
+    NUMBER          reduce using rule 38 (compare_expr -> expr .)
+    VALUE           reduce using rule 38 (compare_expr -> expr .)
+    )               reduce using rule 38 (compare_expr -> expr .)
+    COMPARE         shift and go to state 50
+
+  ! COMPARE         [ reduce using rule 38 (compare_expr -> expr .) ]
+
+
+state 25
+
+    (50) vector -> COMPARE . value , value , value COMPARE
+    (27) value -> . EVENT_TYPE
+    (28) value -> . variable
+    (29) value -> . compound_stmt
+    (30) value -> . number
+    (31) value -> . vector
+    (32) value -> . empty
+    (45) variable -> . NAME
+    (46) variable -> . global_var
+    (47) variable -> . player_var
+    (17) compound_stmt -> . number_expr
+    (18) compound_stmt -> . value_expr
+    (43) number -> . INTEGER
+    (44) number -> . FLOAT
+    (50) vector -> . COMPARE value , value , value COMPARE
+    (51) empty -> .
+    (48) global_var -> . GLOBAL_VAR
+    (49) player_var -> . PLAYER_VAR
+    (41) number_expr -> . NUMBER after_expr
+    (42) value_expr -> . VALUE after_expr
+
+    EVENT_TYPE      shift and go to state 28
+    NAME            shift and go to state 34
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    COMPARE         shift and go to state 25
+    ,               reduce using rule 51 (empty -> .)
+    GLOBAL_VAR      shift and go to state 41
+    PLAYER_VAR      shift and go to state 42
+    NUMBER          shift and go to state 43
+    VALUE           shift and go to state 44
+
+    value                          shift and go to state 51
+    variable                       shift and go to state 29
+    compound_stmt                  shift and go to state 30
+    number                         shift and go to state 31
+    vector                         shift and go to state 32
+    empty                          shift and go to state 33
+    global_var                     shift and go to state 35
+    player_var                     shift and go to state 36
+    number_expr                    shift and go to state 37
+    value_expr                     shift and go to state 38
+
+state 26
+
+    (40) assign_expr -> value . ASSIGN value
+    (25) compare -> value .
+    (26) compare -> value . COMPARE compare
+
+  ! shift/reduce conflict for ASSIGN resolved as shift
+  ! shift/reduce conflict for COMPARE resolved as shift
+    ASSIGN          shift and go to state 52
+    NEWLINE         reduce using rule 25 (compare -> value .)
+    DEDENT          reduce using rule 25 (compare -> value .)
+    ,               reduce using rule 25 (compare -> value .)
+    COMMENT         reduce using rule 25 (compare -> value .)
+    EVENT_TYPE      reduce using rule 25 (compare -> value .)
+    NAME            reduce using rule 25 (compare -> value .)
+    INTEGER         reduce using rule 25 (compare -> value .)
+    FLOAT           reduce using rule 25 (compare -> value .)
+    GLOBAL_VAR      reduce using rule 25 (compare -> value .)
+    PLAYER_VAR      reduce using rule 25 (compare -> value .)
+    NUMBER          reduce using rule 25 (compare -> value .)
+    VALUE           reduce using rule 25 (compare -> value .)
+    )               reduce using rule 25 (compare -> value .)
+    COMPARE         shift and go to state 53
+
+  ! COMPARE         [ reduce using rule 25 (compare -> value .) ]
+  ! ASSIGN          [ reduce using rule 25 (compare -> value .) ]
+
+
+state 27
+
+    (24) expr -> compare .
+
+    COMPARE         reduce using rule 24 (expr -> compare .)
+    NEWLINE         reduce using rule 24 (expr -> compare .)
+    DEDENT          reduce using rule 24 (expr -> compare .)
+    ASSIGN          reduce using rule 24 (expr -> compare .)
+    ,               reduce using rule 24 (expr -> compare .)
+    COMMENT         reduce using rule 24 (expr -> compare .)
+    EVENT_TYPE      reduce using rule 24 (expr -> compare .)
+    NAME            reduce using rule 24 (expr -> compare .)
+    INTEGER         reduce using rule 24 (expr -> compare .)
+    FLOAT           reduce using rule 24 (expr -> compare .)
+    GLOBAL_VAR      reduce using rule 24 (expr -> compare .)
+    PLAYER_VAR      reduce using rule 24 (expr -> compare .)
+    NUMBER          reduce using rule 24 (expr -> compare .)
+    VALUE           reduce using rule 24 (expr -> compare .)
+    )               reduce using rule 24 (expr -> compare .)
+
+
+state 28
+
+    (27) value -> EVENT_TYPE .
+
+    ASSIGN          reduce using rule 27 (value -> EVENT_TYPE .)
+    COMPARE         reduce using rule 27 (value -> EVENT_TYPE .)
+    NEWLINE         reduce using rule 27 (value -> EVENT_TYPE .)
+    DEDENT          reduce using rule 27 (value -> EVENT_TYPE .)
+    ,               reduce using rule 27 (value -> EVENT_TYPE .)
+    COMMENT         reduce using rule 27 (value -> EVENT_TYPE .)
+    EVENT_TYPE      reduce using rule 27 (value -> EVENT_TYPE .)
+    NAME            reduce using rule 27 (value -> EVENT_TYPE .)
+    INTEGER         reduce using rule 27 (value -> EVENT_TYPE .)
+    FLOAT           reduce using rule 27 (value -> EVENT_TYPE .)
+    GLOBAL_VAR      reduce using rule 27 (value -> EVENT_TYPE .)
+    PLAYER_VAR      reduce using rule 27 (value -> EVENT_TYPE .)
+    NUMBER          reduce using rule 27 (value -> EVENT_TYPE .)
+    VALUE           reduce using rule 27 (value -> EVENT_TYPE .)
+    )               reduce using rule 27 (value -> EVENT_TYPE .)
+
+
+state 29
+
+    (28) value -> variable .
+
+    ASSIGN          reduce using rule 28 (value -> variable .)
+    COMPARE         reduce using rule 28 (value -> variable .)
+    NEWLINE         reduce using rule 28 (value -> variable .)
+    DEDENT          reduce using rule 28 (value -> variable .)
+    ,               reduce using rule 28 (value -> variable .)
+    COMMENT         reduce using rule 28 (value -> variable .)
+    EVENT_TYPE      reduce using rule 28 (value -> variable .)
+    NAME            reduce using rule 28 (value -> variable .)
+    INTEGER         reduce using rule 28 (value -> variable .)
+    FLOAT           reduce using rule 28 (value -> variable .)
+    GLOBAL_VAR      reduce using rule 28 (value -> variable .)
+    PLAYER_VAR      reduce using rule 28 (value -> variable .)
+    NUMBER          reduce using rule 28 (value -> variable .)
+    VALUE           reduce using rule 28 (value -> variable .)
+    )               reduce using rule 28 (value -> variable .)
+
+
+state 30
+
+    (29) value -> compound_stmt .
+
+    ASSIGN          reduce using rule 29 (value -> compound_stmt .)
+    COMPARE         reduce using rule 29 (value -> compound_stmt .)
+    NEWLINE         reduce using rule 29 (value -> compound_stmt .)
+    DEDENT          reduce using rule 29 (value -> compound_stmt .)
+    ,               reduce using rule 29 (value -> compound_stmt .)
+    COMMENT         reduce using rule 29 (value -> compound_stmt .)
+    EVENT_TYPE      reduce using rule 29 (value -> compound_stmt .)
+    NAME            reduce using rule 29 (value -> compound_stmt .)
+    INTEGER         reduce using rule 29 (value -> compound_stmt .)
+    FLOAT           reduce using rule 29 (value -> compound_stmt .)
+    GLOBAL_VAR      reduce using rule 29 (value -> compound_stmt .)
+    PLAYER_VAR      reduce using rule 29 (value -> compound_stmt .)
+    NUMBER          reduce using rule 29 (value -> compound_stmt .)
+    VALUE           reduce using rule 29 (value -> compound_stmt .)
+    )               reduce using rule 29 (value -> compound_stmt .)
+
+
+state 31
+
+    (30) value -> number .
+
+    ASSIGN          reduce using rule 30 (value -> number .)
+    COMPARE         reduce using rule 30 (value -> number .)
+    NEWLINE         reduce using rule 30 (value -> number .)
+    DEDENT          reduce using rule 30 (value -> number .)
+    ,               reduce using rule 30 (value -> number .)
+    COMMENT         reduce using rule 30 (value -> number .)
+    EVENT_TYPE      reduce using rule 30 (value -> number .)
+    NAME            reduce using rule 30 (value -> number .)
+    INTEGER         reduce using rule 30 (value -> number .)
+    FLOAT           reduce using rule 30 (value -> number .)
+    GLOBAL_VAR      reduce using rule 30 (value -> number .)
+    PLAYER_VAR      reduce using rule 30 (value -> number .)
+    NUMBER          reduce using rule 30 (value -> number .)
+    VALUE           reduce using rule 30 (value -> number .)
+    )               reduce using rule 30 (value -> number .)
+
+
+state 32
+
+    (31) value -> vector .
+
+    ASSIGN          reduce using rule 31 (value -> vector .)
+    COMPARE         reduce using rule 31 (value -> vector .)
+    NEWLINE         reduce using rule 31 (value -> vector .)
+    DEDENT          reduce using rule 31 (value -> vector .)
+    ,               reduce using rule 31 (value -> vector .)
+    COMMENT         reduce using rule 31 (value -> vector .)
+    EVENT_TYPE      reduce using rule 31 (value -> vector .)
+    NAME            reduce using rule 31 (value -> vector .)
+    INTEGER         reduce using rule 31 (value -> vector .)
+    FLOAT           reduce using rule 31 (value -> vector .)
+    GLOBAL_VAR      reduce using rule 31 (value -> vector .)
+    PLAYER_VAR      reduce using rule 31 (value -> vector .)
+    NUMBER          reduce using rule 31 (value -> vector .)
+    VALUE           reduce using rule 31 (value -> vector .)
+    )               reduce using rule 31 (value -> vector .)
+
+
+state 33
+
+    (32) value -> empty .
+
+    ASSIGN          reduce using rule 32 (value -> empty .)
+    COMPARE         reduce using rule 32 (value -> empty .)
+    NEWLINE         reduce using rule 32 (value -> empty .)
+    DEDENT          reduce using rule 32 (value -> empty .)
+    ,               reduce using rule 32 (value -> empty .)
+    COMMENT         reduce using rule 32 (value -> empty .)
+    EVENT_TYPE      reduce using rule 32 (value -> empty .)
+    NAME            reduce using rule 32 (value -> empty .)
+    INTEGER         reduce using rule 32 (value -> empty .)
+    FLOAT           reduce using rule 32 (value -> empty .)
+    GLOBAL_VAR      reduce using rule 32 (value -> empty .)
+    PLAYER_VAR      reduce using rule 32 (value -> empty .)
+    NUMBER          reduce using rule 32 (value -> empty .)
+    VALUE           reduce using rule 32 (value -> empty .)
+    )               reduce using rule 32 (value -> empty .)
+
+
+state 34
+
+    (45) variable -> NAME .
+
+    ASSIGN          reduce using rule 45 (variable -> NAME .)
+    COMPARE         reduce using rule 45 (variable -> NAME .)
+    NEWLINE         reduce using rule 45 (variable -> NAME .)
+    DEDENT          reduce using rule 45 (variable -> NAME .)
+    ,               reduce using rule 45 (variable -> NAME .)
+    COMMENT         reduce using rule 45 (variable -> NAME .)
+    EVENT_TYPE      reduce using rule 45 (variable -> NAME .)
+    NAME            reduce using rule 45 (variable -> NAME .)
+    INTEGER         reduce using rule 45 (variable -> NAME .)
+    FLOAT           reduce using rule 45 (variable -> NAME .)
+    GLOBAL_VAR      reduce using rule 45 (variable -> NAME .)
+    PLAYER_VAR      reduce using rule 45 (variable -> NAME .)
+    NUMBER          reduce using rule 45 (variable -> NAME .)
+    VALUE           reduce using rule 45 (variable -> NAME .)
+    )               reduce using rule 45 (variable -> NAME .)
+
+
+state 35
+
+    (46) variable -> global_var .
+
+    ASSIGN          reduce using rule 46 (variable -> global_var .)
+    COMPARE         reduce using rule 46 (variable -> global_var .)
+    NEWLINE         reduce using rule 46 (variable -> global_var .)
+    DEDENT          reduce using rule 46 (variable -> global_var .)
+    ,               reduce using rule 46 (variable -> global_var .)
+    COMMENT         reduce using rule 46 (variable -> global_var .)
+    EVENT_TYPE      reduce using rule 46 (variable -> global_var .)
+    NAME            reduce using rule 46 (variable -> global_var .)
+    INTEGER         reduce using rule 46 (variable -> global_var .)
+    FLOAT           reduce using rule 46 (variable -> global_var .)
+    GLOBAL_VAR      reduce using rule 46 (variable -> global_var .)
+    PLAYER_VAR      reduce using rule 46 (variable -> global_var .)
+    NUMBER          reduce using rule 46 (variable -> global_var .)
+    VALUE           reduce using rule 46 (variable -> global_var .)
+    )               reduce using rule 46 (variable -> global_var .)
+
+
+state 36
+
+    (47) variable -> player_var .
+
+    ASSIGN          reduce using rule 47 (variable -> player_var .)
+    COMPARE         reduce using rule 47 (variable -> player_var .)
+    NEWLINE         reduce using rule 47 (variable -> player_var .)
+    DEDENT          reduce using rule 47 (variable -> player_var .)
+    ,               reduce using rule 47 (variable -> player_var .)
+    COMMENT         reduce using rule 47 (variable -> player_var .)
+    EVENT_TYPE      reduce using rule 47 (variable -> player_var .)
+    NAME            reduce using rule 47 (variable -> player_var .)
+    INTEGER         reduce using rule 47 (variable -> player_var .)
+    FLOAT           reduce using rule 47 (variable -> player_var .)
+    GLOBAL_VAR      reduce using rule 47 (variable -> player_var .)
+    PLAYER_VAR      reduce using rule 47 (variable -> player_var .)
+    NUMBER          reduce using rule 47 (variable -> player_var .)
+    VALUE           reduce using rule 47 (variable -> player_var .)
+    )               reduce using rule 47 (variable -> player_var .)
+
+
+state 37
+
+    (17) compound_stmt -> number_expr .
+
+    ASSIGN          reduce using rule 17 (compound_stmt -> number_expr .)
+    COMPARE         reduce using rule 17 (compound_stmt -> number_expr .)
+    NEWLINE         reduce using rule 17 (compound_stmt -> number_expr .)
+    DEDENT          reduce using rule 17 (compound_stmt -> number_expr .)
+    ,               reduce using rule 17 (compound_stmt -> number_expr .)
+    COMMENT         reduce using rule 17 (compound_stmt -> number_expr .)
+    EVENT_TYPE      reduce using rule 17 (compound_stmt -> number_expr .)
+    NAME            reduce using rule 17 (compound_stmt -> number_expr .)
+    INTEGER         reduce using rule 17 (compound_stmt -> number_expr .)
+    FLOAT           reduce using rule 17 (compound_stmt -> number_expr .)
+    GLOBAL_VAR      reduce using rule 17 (compound_stmt -> number_expr .)
+    PLAYER_VAR      reduce using rule 17 (compound_stmt -> number_expr .)
+    NUMBER          reduce using rule 17 (compound_stmt -> number_expr .)
+    VALUE           reduce using rule 17 (compound_stmt -> number_expr .)
+    )               reduce using rule 17 (compound_stmt -> number_expr .)
+
+
+state 38
+
+    (18) compound_stmt -> value_expr .
+
+    ASSIGN          reduce using rule 18 (compound_stmt -> value_expr .)
+    COMPARE         reduce using rule 18 (compound_stmt -> value_expr .)
+    NEWLINE         reduce using rule 18 (compound_stmt -> value_expr .)
+    DEDENT          reduce using rule 18 (compound_stmt -> value_expr .)
+    ,               reduce using rule 18 (compound_stmt -> value_expr .)
+    COMMENT         reduce using rule 18 (compound_stmt -> value_expr .)
+    EVENT_TYPE      reduce using rule 18 (compound_stmt -> value_expr .)
+    NAME            reduce using rule 18 (compound_stmt -> value_expr .)
+    INTEGER         reduce using rule 18 (compound_stmt -> value_expr .)
+    FLOAT           reduce using rule 18 (compound_stmt -> value_expr .)
+    GLOBAL_VAR      reduce using rule 18 (compound_stmt -> value_expr .)
+    PLAYER_VAR      reduce using rule 18 (compound_stmt -> value_expr .)
+    NUMBER          reduce using rule 18 (compound_stmt -> value_expr .)
+    VALUE           reduce using rule 18 (compound_stmt -> value_expr .)
+    )               reduce using rule 18 (compound_stmt -> value_expr .)
+
+
+state 39
+
+    (43) number -> INTEGER .
+
+    ASSIGN          reduce using rule 43 (number -> INTEGER .)
+    COMPARE         reduce using rule 43 (number -> INTEGER .)
+    NEWLINE         reduce using rule 43 (number -> INTEGER .)
+    DEDENT          reduce using rule 43 (number -> INTEGER .)
+    ,               reduce using rule 43 (number -> INTEGER .)
+    COMMENT         reduce using rule 43 (number -> INTEGER .)
+    EVENT_TYPE      reduce using rule 43 (number -> INTEGER .)
+    NAME            reduce using rule 43 (number -> INTEGER .)
+    INTEGER         reduce using rule 43 (number -> INTEGER .)
+    FLOAT           reduce using rule 43 (number -> INTEGER .)
+    GLOBAL_VAR      reduce using rule 43 (number -> INTEGER .)
+    PLAYER_VAR      reduce using rule 43 (number -> INTEGER .)
+    NUMBER          reduce using rule 43 (number -> INTEGER .)
+    VALUE           reduce using rule 43 (number -> INTEGER .)
+    )               reduce using rule 43 (number -> INTEGER .)
+
+
+state 40
+
+    (44) number -> FLOAT .
+
+    ASSIGN          reduce using rule 44 (number -> FLOAT .)
+    COMPARE         reduce using rule 44 (number -> FLOAT .)
+    NEWLINE         reduce using rule 44 (number -> FLOAT .)
+    DEDENT          reduce using rule 44 (number -> FLOAT .)
+    ,               reduce using rule 44 (number -> FLOAT .)
+    COMMENT         reduce using rule 44 (number -> FLOAT .)
+    EVENT_TYPE      reduce using rule 44 (number -> FLOAT .)
+    NAME            reduce using rule 44 (number -> FLOAT .)
+    INTEGER         reduce using rule 44 (number -> FLOAT .)
+    FLOAT           reduce using rule 44 (number -> FLOAT .)
+    GLOBAL_VAR      reduce using rule 44 (number -> FLOAT .)
+    PLAYER_VAR      reduce using rule 44 (number -> FLOAT .)
+    NUMBER          reduce using rule 44 (number -> FLOAT .)
+    VALUE           reduce using rule 44 (number -> FLOAT .)
+    )               reduce using rule 44 (number -> FLOAT .)
+
+
+state 41
+
+    (48) global_var -> GLOBAL_VAR .
+
+    ASSIGN          reduce using rule 48 (global_var -> GLOBAL_VAR .)
+    COMPARE         reduce using rule 48 (global_var -> GLOBAL_VAR .)
+    NEWLINE         reduce using rule 48 (global_var -> GLOBAL_VAR .)
+    DEDENT          reduce using rule 48 (global_var -> GLOBAL_VAR .)
+    ,               reduce using rule 48 (global_var -> GLOBAL_VAR .)
+    COMMENT         reduce using rule 48 (global_var -> GLOBAL_VAR .)
+    EVENT_TYPE      reduce using rule 48 (global_var -> GLOBAL_VAR .)
+    NAME            reduce using rule 48 (global_var -> GLOBAL_VAR .)
+    INTEGER         reduce using rule 48 (global_var -> GLOBAL_VAR .)
+    FLOAT           reduce using rule 48 (global_var -> GLOBAL_VAR .)
+    GLOBAL_VAR      reduce using rule 48 (global_var -> GLOBAL_VAR .)
+    PLAYER_VAR      reduce using rule 48 (global_var -> GLOBAL_VAR .)
+    NUMBER          reduce using rule 48 (global_var -> GLOBAL_VAR .)
+    VALUE           reduce using rule 48 (global_var -> GLOBAL_VAR .)
+    )               reduce using rule 48 (global_var -> GLOBAL_VAR .)
+
+
+state 42
+
+    (49) player_var -> PLAYER_VAR .
+
+    ASSIGN          reduce using rule 49 (player_var -> PLAYER_VAR .)
+    COMPARE         reduce using rule 49 (player_var -> PLAYER_VAR .)
+    NEWLINE         reduce using rule 49 (player_var -> PLAYER_VAR .)
+    DEDENT          reduce using rule 49 (player_var -> PLAYER_VAR .)
+    ,               reduce using rule 49 (player_var -> PLAYER_VAR .)
+    COMMENT         reduce using rule 49 (player_var -> PLAYER_VAR .)
+    EVENT_TYPE      reduce using rule 49 (player_var -> PLAYER_VAR .)
+    NAME            reduce using rule 49 (player_var -> PLAYER_VAR .)
+    INTEGER         reduce using rule 49 (player_var -> PLAYER_VAR .)
+    FLOAT           reduce using rule 49 (player_var -> PLAYER_VAR .)
+    GLOBAL_VAR      reduce using rule 49 (player_var -> PLAYER_VAR .)
+    PLAYER_VAR      reduce using rule 49 (player_var -> PLAYER_VAR .)
+    NUMBER          reduce using rule 49 (player_var -> PLAYER_VAR .)
+    VALUE           reduce using rule 49 (player_var -> PLAYER_VAR .)
+    )               reduce using rule 49 (player_var -> PLAYER_VAR .)
+
+
+state 43
+
+    (41) number_expr -> NUMBER . after_expr
+    (33) after_expr -> . ( value_list )
+    (34) after_expr -> . block
+    (35) after_expr -> . NEWLINE
+    (19) block -> . NEWLINE INDENT statements DEDENT
+    (20) block -> . simple_stmt
+    (15) simple_stmt -> . expr_list NEWLINE
+    (16) simple_stmt -> . expr_list
+    (21) expr_list -> . compare_expr
+    (22) expr_list -> . assign_expr
+    (23) expr_list -> . COMMENT expr_list
+    (38) compare_expr -> . expr
+    (39) compare_expr -> . expr COMPARE compare_expr
+    (40) assign_expr -> . value ASSIGN value
+    (24) expr -> . compare
+    (27) value -> . EVENT_TYPE
+    (28) value -> . variable
+    (29) value -> . compound_stmt
+    (30) value -> . number
+    (31) value -> . vector
+    (32) value -> . empty
+    (25) compare -> . value
+    (26) compare -> . value COMPARE compare
+    (45) variable -> . NAME
+    (46) variable -> . global_var
+    (47) variable -> . player_var
+    (17) compound_stmt -> . number_expr
+    (18) compound_stmt -> . value_expr
+    (43) number -> . INTEGER
+    (44) number -> . FLOAT
+    (50) vector -> . COMPARE value , value , value COMPARE
+    (51) empty -> .
+    (48) global_var -> . GLOBAL_VAR
+    (49) player_var -> . PLAYER_VAR
+    (41) number_expr -> . NUMBER after_expr
+    (42) value_expr -> . VALUE after_expr
+
+  ! shift/reduce conflict for NEWLINE resolved as shift
+  ! shift/reduce conflict for COMPARE resolved as shift
+  ! shift/reduce conflict for COMMENT resolved as shift
+  ! shift/reduce conflict for EVENT_TYPE resolved as shift
+  ! shift/reduce conflict for NAME resolved as shift
+  ! shift/reduce conflict for INTEGER resolved as shift
+  ! shift/reduce conflict for FLOAT resolved as shift
+  ! shift/reduce conflict for GLOBAL_VAR resolved as shift
+  ! shift/reduce conflict for PLAYER_VAR resolved as shift
+  ! shift/reduce conflict for NUMBER resolved as shift
+  ! shift/reduce conflict for VALUE resolved as shift
+    (               shift and go to state 55
+    NEWLINE         shift and go to state 57
+    COMMENT         shift and go to state 23
+    EVENT_TYPE      shift and go to state 28
+    NAME            shift and go to state 34
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    COMPARE         shift and go to state 25
+    DEDENT          reduce using rule 51 (empty -> .)
+    ASSIGN          reduce using rule 51 (empty -> .)
+    ,               reduce using rule 51 (empty -> .)
+    )               reduce using rule 51 (empty -> .)
+    GLOBAL_VAR      shift and go to state 41
+    PLAYER_VAR      shift and go to state 42
+    NUMBER          shift and go to state 43
+    VALUE           shift and go to state 44
+
+  ! NEWLINE         [ reduce using rule 51 (empty -> .) ]
+  ! COMPARE         [ reduce using rule 51 (empty -> .) ]
+  ! COMMENT         [ reduce using rule 51 (empty -> .) ]
+  ! EVENT_TYPE      [ reduce using rule 51 (empty -> .) ]
+  ! NAME            [ reduce using rule 51 (empty -> .) ]
+  ! INTEGER         [ reduce using rule 51 (empty -> .) ]
+  ! FLOAT           [ reduce using rule 51 (empty -> .) ]
+  ! GLOBAL_VAR      [ reduce using rule 51 (empty -> .) ]
+  ! PLAYER_VAR      [ reduce using rule 51 (empty -> .) ]
+  ! NUMBER          [ reduce using rule 51 (empty -> .) ]
+  ! VALUE           [ reduce using rule 51 (empty -> .) ]
+
+    after_expr                     shift and go to state 54
+    block                          shift and go to state 56
+    simple_stmt                    shift and go to state 19
+    expr_list                      shift and go to state 20
+    compare_expr                   shift and go to state 21
+    assign_expr                    shift and go to state 22
+    expr                           shift and go to state 24
+    value                          shift and go to state 26
+    compare                        shift and go to state 27
+    variable                       shift and go to state 29
+    compound_stmt                  shift and go to state 30
+    number                         shift and go to state 31
+    vector                         shift and go to state 32
+    empty                          shift and go to state 33
+    global_var                     shift and go to state 35
+    player_var                     shift and go to state 36
+    number_expr                    shift and go to state 37
+    value_expr                     shift and go to state 38
+
+state 44
+
+    (42) value_expr -> VALUE . after_expr
+    (33) after_expr -> . ( value_list )
+    (34) after_expr -> . block
+    (35) after_expr -> . NEWLINE
+    (19) block -> . NEWLINE INDENT statements DEDENT
+    (20) block -> . simple_stmt
+    (15) simple_stmt -> . expr_list NEWLINE
+    (16) simple_stmt -> . expr_list
+    (21) expr_list -> . compare_expr
+    (22) expr_list -> . assign_expr
+    (23) expr_list -> . COMMENT expr_list
+    (38) compare_expr -> . expr
+    (39) compare_expr -> . expr COMPARE compare_expr
+    (40) assign_expr -> . value ASSIGN value
+    (24) expr -> . compare
+    (27) value -> . EVENT_TYPE
+    (28) value -> . variable
+    (29) value -> . compound_stmt
+    (30) value -> . number
+    (31) value -> . vector
+    (32) value -> . empty
+    (25) compare -> . value
+    (26) compare -> . value COMPARE compare
+    (45) variable -> . NAME
+    (46) variable -> . global_var
+    (47) variable -> . player_var
+    (17) compound_stmt -> . number_expr
+    (18) compound_stmt -> . value_expr
+    (43) number -> . INTEGER
+    (44) number -> . FLOAT
+    (50) vector -> . COMPARE value , value , value COMPARE
+    (51) empty -> .
+    (48) global_var -> . GLOBAL_VAR
+    (49) player_var -> . PLAYER_VAR
+    (41) number_expr -> . NUMBER after_expr
+    (42) value_expr -> . VALUE after_expr
+
+  ! shift/reduce conflict for NEWLINE resolved as shift
+  ! shift/reduce conflict for COMPARE resolved as shift
+  ! shift/reduce conflict for COMMENT resolved as shift
+  ! shift/reduce conflict for EVENT_TYPE resolved as shift
+  ! shift/reduce conflict for NAME resolved as shift
+  ! shift/reduce conflict for INTEGER resolved as shift
+  ! shift/reduce conflict for FLOAT resolved as shift
+  ! shift/reduce conflict for GLOBAL_VAR resolved as shift
+  ! shift/reduce conflict for PLAYER_VAR resolved as shift
+  ! shift/reduce conflict for NUMBER resolved as shift
+  ! shift/reduce conflict for VALUE resolved as shift
+    (               shift and go to state 55
+    NEWLINE         shift and go to state 57
+    COMMENT         shift and go to state 23
+    EVENT_TYPE      shift and go to state 28
+    NAME            shift and go to state 34
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    COMPARE         shift and go to state 25
+    DEDENT          reduce using rule 51 (empty -> .)
+    ASSIGN          reduce using rule 51 (empty -> .)
+    ,               reduce using rule 51 (empty -> .)
+    )               reduce using rule 51 (empty -> .)
+    GLOBAL_VAR      shift and go to state 41
+    PLAYER_VAR      shift and go to state 42
+    NUMBER          shift and go to state 43
+    VALUE           shift and go to state 44
+
+  ! NEWLINE         [ reduce using rule 51 (empty -> .) ]
+  ! COMPARE         [ reduce using rule 51 (empty -> .) ]
+  ! COMMENT         [ reduce using rule 51 (empty -> .) ]
+  ! EVENT_TYPE      [ reduce using rule 51 (empty -> .) ]
+  ! NAME            [ reduce using rule 51 (empty -> .) ]
+  ! INTEGER         [ reduce using rule 51 (empty -> .) ]
+  ! FLOAT           [ reduce using rule 51 (empty -> .) ]
+  ! GLOBAL_VAR      [ reduce using rule 51 (empty -> .) ]
+  ! PLAYER_VAR      [ reduce using rule 51 (empty -> .) ]
+  ! NUMBER          [ reduce using rule 51 (empty -> .) ]
+  ! VALUE           [ reduce using rule 51 (empty -> .) ]
+
+    after_expr                     shift and go to state 58
+    block                          shift and go to state 56
+    simple_stmt                    shift and go to state 19
+    expr_list                      shift and go to state 20
+    compare_expr                   shift and go to state 21
+    assign_expr                    shift and go to state 22
+    expr                           shift and go to state 24
+    value                          shift and go to state 26
+    compare                        shift and go to state 27
+    variable                       shift and go to state 29
+    compound_stmt                  shift and go to state 30
+    number                         shift and go to state 31
+    vector                         shift and go to state 32
+    empty                          shift and go to state 33
+    global_var                     shift and go to state 35
+    player_var                     shift and go to state 36
+    number_expr                    shift and go to state 37
+    value_expr                     shift and go to state 38
+
+state 45
+
+    (10) conditions -> CONDITIONS block .
+
+    DEDENT          reduce using rule 10 (conditions -> CONDITIONS block .)
+
+
+state 46
+
+    (11) actions -> ACTIONS block .
+
+    DEDENT          reduce using rule 11 (actions -> ACTIONS block .)
+
+
+state 47
+
+    (19) block -> NEWLINE INDENT . statements DEDENT
+    (12) statements -> . statements statement
+    (13) statements -> . statement
+    (14) statement -> . simple_stmt
+    (15) simple_stmt -> . expr_list NEWLINE
+    (16) simple_stmt -> . expr_list
+    (21) expr_list -> . compare_expr
+    (22) expr_list -> . assign_expr
+    (23) expr_list -> . COMMENT expr_list
+    (38) compare_expr -> . expr
+    (39) compare_expr -> . expr COMPARE compare_expr
+    (40) assign_expr -> . value ASSIGN value
+    (24) expr -> . compare
+    (27) value -> . EVENT_TYPE
+    (28) value -> . variable
+    (29) value -> . compound_stmt
+    (30) value -> . number
+    (31) value -> . vector
+    (32) value -> . empty
+    (25) compare -> . value
+    (26) compare -> . value COMPARE compare
+    (45) variable -> . NAME
+    (46) variable -> . global_var
+    (47) variable -> . player_var
+    (17) compound_stmt -> . number_expr
+    (18) compound_stmt -> . value_expr
+    (43) number -> . INTEGER
+    (44) number -> . FLOAT
+    (50) vector -> . COMPARE value , value , value COMPARE
+    (51) empty -> .
+    (48) global_var -> . GLOBAL_VAR
+    (49) player_var -> . PLAYER_VAR
+    (41) number_expr -> . NUMBER after_expr
+    (42) value_expr -> . VALUE after_expr
+
+  ! shift/reduce conflict for COMPARE resolved as shift
+  ! shift/reduce conflict for COMMENT resolved as shift
+  ! shift/reduce conflict for EVENT_TYPE resolved as shift
+  ! shift/reduce conflict for NAME resolved as shift
+  ! shift/reduce conflict for INTEGER resolved as shift
+  ! shift/reduce conflict for FLOAT resolved as shift
+  ! shift/reduce conflict for GLOBAL_VAR resolved as shift
+  ! shift/reduce conflict for PLAYER_VAR resolved as shift
+  ! shift/reduce conflict for NUMBER resolved as shift
+  ! shift/reduce conflict for VALUE resolved as shift
+    COMMENT         shift and go to state 23
+    EVENT_TYPE      shift and go to state 28
+    NAME            shift and go to state 34
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    COMPARE         shift and go to state 25
+    ASSIGN          reduce using rule 51 (empty -> .)
+    NEWLINE         reduce using rule 51 (empty -> .)
+    DEDENT          reduce using rule 51 (empty -> .)
+    GLOBAL_VAR      shift and go to state 41
+    PLAYER_VAR      shift and go to state 42
+    NUMBER          shift and go to state 43
+    VALUE           shift and go to state 44
+
+  ! COMPARE         [ reduce using rule 51 (empty -> .) ]
+  ! COMMENT         [ reduce using rule 51 (empty -> .) ]
+  ! EVENT_TYPE      [ reduce using rule 51 (empty -> .) ]
+  ! NAME            [ reduce using rule 51 (empty -> .) ]
+  ! INTEGER         [ reduce using rule 51 (empty -> .) ]
+  ! FLOAT           [ reduce using rule 51 (empty -> .) ]
+  ! GLOBAL_VAR      [ reduce using rule 51 (empty -> .) ]
+  ! PLAYER_VAR      [ reduce using rule 51 (empty -> .) ]
+  ! NUMBER          [ reduce using rule 51 (empty -> .) ]
+  ! VALUE           [ reduce using rule 51 (empty -> .) ]
+
+    statements                     shift and go to state 59
+    statement                      shift and go to state 60
+    simple_stmt                    shift and go to state 61
+    expr_list                      shift and go to state 20
+    compare_expr                   shift and go to state 21
+    assign_expr                    shift and go to state 22
+    expr                           shift and go to state 24
+    value                          shift and go to state 26
+    compare                        shift and go to state 27
+    variable                       shift and go to state 29
+    compound_stmt                  shift and go to state 30
+    number                         shift and go to state 31
+    vector                         shift and go to state 32
+    empty                          shift and go to state 33
+    global_var                     shift and go to state 35
+    player_var                     shift and go to state 36
+    number_expr                    shift and go to state 37
+    value_expr                     shift and go to state 38
+
+state 48
+
+    (15) simple_stmt -> expr_list NEWLINE .
+
+    DEDENT          reduce using rule 15 (simple_stmt -> expr_list NEWLINE .)
+    NEWLINE         reduce using rule 15 (simple_stmt -> expr_list NEWLINE .)
+    ASSIGN          reduce using rule 15 (simple_stmt -> expr_list NEWLINE .)
+    COMPARE         reduce using rule 15 (simple_stmt -> expr_list NEWLINE .)
+    ,               reduce using rule 15 (simple_stmt -> expr_list NEWLINE .)
+    COMMENT         reduce using rule 15 (simple_stmt -> expr_list NEWLINE .)
+    EVENT_TYPE      reduce using rule 15 (simple_stmt -> expr_list NEWLINE .)
+    NAME            reduce using rule 15 (simple_stmt -> expr_list NEWLINE .)
+    INTEGER         reduce using rule 15 (simple_stmt -> expr_list NEWLINE .)
+    FLOAT           reduce using rule 15 (simple_stmt -> expr_list NEWLINE .)
+    GLOBAL_VAR      reduce using rule 15 (simple_stmt -> expr_list NEWLINE .)
+    PLAYER_VAR      reduce using rule 15 (simple_stmt -> expr_list NEWLINE .)
+    NUMBER          reduce using rule 15 (simple_stmt -> expr_list NEWLINE .)
+    VALUE           reduce using rule 15 (simple_stmt -> expr_list NEWLINE .)
+    )               reduce using rule 15 (simple_stmt -> expr_list NEWLINE .)
+
+
+state 49
+
+    (23) expr_list -> COMMENT expr_list .
+
+    NEWLINE         reduce using rule 23 (expr_list -> COMMENT expr_list .)
+    DEDENT          reduce using rule 23 (expr_list -> COMMENT expr_list .)
+    ASSIGN          reduce using rule 23 (expr_list -> COMMENT expr_list .)
+    COMPARE         reduce using rule 23 (expr_list -> COMMENT expr_list .)
+    ,               reduce using rule 23 (expr_list -> COMMENT expr_list .)
+    COMMENT         reduce using rule 23 (expr_list -> COMMENT expr_list .)
+    EVENT_TYPE      reduce using rule 23 (expr_list -> COMMENT expr_list .)
+    NAME            reduce using rule 23 (expr_list -> COMMENT expr_list .)
+    INTEGER         reduce using rule 23 (expr_list -> COMMENT expr_list .)
+    FLOAT           reduce using rule 23 (expr_list -> COMMENT expr_list .)
+    GLOBAL_VAR      reduce using rule 23 (expr_list -> COMMENT expr_list .)
+    PLAYER_VAR      reduce using rule 23 (expr_list -> COMMENT expr_list .)
+    NUMBER          reduce using rule 23 (expr_list -> COMMENT expr_list .)
+    VALUE           reduce using rule 23 (expr_list -> COMMENT expr_list .)
+    )               reduce using rule 23 (expr_list -> COMMENT expr_list .)
+
+
+state 50
+
+    (39) compare_expr -> expr COMPARE . compare_expr
+    (38) compare_expr -> . expr
+    (39) compare_expr -> . expr COMPARE compare_expr
+    (24) expr -> . compare
+    (25) compare -> . value
+    (26) compare -> . value COMPARE compare
+    (27) value -> . EVENT_TYPE
+    (28) value -> . variable
+    (29) value -> . compound_stmt
+    (30) value -> . number
+    (31) value -> . vector
+    (32) value -> . empty
+    (45) variable -> . NAME
+    (46) variable -> . global_var
+    (47) variable -> . player_var
+    (17) compound_stmt -> . number_expr
+    (18) compound_stmt -> . value_expr
+    (43) number -> . INTEGER
+    (44) number -> . FLOAT
+    (50) vector -> . COMPARE value , value , value COMPARE
+    (51) empty -> .
+    (48) global_var -> . GLOBAL_VAR
+    (49) player_var -> . PLAYER_VAR
+    (41) number_expr -> . NUMBER after_expr
+    (42) value_expr -> . VALUE after_expr
+
+  ! shift/reduce conflict for COMPARE resolved as shift
+  ! shift/reduce conflict for EVENT_TYPE resolved as shift
+  ! shift/reduce conflict for NAME resolved as shift
+  ! shift/reduce conflict for INTEGER resolved as shift
+  ! shift/reduce conflict for FLOAT resolved as shift
+  ! shift/reduce conflict for GLOBAL_VAR resolved as shift
+  ! shift/reduce conflict for PLAYER_VAR resolved as shift
+  ! shift/reduce conflict for NUMBER resolved as shift
+  ! shift/reduce conflict for VALUE resolved as shift
+    EVENT_TYPE      shift and go to state 28
+    NAME            shift and go to state 34
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    COMPARE         shift and go to state 25
+    NEWLINE         reduce using rule 51 (empty -> .)
+    DEDENT          reduce using rule 51 (empty -> .)
+    ASSIGN          reduce using rule 51 (empty -> .)
+    ,               reduce using rule 51 (empty -> .)
+    COMMENT         reduce using rule 51 (empty -> .)
+    )               reduce using rule 51 (empty -> .)
+    GLOBAL_VAR      shift and go to state 41
+    PLAYER_VAR      shift and go to state 42
+    NUMBER          shift and go to state 43
+    VALUE           shift and go to state 44
+
+  ! COMPARE         [ reduce using rule 51 (empty -> .) ]
+  ! EVENT_TYPE      [ reduce using rule 51 (empty -> .) ]
+  ! NAME            [ reduce using rule 51 (empty -> .) ]
+  ! INTEGER         [ reduce using rule 51 (empty -> .) ]
+  ! FLOAT           [ reduce using rule 51 (empty -> .) ]
+  ! GLOBAL_VAR      [ reduce using rule 51 (empty -> .) ]
+  ! PLAYER_VAR      [ reduce using rule 51 (empty -> .) ]
+  ! NUMBER          [ reduce using rule 51 (empty -> .) ]
+  ! VALUE           [ reduce using rule 51 (empty -> .) ]
+
+    expr                           shift and go to state 24
+    compare_expr                   shift and go to state 62
+    compare                        shift and go to state 27
+    value                          shift and go to state 63
+    variable                       shift and go to state 29
+    compound_stmt                  shift and go to state 30
+    number                         shift and go to state 31
+    vector                         shift and go to state 32
+    empty                          shift and go to state 33
+    global_var                     shift and go to state 35
+    player_var                     shift and go to state 36
+    number_expr                    shift and go to state 37
+    value_expr                     shift and go to state 38
+
+state 51
+
+    (50) vector -> COMPARE value . , value , value COMPARE
+
+    ,               shift and go to state 64
+
+
+state 52
+
+    (40) assign_expr -> value ASSIGN . value
+    (27) value -> . EVENT_TYPE
+    (28) value -> . variable
+    (29) value -> . compound_stmt
+    (30) value -> . number
+    (31) value -> . vector
+    (32) value -> . empty
+    (45) variable -> . NAME
+    (46) variable -> . global_var
+    (47) variable -> . player_var
+    (17) compound_stmt -> . number_expr
+    (18) compound_stmt -> . value_expr
+    (43) number -> . INTEGER
+    (44) number -> . FLOAT
+    (50) vector -> . COMPARE value , value , value COMPARE
+    (51) empty -> .
+    (48) global_var -> . GLOBAL_VAR
+    (49) player_var -> . PLAYER_VAR
+    (41) number_expr -> . NUMBER after_expr
+    (42) value_expr -> . VALUE after_expr
+
+  ! shift/reduce conflict for COMPARE resolved as shift
+  ! shift/reduce conflict for EVENT_TYPE resolved as shift
+  ! shift/reduce conflict for NAME resolved as shift
+  ! shift/reduce conflict for INTEGER resolved as shift
+  ! shift/reduce conflict for FLOAT resolved as shift
+  ! shift/reduce conflict for GLOBAL_VAR resolved as shift
+  ! shift/reduce conflict for PLAYER_VAR resolved as shift
+  ! shift/reduce conflict for NUMBER resolved as shift
+  ! shift/reduce conflict for VALUE resolved as shift
+    EVENT_TYPE      shift and go to state 28
+    NAME            shift and go to state 34
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    COMPARE         shift and go to state 25
+    NEWLINE         reduce using rule 51 (empty -> .)
+    DEDENT          reduce using rule 51 (empty -> .)
+    ASSIGN          reduce using rule 51 (empty -> .)
+    ,               reduce using rule 51 (empty -> .)
+    COMMENT         reduce using rule 51 (empty -> .)
+    )               reduce using rule 51 (empty -> .)
+    GLOBAL_VAR      shift and go to state 41
+    PLAYER_VAR      shift and go to state 42
+    NUMBER          shift and go to state 43
+    VALUE           shift and go to state 44
+
+  ! COMPARE         [ reduce using rule 51 (empty -> .) ]
+  ! EVENT_TYPE      [ reduce using rule 51 (empty -> .) ]
+  ! NAME            [ reduce using rule 51 (empty -> .) ]
+  ! INTEGER         [ reduce using rule 51 (empty -> .) ]
+  ! FLOAT           [ reduce using rule 51 (empty -> .) ]
+  ! GLOBAL_VAR      [ reduce using rule 51 (empty -> .) ]
+  ! PLAYER_VAR      [ reduce using rule 51 (empty -> .) ]
+  ! NUMBER          [ reduce using rule 51 (empty -> .) ]
+  ! VALUE           [ reduce using rule 51 (empty -> .) ]
+
+    value                          shift and go to state 65
+    variable                       shift and go to state 29
+    compound_stmt                  shift and go to state 30
+    number                         shift and go to state 31
+    vector                         shift and go to state 32
+    empty                          shift and go to state 33
+    global_var                     shift and go to state 35
+    player_var                     shift and go to state 36
+    number_expr                    shift and go to state 37
+    value_expr                     shift and go to state 38
+
+state 53
+
+    (26) compare -> value COMPARE . compare
+    (25) compare -> . value
+    (26) compare -> . value COMPARE compare
+    (27) value -> . EVENT_TYPE
+    (28) value -> . variable
+    (29) value -> . compound_stmt
+    (30) value -> . number
+    (31) value -> . vector
+    (32) value -> . empty
+    (45) variable -> . NAME
+    (46) variable -> . global_var
+    (47) variable -> . player_var
+    (17) compound_stmt -> . number_expr
+    (18) compound_stmt -> . value_expr
+    (43) number -> . INTEGER
+    (44) number -> . FLOAT
+    (50) vector -> . COMPARE value , value , value COMPARE
+    (51) empty -> .
+    (48) global_var -> . GLOBAL_VAR
+    (49) player_var -> . PLAYER_VAR
+    (41) number_expr -> . NUMBER after_expr
+    (42) value_expr -> . VALUE after_expr
+
+  ! shift/reduce conflict for COMPARE resolved as shift
+  ! shift/reduce conflict for EVENT_TYPE resolved as shift
+  ! shift/reduce conflict for NAME resolved as shift
+  ! shift/reduce conflict for INTEGER resolved as shift
+  ! shift/reduce conflict for FLOAT resolved as shift
+  ! shift/reduce conflict for GLOBAL_VAR resolved as shift
+  ! shift/reduce conflict for PLAYER_VAR resolved as shift
+  ! shift/reduce conflict for NUMBER resolved as shift
+  ! shift/reduce conflict for VALUE resolved as shift
+    EVENT_TYPE      shift and go to state 28
+    NAME            shift and go to state 34
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    COMPARE         shift and go to state 25
+    NEWLINE         reduce using rule 51 (empty -> .)
+    DEDENT          reduce using rule 51 (empty -> .)
+    ASSIGN          reduce using rule 51 (empty -> .)
+    ,               reduce using rule 51 (empty -> .)
+    COMMENT         reduce using rule 51 (empty -> .)
+    )               reduce using rule 51 (empty -> .)
+    GLOBAL_VAR      shift and go to state 41
+    PLAYER_VAR      shift and go to state 42
+    NUMBER          shift and go to state 43
+    VALUE           shift and go to state 44
+
+  ! COMPARE         [ reduce using rule 51 (empty -> .) ]
+  ! EVENT_TYPE      [ reduce using rule 51 (empty -> .) ]
+  ! NAME            [ reduce using rule 51 (empty -> .) ]
+  ! INTEGER         [ reduce using rule 51 (empty -> .) ]
+  ! FLOAT           [ reduce using rule 51 (empty -> .) ]
+  ! GLOBAL_VAR      [ reduce using rule 51 (empty -> .) ]
+  ! PLAYER_VAR      [ reduce using rule 51 (empty -> .) ]
+  ! NUMBER          [ reduce using rule 51 (empty -> .) ]
+  ! VALUE           [ reduce using rule 51 (empty -> .) ]
+
+    value                          shift and go to state 63
+    compare                        shift and go to state 66
+    variable                       shift and go to state 29
+    compound_stmt                  shift and go to state 30
+    number                         shift and go to state 31
+    vector                         shift and go to state 32
+    empty                          shift and go to state 33
+    global_var                     shift and go to state 35
+    player_var                     shift and go to state 36
+    number_expr                    shift and go to state 37
+    value_expr                     shift and go to state 38
+
+state 54
+
+    (41) number_expr -> NUMBER after_expr .
+
+    ASSIGN          reduce using rule 41 (number_expr -> NUMBER after_expr .)
+    COMPARE         reduce using rule 41 (number_expr -> NUMBER after_expr .)
+    NEWLINE         reduce using rule 41 (number_expr -> NUMBER after_expr .)
+    DEDENT          reduce using rule 41 (number_expr -> NUMBER after_expr .)
+    ,               reduce using rule 41 (number_expr -> NUMBER after_expr .)
+    COMMENT         reduce using rule 41 (number_expr -> NUMBER after_expr .)
+    EVENT_TYPE      reduce using rule 41 (number_expr -> NUMBER after_expr .)
+    NAME            reduce using rule 41 (number_expr -> NUMBER after_expr .)
+    INTEGER         reduce using rule 41 (number_expr -> NUMBER after_expr .)
+    FLOAT           reduce using rule 41 (number_expr -> NUMBER after_expr .)
+    GLOBAL_VAR      reduce using rule 41 (number_expr -> NUMBER after_expr .)
+    PLAYER_VAR      reduce using rule 41 (number_expr -> NUMBER after_expr .)
+    NUMBER          reduce using rule 41 (number_expr -> NUMBER after_expr .)
+    VALUE           reduce using rule 41 (number_expr -> NUMBER after_expr .)
+    )               reduce using rule 41 (number_expr -> NUMBER after_expr .)
+
+
+state 55
+
+    (33) after_expr -> ( . value_list )
+    (36) value_list -> . value
+    (37) value_list -> . value , value_list
+    (27) value -> . EVENT_TYPE
+    (28) value -> . variable
+    (29) value -> . compound_stmt
+    (30) value -> . number
+    (31) value -> . vector
+    (32) value -> . empty
+    (45) variable -> . NAME
+    (46) variable -> . global_var
+    (47) variable -> . player_var
+    (17) compound_stmt -> . number_expr
+    (18) compound_stmt -> . value_expr
+    (43) number -> . INTEGER
+    (44) number -> . FLOAT
+    (50) vector -> . COMPARE value , value , value COMPARE
+    (51) empty -> .
+    (48) global_var -> . GLOBAL_VAR
+    (49) player_var -> . PLAYER_VAR
+    (41) number_expr -> . NUMBER after_expr
+    (42) value_expr -> . VALUE after_expr
+
+    EVENT_TYPE      shift and go to state 28
+    NAME            shift and go to state 34
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    COMPARE         shift and go to state 25
+    ,               reduce using rule 51 (empty -> .)
+    )               reduce using rule 51 (empty -> .)
+    GLOBAL_VAR      shift and go to state 41
+    PLAYER_VAR      shift and go to state 42
+    NUMBER          shift and go to state 43
+    VALUE           shift and go to state 44
+
+    value_list                     shift and go to state 67
+    value                          shift and go to state 68
+    variable                       shift and go to state 29
+    compound_stmt                  shift and go to state 30
+    number                         shift and go to state 31
+    vector                         shift and go to state 32
+    empty                          shift and go to state 33
+    global_var                     shift and go to state 35
+    player_var                     shift and go to state 36
+    number_expr                    shift and go to state 37
+    value_expr                     shift and go to state 38
+
+state 56
+
+    (34) after_expr -> block .
+
+    NEWLINE         reduce using rule 34 (after_expr -> block .)
+    DEDENT          reduce using rule 34 (after_expr -> block .)
+    ASSIGN          reduce using rule 34 (after_expr -> block .)
+    COMPARE         reduce using rule 34 (after_expr -> block .)
+    ,               reduce using rule 34 (after_expr -> block .)
+    COMMENT         reduce using rule 34 (after_expr -> block .)
+    EVENT_TYPE      reduce using rule 34 (after_expr -> block .)
+    NAME            reduce using rule 34 (after_expr -> block .)
+    INTEGER         reduce using rule 34 (after_expr -> block .)
+    FLOAT           reduce using rule 34 (after_expr -> block .)
+    GLOBAL_VAR      reduce using rule 34 (after_expr -> block .)
+    PLAYER_VAR      reduce using rule 34 (after_expr -> block .)
+    NUMBER          reduce using rule 34 (after_expr -> block .)
+    VALUE           reduce using rule 34 (after_expr -> block .)
+    )               reduce using rule 34 (after_expr -> block .)
+
+
+state 57
+
+    (35) after_expr -> NEWLINE .
+    (19) block -> NEWLINE . INDENT statements DEDENT
+
+    NEWLINE         reduce using rule 35 (after_expr -> NEWLINE .)
+    DEDENT          reduce using rule 35 (after_expr -> NEWLINE .)
+    ASSIGN          reduce using rule 35 (after_expr -> NEWLINE .)
+    COMPARE         reduce using rule 35 (after_expr -> NEWLINE .)
+    ,               reduce using rule 35 (after_expr -> NEWLINE .)
+    COMMENT         reduce using rule 35 (after_expr -> NEWLINE .)
+    EVENT_TYPE      reduce using rule 35 (after_expr -> NEWLINE .)
+    NAME            reduce using rule 35 (after_expr -> NEWLINE .)
+    INTEGER         reduce using rule 35 (after_expr -> NEWLINE .)
+    FLOAT           reduce using rule 35 (after_expr -> NEWLINE .)
+    GLOBAL_VAR      reduce using rule 35 (after_expr -> NEWLINE .)
+    PLAYER_VAR      reduce using rule 35 (after_expr -> NEWLINE .)
+    NUMBER          reduce using rule 35 (after_expr -> NEWLINE .)
+    VALUE           reduce using rule 35 (after_expr -> NEWLINE .)
+    )               reduce using rule 35 (after_expr -> NEWLINE .)
+    INDENT          shift and go to state 47
+
+
+state 58
+
+    (42) value_expr -> VALUE after_expr .
+
+    ASSIGN          reduce using rule 42 (value_expr -> VALUE after_expr .)
+    COMPARE         reduce using rule 42 (value_expr -> VALUE after_expr .)
+    NEWLINE         reduce using rule 42 (value_expr -> VALUE after_expr .)
+    DEDENT          reduce using rule 42 (value_expr -> VALUE after_expr .)
+    ,               reduce using rule 42 (value_expr -> VALUE after_expr .)
+    COMMENT         reduce using rule 42 (value_expr -> VALUE after_expr .)
+    EVENT_TYPE      reduce using rule 42 (value_expr -> VALUE after_expr .)
+    NAME            reduce using rule 42 (value_expr -> VALUE after_expr .)
+    INTEGER         reduce using rule 42 (value_expr -> VALUE after_expr .)
+    FLOAT           reduce using rule 42 (value_expr -> VALUE after_expr .)
+    GLOBAL_VAR      reduce using rule 42 (value_expr -> VALUE after_expr .)
+    PLAYER_VAR      reduce using rule 42 (value_expr -> VALUE after_expr .)
+    NUMBER          reduce using rule 42 (value_expr -> VALUE after_expr .)
+    VALUE           reduce using rule 42 (value_expr -> VALUE after_expr .)
+    )               reduce using rule 42 (value_expr -> VALUE after_expr .)
+
+
+state 59
+
+    (19) block -> NEWLINE INDENT statements . DEDENT
+    (12) statements -> statements . statement
+    (14) statement -> . simple_stmt
+    (15) simple_stmt -> . expr_list NEWLINE
+    (16) simple_stmt -> . expr_list
+    (21) expr_list -> . compare_expr
+    (22) expr_list -> . assign_expr
+    (23) expr_list -> . COMMENT expr_list
+    (38) compare_expr -> . expr
+    (39) compare_expr -> . expr COMPARE compare_expr
+    (40) assign_expr -> . value ASSIGN value
+    (24) expr -> . compare
+    (27) value -> . EVENT_TYPE
+    (28) value -> . variable
+    (29) value -> . compound_stmt
+    (30) value -> . number
+    (31) value -> . vector
+    (32) value -> . empty
+    (25) compare -> . value
+    (26) compare -> . value COMPARE compare
+    (45) variable -> . NAME
+    (46) variable -> . global_var
+    (47) variable -> . player_var
+    (17) compound_stmt -> . number_expr
+    (18) compound_stmt -> . value_expr
+    (43) number -> . INTEGER
+    (44) number -> . FLOAT
+    (50) vector -> . COMPARE value , value , value COMPARE
+    (51) empty -> .
+    (48) global_var -> . GLOBAL_VAR
+    (49) player_var -> . PLAYER_VAR
+    (41) number_expr -> . NUMBER after_expr
+    (42) value_expr -> . VALUE after_expr
+
+  ! shift/reduce conflict for COMPARE resolved as shift
+  ! shift/reduce conflict for DEDENT resolved as shift
+  ! shift/reduce conflict for COMMENT resolved as shift
+  ! shift/reduce conflict for EVENT_TYPE resolved as shift
+  ! shift/reduce conflict for NAME resolved as shift
+  ! shift/reduce conflict for INTEGER resolved as shift
+  ! shift/reduce conflict for FLOAT resolved as shift
+  ! shift/reduce conflict for GLOBAL_VAR resolved as shift
+  ! shift/reduce conflict for PLAYER_VAR resolved as shift
+  ! shift/reduce conflict for NUMBER resolved as shift
+  ! shift/reduce conflict for VALUE resolved as shift
+    DEDENT          shift and go to state 69
+    COMMENT         shift and go to state 23
+    EVENT_TYPE      shift and go to state 28
+    NAME            shift and go to state 34
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    COMPARE         shift and go to state 25
+    ASSIGN          reduce using rule 51 (empty -> .)
+    NEWLINE         reduce using rule 51 (empty -> .)
+    GLOBAL_VAR      shift and go to state 41
+    PLAYER_VAR      shift and go to state 42
+    NUMBER          shift and go to state 43
+    VALUE           shift and go to state 44
+
+  ! COMPARE         [ reduce using rule 51 (empty -> .) ]
+  ! DEDENT          [ reduce using rule 51 (empty -> .) ]
+  ! COMMENT         [ reduce using rule 51 (empty -> .) ]
+  ! EVENT_TYPE      [ reduce using rule 51 (empty -> .) ]
+  ! NAME            [ reduce using rule 51 (empty -> .) ]
+  ! INTEGER         [ reduce using rule 51 (empty -> .) ]
+  ! FLOAT           [ reduce using rule 51 (empty -> .) ]
+  ! GLOBAL_VAR      [ reduce using rule 51 (empty -> .) ]
+  ! PLAYER_VAR      [ reduce using rule 51 (empty -> .) ]
+  ! NUMBER          [ reduce using rule 51 (empty -> .) ]
+  ! VALUE           [ reduce using rule 51 (empty -> .) ]
+
+    statement                      shift and go to state 70
+    simple_stmt                    shift and go to state 61
+    expr_list                      shift and go to state 20
+    compare_expr                   shift and go to state 21
+    assign_expr                    shift and go to state 22
+    expr                           shift and go to state 24
+    value                          shift and go to state 26
+    compare                        shift and go to state 27
+    variable                       shift and go to state 29
+    compound_stmt                  shift and go to state 30
+    number                         shift and go to state 31
+    vector                         shift and go to state 32
+    empty                          shift and go to state 33
+    global_var                     shift and go to state 35
+    player_var                     shift and go to state 36
+    number_expr                    shift and go to state 37
+    value_expr                     shift and go to state 38
+
+state 60
+
+    (13) statements -> statement .
+
+    DEDENT          reduce using rule 13 (statements -> statement .)
+    COMMENT         reduce using rule 13 (statements -> statement .)
+    EVENT_TYPE      reduce using rule 13 (statements -> statement .)
+    NAME            reduce using rule 13 (statements -> statement .)
+    INTEGER         reduce using rule 13 (statements -> statement .)
+    FLOAT           reduce using rule 13 (statements -> statement .)
+    COMPARE         reduce using rule 13 (statements -> statement .)
+    GLOBAL_VAR      reduce using rule 13 (statements -> statement .)
+    PLAYER_VAR      reduce using rule 13 (statements -> statement .)
+    NUMBER          reduce using rule 13 (statements -> statement .)
+    VALUE           reduce using rule 13 (statements -> statement .)
+    NEWLINE         reduce using rule 13 (statements -> statement .)
+    ASSIGN          reduce using rule 13 (statements -> statement .)
+
+
+state 61
+
+    (14) statement -> simple_stmt .
+
+    DEDENT          reduce using rule 14 (statement -> simple_stmt .)
+    COMMENT         reduce using rule 14 (statement -> simple_stmt .)
+    EVENT_TYPE      reduce using rule 14 (statement -> simple_stmt .)
+    NAME            reduce using rule 14 (statement -> simple_stmt .)
+    INTEGER         reduce using rule 14 (statement -> simple_stmt .)
+    FLOAT           reduce using rule 14 (statement -> simple_stmt .)
+    COMPARE         reduce using rule 14 (statement -> simple_stmt .)
+    GLOBAL_VAR      reduce using rule 14 (statement -> simple_stmt .)
+    PLAYER_VAR      reduce using rule 14 (statement -> simple_stmt .)
+    NUMBER          reduce using rule 14 (statement -> simple_stmt .)
+    VALUE           reduce using rule 14 (statement -> simple_stmt .)
+    NEWLINE         reduce using rule 14 (statement -> simple_stmt .)
+    ASSIGN          reduce using rule 14 (statement -> simple_stmt .)
+
+
+state 62
+
+    (39) compare_expr -> expr COMPARE compare_expr .
+
+    NEWLINE         reduce using rule 39 (compare_expr -> expr COMPARE compare_expr .)
+    DEDENT          reduce using rule 39 (compare_expr -> expr COMPARE compare_expr .)
+    ASSIGN          reduce using rule 39 (compare_expr -> expr COMPARE compare_expr .)
+    COMPARE         reduce using rule 39 (compare_expr -> expr COMPARE compare_expr .)
+    ,               reduce using rule 39 (compare_expr -> expr COMPARE compare_expr .)
+    COMMENT         reduce using rule 39 (compare_expr -> expr COMPARE compare_expr .)
+    EVENT_TYPE      reduce using rule 39 (compare_expr -> expr COMPARE compare_expr .)
+    NAME            reduce using rule 39 (compare_expr -> expr COMPARE compare_expr .)
+    INTEGER         reduce using rule 39 (compare_expr -> expr COMPARE compare_expr .)
+    FLOAT           reduce using rule 39 (compare_expr -> expr COMPARE compare_expr .)
+    GLOBAL_VAR      reduce using rule 39 (compare_expr -> expr COMPARE compare_expr .)
+    PLAYER_VAR      reduce using rule 39 (compare_expr -> expr COMPARE compare_expr .)
+    NUMBER          reduce using rule 39 (compare_expr -> expr COMPARE compare_expr .)
+    VALUE           reduce using rule 39 (compare_expr -> expr COMPARE compare_expr .)
+    )               reduce using rule 39 (compare_expr -> expr COMPARE compare_expr .)
+
+
+state 63
+
+    (25) compare -> value .
+    (26) compare -> value . COMPARE compare
+
+  ! shift/reduce conflict for COMPARE resolved as shift
+    NEWLINE         reduce using rule 25 (compare -> value .)
+    DEDENT          reduce using rule 25 (compare -> value .)
+    ASSIGN          reduce using rule 25 (compare -> value .)
+    ,               reduce using rule 25 (compare -> value .)
+    COMMENT         reduce using rule 25 (compare -> value .)
+    EVENT_TYPE      reduce using rule 25 (compare -> value .)
+    NAME            reduce using rule 25 (compare -> value .)
+    INTEGER         reduce using rule 25 (compare -> value .)
+    FLOAT           reduce using rule 25 (compare -> value .)
+    GLOBAL_VAR      reduce using rule 25 (compare -> value .)
+    PLAYER_VAR      reduce using rule 25 (compare -> value .)
+    NUMBER          reduce using rule 25 (compare -> value .)
+    VALUE           reduce using rule 25 (compare -> value .)
+    )               reduce using rule 25 (compare -> value .)
+    COMPARE         shift and go to state 53
+
+  ! COMPARE         [ reduce using rule 25 (compare -> value .) ]
+
+
+state 64
+
+    (50) vector -> COMPARE value , . value , value COMPARE
+    (27) value -> . EVENT_TYPE
+    (28) value -> . variable
+    (29) value -> . compound_stmt
+    (30) value -> . number
+    (31) value -> . vector
+    (32) value -> . empty
+    (45) variable -> . NAME
+    (46) variable -> . global_var
+    (47) variable -> . player_var
+    (17) compound_stmt -> . number_expr
+    (18) compound_stmt -> . value_expr
+    (43) number -> . INTEGER
+    (44) number -> . FLOAT
+    (50) vector -> . COMPARE value , value , value COMPARE
+    (51) empty -> .
+    (48) global_var -> . GLOBAL_VAR
+    (49) player_var -> . PLAYER_VAR
+    (41) number_expr -> . NUMBER after_expr
+    (42) value_expr -> . VALUE after_expr
+
+    EVENT_TYPE      shift and go to state 28
+    NAME            shift and go to state 34
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    COMPARE         shift and go to state 25
+    ,               reduce using rule 51 (empty -> .)
+    GLOBAL_VAR      shift and go to state 41
+    PLAYER_VAR      shift and go to state 42
+    NUMBER          shift and go to state 43
+    VALUE           shift and go to state 44
+
+    value                          shift and go to state 71
+    variable                       shift and go to state 29
+    compound_stmt                  shift and go to state 30
+    number                         shift and go to state 31
+    vector                         shift and go to state 32
+    empty                          shift and go to state 33
+    global_var                     shift and go to state 35
+    player_var                     shift and go to state 36
+    number_expr                    shift and go to state 37
+    value_expr                     shift and go to state 38
+
+state 65
+
+    (40) assign_expr -> value ASSIGN value .
+
+    NEWLINE         reduce using rule 40 (assign_expr -> value ASSIGN value .)
+    DEDENT          reduce using rule 40 (assign_expr -> value ASSIGN value .)
+    ASSIGN          reduce using rule 40 (assign_expr -> value ASSIGN value .)
+    COMPARE         reduce using rule 40 (assign_expr -> value ASSIGN value .)
+    ,               reduce using rule 40 (assign_expr -> value ASSIGN value .)
+    COMMENT         reduce using rule 40 (assign_expr -> value ASSIGN value .)
+    EVENT_TYPE      reduce using rule 40 (assign_expr -> value ASSIGN value .)
+    NAME            reduce using rule 40 (assign_expr -> value ASSIGN value .)
+    INTEGER         reduce using rule 40 (assign_expr -> value ASSIGN value .)
+    FLOAT           reduce using rule 40 (assign_expr -> value ASSIGN value .)
+    GLOBAL_VAR      reduce using rule 40 (assign_expr -> value ASSIGN value .)
+    PLAYER_VAR      reduce using rule 40 (assign_expr -> value ASSIGN value .)
+    NUMBER          reduce using rule 40 (assign_expr -> value ASSIGN value .)
+    VALUE           reduce using rule 40 (assign_expr -> value ASSIGN value .)
+    )               reduce using rule 40 (assign_expr -> value ASSIGN value .)
+
+
+state 66
+
+    (26) compare -> value COMPARE compare .
+
+    COMPARE         reduce using rule 26 (compare -> value COMPARE compare .)
+    NEWLINE         reduce using rule 26 (compare -> value COMPARE compare .)
+    DEDENT          reduce using rule 26 (compare -> value COMPARE compare .)
+    ASSIGN          reduce using rule 26 (compare -> value COMPARE compare .)
+    ,               reduce using rule 26 (compare -> value COMPARE compare .)
+    COMMENT         reduce using rule 26 (compare -> value COMPARE compare .)
+    EVENT_TYPE      reduce using rule 26 (compare -> value COMPARE compare .)
+    NAME            reduce using rule 26 (compare -> value COMPARE compare .)
+    INTEGER         reduce using rule 26 (compare -> value COMPARE compare .)
+    FLOAT           reduce using rule 26 (compare -> value COMPARE compare .)
+    GLOBAL_VAR      reduce using rule 26 (compare -> value COMPARE compare .)
+    PLAYER_VAR      reduce using rule 26 (compare -> value COMPARE compare .)
+    NUMBER          reduce using rule 26 (compare -> value COMPARE compare .)
+    VALUE           reduce using rule 26 (compare -> value COMPARE compare .)
+    )               reduce using rule 26 (compare -> value COMPARE compare .)
+
+
+state 67
+
+    (33) after_expr -> ( value_list . )
+
+    )               shift and go to state 72
+
+
+state 68
+
+    (36) value_list -> value .
+    (37) value_list -> value . , value_list
+
+    )               reduce using rule 36 (value_list -> value .)
+    ,               shift and go to state 73
+
+
+state 69
+
+    (19) block -> NEWLINE INDENT statements DEDENT .
+
+    DEDENT          reduce using rule 19 (block -> NEWLINE INDENT statements DEDENT .)
+    NEWLINE         reduce using rule 19 (block -> NEWLINE INDENT statements DEDENT .)
+    ASSIGN          reduce using rule 19 (block -> NEWLINE INDENT statements DEDENT .)
+    COMPARE         reduce using rule 19 (block -> NEWLINE INDENT statements DEDENT .)
+    ,               reduce using rule 19 (block -> NEWLINE INDENT statements DEDENT .)
+    COMMENT         reduce using rule 19 (block -> NEWLINE INDENT statements DEDENT .)
+    EVENT_TYPE      reduce using rule 19 (block -> NEWLINE INDENT statements DEDENT .)
+    NAME            reduce using rule 19 (block -> NEWLINE INDENT statements DEDENT .)
+    INTEGER         reduce using rule 19 (block -> NEWLINE INDENT statements DEDENT .)
+    FLOAT           reduce using rule 19 (block -> NEWLINE INDENT statements DEDENT .)
+    GLOBAL_VAR      reduce using rule 19 (block -> NEWLINE INDENT statements DEDENT .)
+    PLAYER_VAR      reduce using rule 19 (block -> NEWLINE INDENT statements DEDENT .)
+    NUMBER          reduce using rule 19 (block -> NEWLINE INDENT statements DEDENT .)
+    VALUE           reduce using rule 19 (block -> NEWLINE INDENT statements DEDENT .)
+    )               reduce using rule 19 (block -> NEWLINE INDENT statements DEDENT .)
+
+
+state 70
+
+    (12) statements -> statements statement .
+
+    DEDENT          reduce using rule 12 (statements -> statements statement .)
+    COMMENT         reduce using rule 12 (statements -> statements statement .)
+    EVENT_TYPE      reduce using rule 12 (statements -> statements statement .)
+    NAME            reduce using rule 12 (statements -> statements statement .)
+    INTEGER         reduce using rule 12 (statements -> statements statement .)
+    FLOAT           reduce using rule 12 (statements -> statements statement .)
+    COMPARE         reduce using rule 12 (statements -> statements statement .)
+    GLOBAL_VAR      reduce using rule 12 (statements -> statements statement .)
+    PLAYER_VAR      reduce using rule 12 (statements -> statements statement .)
+    NUMBER          reduce using rule 12 (statements -> statements statement .)
+    VALUE           reduce using rule 12 (statements -> statements statement .)
+    NEWLINE         reduce using rule 12 (statements -> statements statement .)
+    ASSIGN          reduce using rule 12 (statements -> statements statement .)
+
+
+state 71
+
+    (50) vector -> COMPARE value , value . , value COMPARE
+
+    ,               shift and go to state 74
+
+
+state 72
+
+    (33) after_expr -> ( value_list ) .
+
+    NEWLINE         reduce using rule 33 (after_expr -> ( value_list ) .)
+    DEDENT          reduce using rule 33 (after_expr -> ( value_list ) .)
+    ASSIGN          reduce using rule 33 (after_expr -> ( value_list ) .)
+    COMPARE         reduce using rule 33 (after_expr -> ( value_list ) .)
+    ,               reduce using rule 33 (after_expr -> ( value_list ) .)
+    COMMENT         reduce using rule 33 (after_expr -> ( value_list ) .)
+    EVENT_TYPE      reduce using rule 33 (after_expr -> ( value_list ) .)
+    NAME            reduce using rule 33 (after_expr -> ( value_list ) .)
+    INTEGER         reduce using rule 33 (after_expr -> ( value_list ) .)
+    FLOAT           reduce using rule 33 (after_expr -> ( value_list ) .)
+    GLOBAL_VAR      reduce using rule 33 (after_expr -> ( value_list ) .)
+    PLAYER_VAR      reduce using rule 33 (after_expr -> ( value_list ) .)
+    NUMBER          reduce using rule 33 (after_expr -> ( value_list ) .)
+    VALUE           reduce using rule 33 (after_expr -> ( value_list ) .)
+    )               reduce using rule 33 (after_expr -> ( value_list ) .)
+
+
+state 73
+
+    (37) value_list -> value , . value_list
+    (36) value_list -> . value
+    (37) value_list -> . value , value_list
+    (27) value -> . EVENT_TYPE
+    (28) value -> . variable
+    (29) value -> . compound_stmt
+    (30) value -> . number
+    (31) value -> . vector
+    (32) value -> . empty
+    (45) variable -> . NAME
+    (46) variable -> . global_var
+    (47) variable -> . player_var
+    (17) compound_stmt -> . number_expr
+    (18) compound_stmt -> . value_expr
+    (43) number -> . INTEGER
+    (44) number -> . FLOAT
+    (50) vector -> . COMPARE value , value , value COMPARE
+    (51) empty -> .
+    (48) global_var -> . GLOBAL_VAR
+    (49) player_var -> . PLAYER_VAR
+    (41) number_expr -> . NUMBER after_expr
+    (42) value_expr -> . VALUE after_expr
+
+    EVENT_TYPE      shift and go to state 28
+    NAME            shift and go to state 34
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    COMPARE         shift and go to state 25
+    ,               reduce using rule 51 (empty -> .)
+    )               reduce using rule 51 (empty -> .)
+    GLOBAL_VAR      shift and go to state 41
+    PLAYER_VAR      shift and go to state 42
+    NUMBER          shift and go to state 43
+    VALUE           shift and go to state 44
+
+    value                          shift and go to state 68
+    value_list                     shift and go to state 75
+    variable                       shift and go to state 29
+    compound_stmt                  shift and go to state 30
+    number                         shift and go to state 31
+    vector                         shift and go to state 32
+    empty                          shift and go to state 33
+    global_var                     shift and go to state 35
+    player_var                     shift and go to state 36
+    number_expr                    shift and go to state 37
+    value_expr                     shift and go to state 38
+
+state 74
+
+    (50) vector -> COMPARE value , value , . value COMPARE
+    (27) value -> . EVENT_TYPE
+    (28) value -> . variable
+    (29) value -> . compound_stmt
+    (30) value -> . number
+    (31) value -> . vector
+    (32) value -> . empty
+    (45) variable -> . NAME
+    (46) variable -> . global_var
+    (47) variable -> . player_var
+    (17) compound_stmt -> . number_expr
+    (18) compound_stmt -> . value_expr
+    (43) number -> . INTEGER
+    (44) number -> . FLOAT
+    (50) vector -> . COMPARE value , value , value COMPARE
+    (51) empty -> .
+    (48) global_var -> . GLOBAL_VAR
+    (49) player_var -> . PLAYER_VAR
+    (41) number_expr -> . NUMBER after_expr
+    (42) value_expr -> . VALUE after_expr
+
+  ! shift/reduce conflict for COMPARE resolved as shift
+    EVENT_TYPE      shift and go to state 28
+    NAME            shift and go to state 34
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    COMPARE         shift and go to state 25
+    GLOBAL_VAR      shift and go to state 41
+    PLAYER_VAR      shift and go to state 42
+    NUMBER          shift and go to state 43
+    VALUE           shift and go to state 44
+
+  ! COMPARE         [ reduce using rule 51 (empty -> .) ]
+
+    value                          shift and go to state 76
+    variable                       shift and go to state 29
+    compound_stmt                  shift and go to state 30
+    number                         shift and go to state 31
+    vector                         shift and go to state 32
+    empty                          shift and go to state 33
+    global_var                     shift and go to state 35
+    player_var                     shift and go to state 36
+    number_expr                    shift and go to state 37
+    value_expr                     shift and go to state 38
+
+state 75
+
+    (37) value_list -> value , value_list .
+
+    )               reduce using rule 37 (value_list -> value , value_list .)
+
+
+state 76
+
+    (50) vector -> COMPARE value , value , value . COMPARE
+
+    COMPARE         shift and go to state 77
+
+
+state 77
+
+    (50) vector -> COMPARE value , value , value COMPARE .
+
+    ASSIGN          reduce using rule 50 (vector -> COMPARE value , value , value COMPARE .)
+    COMPARE         reduce using rule 50 (vector -> COMPARE value , value , value COMPARE .)
+    NEWLINE         reduce using rule 50 (vector -> COMPARE value , value , value COMPARE .)
+    DEDENT          reduce using rule 50 (vector -> COMPARE value , value , value COMPARE .)
+    ,               reduce using rule 50 (vector -> COMPARE value , value , value COMPARE .)
+    COMMENT         reduce using rule 50 (vector -> COMPARE value , value , value COMPARE .)
+    EVENT_TYPE      reduce using rule 50 (vector -> COMPARE value , value , value COMPARE .)
+    NAME            reduce using rule 50 (vector -> COMPARE value , value , value COMPARE .)
+    INTEGER         reduce using rule 50 (vector -> COMPARE value , value , value COMPARE .)
+    FLOAT           reduce using rule 50 (vector -> COMPARE value , value , value COMPARE .)
+    GLOBAL_VAR      reduce using rule 50 (vector -> COMPARE value , value , value COMPARE .)
+    PLAYER_VAR      reduce using rule 50 (vector -> COMPARE value , value , value COMPARE .)
+    NUMBER          reduce using rule 50 (vector -> COMPARE value , value , value COMPARE .)
+    VALUE           reduce using rule 50 (vector -> COMPARE value , value , value COMPARE .)
+    )               reduce using rule 50 (vector -> COMPARE value , value , value COMPARE .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for COMPARE in state 12 resolved as shift
+WARNING: shift/reduce conflict for NEWLINE in state 12 resolved as shift
+WARNING: shift/reduce conflict for COMPARE in state 13 resolved as shift
+WARNING: shift/reduce conflict for NEWLINE in state 13 resolved as shift
+WARNING: shift/reduce conflict for COMPARE in state 14 resolved as shift
+WARNING: shift/reduce conflict for NEWLINE in state 14 resolved as shift
+WARNING: shift/reduce conflict for NEWLINE in state 20 resolved as shift
+WARNING: shift/reduce conflict for COMPARE in state 23 resolved as shift
+WARNING: shift/reduce conflict for COMMENT in state 23 resolved as shift
+WARNING: shift/reduce conflict for EVENT_TYPE in state 23 resolved as shift
+WARNING: shift/reduce conflict for NAME in state 23 resolved as shift
+WARNING: shift/reduce conflict for INTEGER in state 23 resolved as shift
+WARNING: shift/reduce conflict for FLOAT in state 23 resolved as shift
+WARNING: shift/reduce conflict for GLOBAL_VAR in state 23 resolved as shift
+WARNING: shift/reduce conflict for PLAYER_VAR in state 23 resolved as shift
+WARNING: shift/reduce conflict for NUMBER in state 23 resolved as shift
+WARNING: shift/reduce conflict for VALUE in state 23 resolved as shift
+WARNING: shift/reduce conflict for COMPARE in state 24 resolved as shift
+WARNING: shift/reduce conflict for ASSIGN in state 26 resolved as shift
+WARNING: shift/reduce conflict for COMPARE in state 26 resolved as shift
+WARNING: shift/reduce conflict for NEWLINE in state 43 resolved as shift
+WARNING: shift/reduce conflict for COMPARE in state 43 resolved as shift
+WARNING: shift/reduce conflict for COMMENT in state 43 resolved as shift
+WARNING: shift/reduce conflict for EVENT_TYPE in state 43 resolved as shift
+WARNING: shift/reduce conflict for NAME in state 43 resolved as shift
+WARNING: shift/reduce conflict for INTEGER in state 43 resolved as shift
+WARNING: shift/reduce conflict for FLOAT in state 43 resolved as shift
+WARNING: shift/reduce conflict for GLOBAL_VAR in state 43 resolved as shift
+WARNING: shift/reduce conflict for PLAYER_VAR in state 43 resolved as shift
+WARNING: shift/reduce conflict for NUMBER in state 43 resolved as shift
+WARNING: shift/reduce conflict for VALUE in state 43 resolved as shift
+WARNING: shift/reduce conflict for NEWLINE in state 44 resolved as shift
+WARNING: shift/reduce conflict for COMPARE in state 44 resolved as shift
+WARNING: shift/reduce conflict for COMMENT in state 44 resolved as shift
+WARNING: shift/reduce conflict for EVENT_TYPE in state 44 resolved as shift
+WARNING: shift/reduce conflict for NAME in state 44 resolved as shift
+WARNING: shift/reduce conflict for INTEGER in state 44 resolved as shift
+WARNING: shift/reduce conflict for FLOAT in state 44 resolved as shift
+WARNING: shift/reduce conflict for GLOBAL_VAR in state 44 resolved as shift
+WARNING: shift/reduce conflict for PLAYER_VAR in state 44 resolved as shift
+WARNING: shift/reduce conflict for NUMBER in state 44 resolved as shift
+WARNING: shift/reduce conflict for VALUE in state 44 resolved as shift
+WARNING: shift/reduce conflict for COMPARE in state 47 resolved as shift
+WARNING: shift/reduce conflict for COMMENT in state 47 resolved as shift
+WARNING: shift/reduce conflict for EVENT_TYPE in state 47 resolved as shift
+WARNING: shift/reduce conflict for NAME in state 47 resolved as shift
+WARNING: shift/reduce conflict for INTEGER in state 47 resolved as shift
+WARNING: shift/reduce conflict for FLOAT in state 47 resolved as shift
+WARNING: shift/reduce conflict for GLOBAL_VAR in state 47 resolved as shift
+WARNING: shift/reduce conflict for PLAYER_VAR in state 47 resolved as shift
+WARNING: shift/reduce conflict for NUMBER in state 47 resolved as shift
+WARNING: shift/reduce conflict for VALUE in state 47 resolved as shift
+WARNING: shift/reduce conflict for COMPARE in state 50 resolved as shift
+WARNING: shift/reduce conflict for EVENT_TYPE in state 50 resolved as shift
+WARNING: shift/reduce conflict for NAME in state 50 resolved as shift
+WARNING: shift/reduce conflict for INTEGER in state 50 resolved as shift
+WARNING: shift/reduce conflict for FLOAT in state 50 resolved as shift
+WARNING: shift/reduce conflict for GLOBAL_VAR in state 50 resolved as shift
+WARNING: shift/reduce conflict for PLAYER_VAR in state 50 resolved as shift
+WARNING: shift/reduce conflict for NUMBER in state 50 resolved as shift
+WARNING: shift/reduce conflict for VALUE in state 50 resolved as shift
+WARNING: shift/reduce conflict for COMPARE in state 52 resolved as shift
+WARNING: shift/reduce conflict for EVENT_TYPE in state 52 resolved as shift
+WARNING: shift/reduce conflict for NAME in state 52 resolved as shift
+WARNING: shift/reduce conflict for INTEGER in state 52 resolved as shift
+WARNING: shift/reduce conflict for FLOAT in state 52 resolved as shift
+WARNING: shift/reduce conflict for GLOBAL_VAR in state 52 resolved as shift
+WARNING: shift/reduce conflict for PLAYER_VAR in state 52 resolved as shift
+WARNING: shift/reduce conflict for NUMBER in state 52 resolved as shift
+WARNING: shift/reduce conflict for VALUE in state 52 resolved as shift
+WARNING: shift/reduce conflict for COMPARE in state 53 resolved as shift
+WARNING: shift/reduce conflict for EVENT_TYPE in state 53 resolved as shift
+WARNING: shift/reduce conflict for NAME in state 53 resolved as shift
+WARNING: shift/reduce conflict for INTEGER in state 53 resolved as shift
+WARNING: shift/reduce conflict for FLOAT in state 53 resolved as shift
+WARNING: shift/reduce conflict for GLOBAL_VAR in state 53 resolved as shift
+WARNING: shift/reduce conflict for PLAYER_VAR in state 53 resolved as shift
+WARNING: shift/reduce conflict for NUMBER in state 53 resolved as shift
+WARNING: shift/reduce conflict for VALUE in state 53 resolved as shift
+WARNING: shift/reduce conflict for COMPARE in state 59 resolved as shift
+WARNING: shift/reduce conflict for DEDENT in state 59 resolved as shift
+WARNING: shift/reduce conflict for COMMENT in state 59 resolved as shift
+WARNING: shift/reduce conflict for EVENT_TYPE in state 59 resolved as shift
+WARNING: shift/reduce conflict for NAME in state 59 resolved as shift
+WARNING: shift/reduce conflict for INTEGER in state 59 resolved as shift
+WARNING: shift/reduce conflict for FLOAT in state 59 resolved as shift
+WARNING: shift/reduce conflict for GLOBAL_VAR in state 59 resolved as shift
+WARNING: shift/reduce conflict for PLAYER_VAR in state 59 resolved as shift
+WARNING: shift/reduce conflict for NUMBER in state 59 resolved as shift
+WARNING: shift/reduce conflict for VALUE in state 59 resolved as shift
+WARNING: shift/reduce conflict for COMPARE in state 63 resolved as shift
+WARNING: shift/reduce conflict for COMPARE in state 74 resolved as shift

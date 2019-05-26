@@ -1,224 +1,172 @@
-import sys
-import typing
+from AST import *
+from ply import yacc
+from Lexer import tokens
 
-import Definitions
-from Nodes import *
+def p_ruleset(p):
+    """ruleset : rule
+               | rule ruleset"""
+    p[0] = Ruleset(rules=[p[1]])
+    if len(p) == 3:
+        p[0].rules += p[2].rules
 
-class Parser:
-    """Generates an abstract syntax tree (AST) of the ruleset."""
-    def __init__(self, tokens):
-        self.tokens = tokens
-        self.num_tokens = len(tokens) - 1
-        self.index = 0
-        self.last_expr = None
-        self.cur_token = self.get_token()
-        self.indents = [0]
+def p_rule(p):
+    """rule : RULE 
+            | RULE NEWLINE INDENT ruleblock DEDENT"""
+    p[0] = Rule(rulename=p[1])
+    if len(p) == 6:
+        for block in p[4]:
+            if block.__class__ == Event:
+                p[0].event = block
+            elif block.__class__ == Conditions:
+                p[0].conditions = block
+            elif block.__class__ == Actions:
+                p[0].actions = block
 
-    @property
-    def peek(self):
-        """Checks to see the next token."""
-        return self.tokens[self.index + 1].type
+def p_ruleblock(p):
+    """ruleblock : event
+                 | conditions
+                 | actions
+                 | NEWLINE ruleblock"""
+    p[0] = [p[1]]
+    if len(p) == 3:
+        p[0] += p[2]
 
-    def ahead(self, n=1):
-        """Checks n tokens ahead."""
-        return self.tokens[self.index + n].type
+def p_event(p):
+    """event : EVENT block"""
+    p[0] = Event(block=p[2])
 
-    def get_token(self):
-        """Retrieves the current token."""
-        return self.tokens[self.index]
+def p_conditions(p):
+    """conditions : CONDITIONS block"""
+    p[0] = Conditions(block=p[2])
 
-    def eat(self, type_):
-        """Consumes the token and advances to the next token."""
-        if self.cur_token.type == type_:
-            self.index += 1
-            self.cur_token = self.get_token()
-            while self.cur_token.type == 'WHITESPACE':
-                self.index += 1
-                self.cur_token = self.get_token()
-        else:
-            raise ValueError(f'Expected token {type_}, received {self.cur_token.type}')
+def p_actions(p):
+    """actions : ACTIONS block"""
+    p[0] = Actions(block=p[2])
 
-    def ruleset(self):
-        """ruleset: maps* rule*"""
-        maps = []
-        while self.cur_token.type == 'NAME':
-            if not self.peek == 'MAP':
-                break
-            name = self.cur_token.value
-            self.eat('NAME')
-            self.eat('MAP')
-            value = self.cur_token.value
-            self.eat('NAME')
-            self.eat('NEWLINE')
-            map_ = Map(name=name, value=value)
-            maps.append(map_)
-        ruleset = []
-        while self.cur_token.type != 'EOF':
-            rule = self.rule()
-            ruleset.append(rule)
-        node = Ruleset(maps=maps, rules=ruleset)
-        return node
+def p_statements(p):
+    """statements : statements statement
+                  | statement"""
+    p[0] = p[1]
+    if len(p) == 3:
+        p[0] += p[2]
 
-    def rule(self):
-        """rule: 'Rule' STRING block"""
-        self.eat('KEYWORD')
-        rule_name = self.cur_token.value
-        self.eat('STRING')
-        rule_block = self.block()
-        node = Rule(name=rule_name)
-        for statement in rule_block.statements:
-            stmt_type = statement.__class__.__name__
-            if stmt_type == 'Event':
-                node.event = statement
-            elif stmt_type == 'Conditions':
-                node.conditions = statement
-            elif stmt_type == 'Actions':
-                node.actions = statement
-        return node
+def p_statement(p):
+    """statement : simple_stmt"""
+    p[0] = p[1]
 
-    def block(self):
-        """block: NEWLINE? INDENT statements* DEDENT"""
-        if self.cur_token.type == 'NEWLINE':
-            self.eat('NEWLINE')
-        self.eat('INDENT')
-        statements = []
-        while self.cur_token.type != 'DEDENT':
-            statements.append(self.statement())
-            if self.cur_token.type == 'NEWLINE':
-                self.eat('NEWLINE')
-        node = Block(statements)
-        self.eat('DEDENT')
-        return node
+def p_simple_stmt(p):
+    """simple_stmt : expr_list NEWLINE
+                   | expr_list"""
+    p[0] = p[1]
 
-    def statement(self):
-        """statement: (event? conditions? actions?|expr?)"""
-        if self.cur_token.type == 'KEYWORD':
-            keyword = self.cur_token.value
-            self.eat('KEYWORD')
-            block = self.block()
-            if keyword == 'Event':
-                node = Event(block)
-            elif keyword == 'Conditions':
-                node = Conditions(block)
-            elif keyword == 'Actions':
-                node = Actions(block)
-        else:
-            node = self.expr()
-        return node
+def p_compound_stmt(p):
+    """compound_stmt : number_expr
+                     | value_expr"""
+    p[0] = p[1]
 
-    def expr(self):
-        """expr: compare"""
-        if self.cur_token.type == 'ASSIGN':
-            self.assign()
-        node = self.compare()
-        return node
+def p_block(p):
+    """block : NEWLINE INDENT statements DEDENT
+             | simple_stmt"""
+    p[0] = Block()
+    if len(p) == 2:
+        p[0].statements = [p[1]]
+    elif len(p) == 5:
+        p[0].statements = p[3]
 
-    def compare(self):
-        """compare: primary (COMPARE primary)*"""
-        node = self.primary()
-        while self.cur_token.type == 'COMPARE':
-            op = self.cur_token
-            self.eat('COMPARE')
-            node = Compare(left=node, op=op, right=self.block())
-        return node
+def p_expr_list(p):
+    """expr_list : compare_expr
+                 | assign_expr
+                 | COMMENT expr_list"""
+    p[0] = p[1]
+    if len(p) == 3:
+        p[0] = p[2]
 
-    def primary(self):
-        """primary: NAME
-                  | NUMBER
-                  | BOOLEAN
-                  | ARRAY
-                  | VALUE
-                  | CONDITION
-        """
-        token = self.cur_token.value
-        if self.cur_token.type == 'VALUE':
-            node = Value(value=token)
-            defs = self.cur_token.definitions
-            self.eat('VALUE')
-            # First Param
-            if defs and defs.__origin__ is typing.Union:
-                if self.cur_token.type == 'NEWLINE':
-                    self.eat('NEWLINE')
-                self.eat('INDENT')
-                if self.cur_token.type == 'NAME':
-                    self.eat('NAME')
-                    self.eat('COLON')
-                for value in defs.__args__:
-                    if value.__name__.upper() == self.cur_token.type:
-                        param = Value(value=self.cur_token.value)
-                        self.eat(self.cur_token.type)
-                        break
-                node.params.append(param)
-                if self.cur_token.type == 'NEWLINE':
-                    self.eat('NEWLINE')
-                self.eat('DEDENT')
-            elif defs and defs.__origin__ is tuple: #please send help
-                for arg in defs.__args__:
-                    name = arg.__name__.upper()
-                    if self.cur_token.type == 'NEWLINE':
-                        self.eat('NEWLINE')
-                    if self.cur_token.type == 'INDENT':
-                        self.eat('INDENT')
-                    if self.cur_token.type == 'NAME':
-                        self.eat('NAME')
-                        self.eat('COLON')
-                    param = self.primary()
-                    node.params.append(param)
-                    if self.cur_token.type == 'DEDENT':
-                        self.eat('DEDENT')
-            else:
-                pass
-                # print(self.tokens[:self.index])
-                # print(defs.__origin__)
-                # print('not typing union', self.cur_token, defs)
-                # sys.exit(0)
-                #param = self.block()
-                #node.params.append(param)
-        elif self.cur_token.type == 'ARRAY':
-            self.eat('ARRAY')
-            node = Array(token, block=self.block())
-        elif self.cur_token.type == 'CONDITION':
-            self.eat('CONDITION')
-            node = Condition(cond=token, value=self.block())
-        elif self.cur_token.type in Definitions.type_names:
-            node = Name(value=token)
-            defs = self.cur_token.definitions
-            self.eat(self.cur_token.type)
-            self.eat('NEWLINE')
-            if defs and hasattr(defs, '__args__'):
-                node = Group(value=token)
-                for d in defs.__args__:
-                    if self.cur_token.type == 'NAME':
-                        # Eat comment
-                        self.eat('NAME')
-                        self.eat('COLON')
-                    child_node = self.expr()
-                    node.children.append(child_node)
-        elif self.cur_token.type == 'NAME':
-            if self.peek == 'COLON':
-                self.eat('NAME')
-                self.eat('COLON')
-                node = self.expr()
-            elif self.peek == 'ASSIGN': # Variable Assign
-                name = Variable(value=token)
-                self.eat('NAME')
-                op = self.cur_token.value
-                self.eat('ASSIGN')
-                value = self.expr()
-                node = Assign(left=name, op=op, right=value)
-            else:
-                node = Name(token)
-                self.eat('NAME')
-        elif self.cur_token.type == 'INTEGER':
-            node = Integer(token)
-            self.eat('INTEGER')
-        # elif self.cur_token.type == 'BOOLEAN':
-        #     node = Boolean(token)
-        #     self.eat('BOOLEAN')
-        else:
-            print('No token found:', self.cur_token)
-        return node
+def p_expr(p):
+    """expr : compare"""
+    p[0] = p[1]
 
-    def parse(self):
-        """Parses the tokens into an AST."""
-        return self.ruleset()
+def p_compare(p):
+    """compare : value
+               | value COMPARE compare
+    """
+    p[0] = p[1]
+    if len(p) == 4:
+        p[0] = Compare(left=p[1], op=p[2], right=p[3])
+
+def p_value(p):
+    """value : EVENT_TYPE
+             | variable
+             | compound_stmt
+             | number
+             | vector
+             | empty"""
+    p[0] = p[1]
+
+def p_after_expr(p):
+    """after_expr : '(' value_list ')'
+                  | block
+                  | NEWLINE"""
+    p[0] = p[1]
+    if len(p) == 4:
+        p[0] = p[2]
+
+def p_value_list(p):
+    """value_list : value
+                  | value ',' value_list
+    """
+    p[0] = [p[1]]
+    if len(p) == 4:
+        p[0] += p[3]
+
+def p_compare_expr(p):
+    """compare_expr : expr
+                    | expr COMPARE compare_expr"""
+    p[0] = p[1]
+    if len(p) == 4:
+        p[0] += p[3]
+
+def p_assign_expr(p):
+    """assign_expr : value ASSIGN value"""
+    p[0] = [Assign(left=p[1], op=p[2], right=p[3])]
+
+def p_number_expr(p):
+    """number_expr : NUMBER after_expr"""
+    p[0] = [Number(value=p[1], args=p[2])]
+
+def p_value_expr(p):
+    """value_expr : VALUE after_expr"""
+    if type(p[2]) == Block:
+        p[2] = list(p[2].statements)
+    p[0] = Value(name=p[1], args=p[2])
+
+def p_number(p):
+    """number : INTEGER
+              | FLOAT"""
+    p[0] = p[1]
+
+def p_variable(p):
+    """variable : NAME
+                | global_var
+                | player_var"""
+    p[0] = p[1]
+
+def p_global_var(p):
+    """global_var : GLOBAL_VAR"""
+    p[0] = GlobalVar(name=p[1])
+
+def p_player_var(p):
+    """player_var : PLAYER_VAR"""
+    p[0] = PlayerVar(name=p[1])
+
+def p_vector(p):
+    """vector : COMPARE value ',' value ',' value COMPARE"""
+    p[0] = Value(name='Vector', args=[p[2], p[4], p[6]])
+
+def p_empty(p):
+    """empty :"""
+    pass
+
+def p_error(p):
+    print('Error in parsing token', p)
+
+Parser = yacc.yacc()

@@ -1,0 +1,46 @@
+rule("Start aimbot")
+{
+    event
+    {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+
+    conditions
+    {
+        Is Button Held(Event Player, Primary Fire) == True;
+        Hero Of(Event Player) != Hero(Widowmaker);
+        Hero Of(Event Player) != Hero(Soldier: 76);
+        Is Alive(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player)))) == True;
+        Players In Slot(1, All Teams) == True;
+    }
+
+    actions
+    {
+        Start Facing(Event Player, Direction Towards(Event Player, Add(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(
+            Event Player))), Vector(0, 0.240, 0))), 10000, To World, Direction and Turn Rate);
+    }
+}
+
+rule("Stop aimbot")
+{
+    event
+    {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+
+    conditions
+    {
+        Is Button Held(Event Player, Primary Fire) == False;
+        Hero Of(Event Player) != Hero(Widowmaker);
+        Players In Slot(1, All Teams) == True;
+    }
+
+    actions
+    {
+        Stop Facing(Event Player);
+    }
+}

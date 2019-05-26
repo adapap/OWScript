@@ -1,0 +1,5 @@
+Rule "Test"
+    Event
+        Type: Ongoing - Global
+
+Rule "No"

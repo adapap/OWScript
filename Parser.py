@@ -26,6 +26,7 @@ def p_ruleblock(p):
     """ruleblock : event ruleblock
                  | conditions ruleblock
                  | actions ruleblock
+                 | NEWLINE ruleblock
                  | empty"""
     p[0] = [p[1]]
     if len(p) == 3:
@@ -55,13 +56,14 @@ def p_statement(p):
     p[0] = [p[1]]
 
 def p_simple_stmt(p):
-    """simple_stmt : expr_list NEWLINE
-                   | expr_list"""
+    """simple_stmt : expr NEWLINE
+                   | expr"""
     p[0] = p[1]
 
 def p_compound_stmt(p):
     """compound_stmt : number_expr
-                     | value_expr"""
+                     | value_expr
+                     | action_expr"""
     p[0] = p[1]
 
 def p_block(p):
@@ -73,26 +75,43 @@ def p_block(p):
     elif len(p) == 5:
         p[0].statements = p[3]
 
-def p_expr_list(p):
-    """expr_list : compare_expr
-                 | assign_expr
-                 | COMMENT_TAG expr_list"""
+def p_expr(p):
+    """expr : compare
+            | assign
+            | ANNOTATION expr"""
     p[0] = p[1]
     if len(p) == 3:
         p[0] = p[2]
 
-def p_expr(p):
-    """expr : value"""
+def p_arith_expr(p):
+    """arith_expr : term
+                  | arith_expr '+' arith_expr
+                  | arith_expr '-' arith_expr"""
     p[0] = p[1]
+    if len(p) == 4:
+        p[0] = BinaryOp(left=p[1], op=p[2], right=p[3])
+
+def p_term(p):
+    """term : value
+            | term '*' term
+            | term '/' term"""
+    p[0] = p[1]
+    if len(p) == 4:
+        p[0] = BinaryOp(left=p[1], op=p[2], right=p[3])
 
 def p_value(p):
     """value : variable
              | compound_stmt
              | number_const
              | vector
+             | unary
              | array
+             | time
+             | '(' compare ')'
              | empty"""
     p[0] = p[1]
+    if len(p) == 4:
+        p[0] = p[2]
 
 def p_after_expr(p):
     """after_expr : '(' value_list ')'
@@ -103,6 +122,10 @@ def p_after_expr(p):
         p[0] = None
     if len(p) == 4:
         p[0] = p[2]
+    if type(p[0]) == Block:
+        p[0] = p[0].statements
+        if p[0][0].__class__ == Empty:
+            p[0] = None
 
 def p_value_list(p):
     """value_list : value
@@ -112,28 +135,38 @@ def p_value_list(p):
     if len(p) == 4:
         p[0] += p[3]
 
-def p_compare_expr(p):
-    """compare_expr : expr
-                    | compare_expr COMPARE expr"""
+def p_unary(p):
+    """unary : '-' value"""
+    p[0] = Negate(op=p[1], right=p[2])
+
+def p_compare(p):
+    """compare : arith_expr
+               | compare COMPARE arith_expr"""
     p[0] = p[1]
     if len(p) == 4:
         p[0] = Compare(left=p[1], op=p[2], right=p[3])
 
-def p_assign_expr(p):
-    """assign_expr : value ASSIGN value"""
+def p_assign(p):
+    """assign : value ASSIGN compare"""
     p[0] = Assign(left=p[1], op=p[2], right=p[3])
 
 def p_number_expr(p):
     """number_expr : NUMBER after_expr"""
-    p[0] = Number(value=p[1], block=p[2])
+    p[0] = Number(value=p[1], args=p[2])
 
 def p_value_expr(p):
     """value_expr : VALUE after_expr"""
-    if type(p[2]) == Block:
-        p[2] = p[2].statements
-        if p[2][0].__class__ == Empty:
-            p[2] = None
     p[0] = Value(name=p[1], args=p[2])
+
+def p_action_expr(p):
+    """action_expr : ACTION after_expr"""
+    p[0] = p[1]
+    if len(p) == 3:
+        p[0] = Action(name=p[1], args=p[2])
+
+def p_time_expr(p):
+    """time : TIME"""
+    p[0] = Time(value=p[1])
 
 def p_number_const(p):
     """number_const : INTEGER

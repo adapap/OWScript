@@ -15,3 +15,35 @@ Rule "Reset menu positions (trigger: game start || num of allowed heroes changed
         != count of
             allowed heroes
                 event player
+
+Rule "Init menu item positions, num == 2 (PV_P[] = item_positions, PV_T once)"
+    event
+        ongoing - each player
+        all
+        all;
+    
+    actions
+        pVar ang1 = <sin(-90), cos(-90), 0>
+        pVar ang2 = <sin(90), cos(90), 0>
+    
+    conditions
+        pVar heroes == []
+        count of
+            allowed heroes(event player)
+        == 2
+
+Rule "Init menu item positions, num > 2 (PV_P[] = item_positions, PV_T once)"
+    event
+        ongoing - each player
+        all
+        all
+    
+    actions
+        pVar formula = pVar num_heroes * 360
+        /*pVar formula = <sin(pVar num_heroes * 360 / count of(allowed heroes(event player))), 0, 0>*/
+    
+    conditions
+        pVar heroes == []
+        Count Of
+            Allowed Heroes(Event Player)
+        > 2

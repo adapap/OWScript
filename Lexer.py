@@ -11,20 +11,23 @@ reserved_list.extend([(x, 'NAME') for x in types.get('EVENT').get('values')])
 reserved_list.extend([(x, 'NUMBER') for x in types.get('NUMBER').get('values')])
 reserved_list.extend([('EVENT', 'EVENT'), ('CONDITIONS', 'CONDITIONS'), ('ACTIONS', 'ACTIONS')])
 reserved = dict(reserved_list)
-aliases_list = [
-    ('ROUND', 'ROUND TO INTEGER')
-]
-aliases = {k: reserved.get(v) for k, v in dict(aliases_list).items()}
-reserved.update(aliases)
+aliases = {
+    'ROUND': 'ROUND TO INTEGER',
+    'SIN': 'SINE FROM DEGREES',
+    'SINR': 'SINE FROM RADIANS',
+    'COS': 'COSINE FROM DEGREES',
+    'COSR': 'COSINE FROM RADIANS'
+}
 
 # Token Names
 tokens = (
     'COMMENT',
-    'COMMENT_TAG',
+    'ANNOTATION',
     'ASSIGN',
     'MAP',
     'RULE',
     'QUOTE',
+    'TIME',
     'NAME',
     'BOOLEAN',
     'FLOAT',
@@ -47,13 +50,18 @@ t_ASSIGN = r'(?<!=)=(?!=)|\+=|-=|\*=|\/=|\^='
 t_MAP = r'\->'
 t_QUOTE = r'(\'|\")'
 t_BOOLEAN = r'(True|False)'
-t_FLOAT = r'\d+\.\d*'
+t_FLOAT = r'\d+\.\d+'
 t_INTEGER = r'\d+'
 t_COMPARE = r'(<=?|>=?|!=|==)'
 t_WHITESPACE = r'[ \t]+'
 t_NEWLINE = r'\n+'
-# Ignore Whitespace
-# t_ignore = r'[ \t\r]+'
+# Ignore Semicolons
+t_ignore = r';'
+
+milliseconds = t_INTEGER + r'ms'
+seconds = r'(' + t_FLOAT + r'|' + t_INTEGER + r')s'
+minutes = r'(' + t_FLOAT + r'|' + t_INTEGER + r')min'
+time = r'(' + milliseconds + r'|' + seconds + r'|' + minutes + r')'
 
 def _new_token(type_, lineno, lexpos, value=None):
     tok = lex.LexToken()
@@ -72,12 +80,16 @@ def t_COMMENT(t):
     r'\/\*(.|\n)*?\*\/'
     return None
 
-def t_COMMENT_TAG(t):
+def t_ANNOTATION(t):
     r'[^:\s]+:\s*'
     return t
 
+def t_TIME(t):
+    r'(\d+ms|(\d+|\d+\.\d+)(s|min))'
+    return t
+
 def t_NAME(t):
-    r'([_a-zA-Z][_a-zA-Z0-9\- ]*)\b'
+    r'([_a-zA-Z][_a-zA-Z0-9- ]*(?<! [0-9]))\b'
     match = t.lexer.lexmatch.group(0)
     if match.startswith('gVar'):
         _, var = re.split(r'\s+', match)
@@ -85,7 +97,9 @@ def t_NAME(t):
     if match.startswith('pVar'):
         _, var = re.split(r'\s+', match)
         return _new_token('PLAYER_VAR', t.lineno, t.lexpos, value=var)
-    t.type = reserved.get(t.value.upper(), 'NAME')
+
+    t.value = aliases.get(t.value.strip().upper(), t.value)
+    t.type = reserved.get(t.value.strip().upper(), 'NAME')
     return t
 
 def t_eof(t):

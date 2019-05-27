@@ -1,20 +1,34 @@
-# owscript
+# OWScript
 Python-like scripting language which transpiles into Overwatch Workshop script rulesets.
+## Installation / Usage
+1. Install Python with `pip` if you have not done so already.
+2. Install the requirements using `pip install -r requirements.txt` on your machine.
+~3. Run the command `python owscript.py <filename>` to convert a file into workshop rules.~ 
 
-## Usage
-*See example code in `Tests/`.*
+## Documentation
+*See example code in the `Tests/` folder. `.ows` files are input, `.ow` files are output.*
 
-#### Comments
-Comments are written as text followed by a colon before any rule. They can
-be used for type hints once autocompletion is done for text editors.
+### Annotations / Comments
+Annotations are ways to remind yourself what the type of a variable. It is written as text followed by a colon. Comments are written as most traditional languages (`/* comment */`)
 ```
 Event
+    /* Set up event attributes */
     Event_Type: Ongoing - Event Player
-    other_comment_tag: All
+    Annotation_2: All
 ```
 
-#### Variables
+### Assignment / Arithmetic
+Assignment (regular and augmented), as well as most arithmetic operators work as they do in Python or other traditional programming languages.
+```
+x = 1
+x += 1
+x *= 3
+x = x ^ (x + x) % 3
+```
+
+### Variables
 There are 3 ways to manipulate variables:
+
 **Explicit Global Assignment**
 ```
 gVar globalvarname = 1
@@ -31,7 +45,7 @@ varname = 3
 Using the technique from [@ItsDeltin](https://github.com/ItsDeltin), the limit to
 the number of variables that can be created is the maximum length of an array.
 
-#### Vectors
+### Vectors
 Vectors can be created in 3 ways as well:
 
 **Function**
@@ -50,3 +64,7 @@ Vector
 ```
 <1, 2, 3>
 ```
+
+### Arrays
+Arrays are created, modified, and accessed as in Python notation.
+*WIP - Currently, only Empty Arrays work by setting a variable equal to `[]`*

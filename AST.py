@@ -64,14 +64,17 @@ class PlayerVar(Value):
     def __repr__(self):
         return f'pVar@({self.player}) {self.name}'
 
+class Action(Value):
+    pass
+
 class Type(AST):
-    def __init__(self, value, block=None):
+    def __init__(self, value, args=None):
         self.value = value
-        self.block = block
+        self.args = args or []
 
     def __repr__(self):
-        if self.block:
-            return f'{self.value} {self.block}'
+        if self.args:
+            return f'{self.value} {self.args}'
         return f'{self.value}'
 
 class Number(Type):
@@ -84,6 +87,9 @@ class Name(Type):
     pass
 
 class Comment(Type):
+    pass
+
+class Time(Type):
     pass
 
 class Array(AST):
@@ -106,6 +112,17 @@ class Assign(BinaryOp):
     pass
 
 class Compare(BinaryOp):
+    pass
+
+class UnaryOp(AST):
+    def __init__(self, op, right):
+        self.op = op
+        self.right = right
+
+    def __repr__(self):
+        return f'{self.op}{self.right}'
+
+class Negate(UnaryOp):
     pass
 
 class Empty(AST):

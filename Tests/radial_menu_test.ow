@@ -1,0 +1,51 @@
+rule("Reset menu positions (trigger: game start || num of allowed heroes changed)") {
+	event {
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+
+	conditions {
+		Count Of(Value In Array(Player Variable(Event Player, A), 0)) != Count Of(Allowed Heroes(Event Player));
+	}
+
+	actions {
+		Set Player Variable At Index(Event Player, A, 0, Empty Array);
+		Set Global Variable At Index(A, 0, 1);
+	}
+}
+
+rule("Init menu item positions, num == 2 (PV_P[] = item_positions, PV_T once)") {
+	event {
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+
+	conditions {
+		Value In Array(Player Variable(Event Player, A), 0) == Empty Array;
+		Count Of(Allowed Heroes(Event Player)) == 2;
+	}
+
+	actions {
+		Set Player Variable At Index(Event Player, A, 1, Vector(Sine From Degrees(-90), Cosine From Degrees(-90), 0));
+		Set Player Variable At Index(Event Player, A, 2, Vector(Sine From Degrees(90), Cosine From Degrees(90), 0));
+	}
+}
+
+rule("Init menu item positions, num > 2 (PV_P[] = item_positions, PV_T once)") {
+	event {
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+
+	conditions {
+		Value In Array(Player Variable(Event Player, A), 0) == Empty Array;
+		Count Of(Allowed Heroes(Event Player)) > 2;
+	}
+
+	actions {
+		Set Player Variable At Index(Event Player, A, 3, Value In Array(Player Variable(Event Player, A), 4));
+Multiply(, 360)	}
+}

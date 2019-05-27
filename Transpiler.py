@@ -64,6 +64,7 @@ class Transpiler:
     def visit_Ruleset(self, node):
         for rule in node.rules:
             self.visit(rule)
+        self.code = self.code.rstrip()
 
     def visit_Rule(self, node):
         self.code += 'rule(' + node.rulename + ') {\n'
@@ -85,7 +86,7 @@ class Transpiler:
             self.visit(node.actions.block)
             self.code += self.tabs + '}'
             self.indent_level -= 1
-        self.code += '\n}'
+        self.code += '\n}\n\n'
 
     def visit_Block(self, node):
         self.indent_level += 1
@@ -95,6 +96,8 @@ class Transpiler:
 
     def visit_Assign(self, node):
         name = node.left.value if type(node.left) == AST.Name else node.left.name
+        if len(node.op) > 1:
+            node.right = AST.BinaryOp(left=node.left, op=node.op[0], right=node.right)
         if type(node.left) == AST.GlobalVar or type(node.left) == AST.Name:
             self.assign_var(name=name, value=node.right, scope='global')
         elif type(node.left) == AST.PlayerVar:
@@ -117,17 +120,59 @@ class Transpiler:
                 if arg != '\n':
                     self.visit(arg)
                 self.code += ', '
-            self.code = self.code[:-2]
+            self.code = self.code.rstrip(', ')
             self.code += ')'
+
+    def visit_Action(self, node):
+        self.code += self.tabs + string.capwords(node.name)
+        if node.args:
+            self.code += '('
+            for arg in node.args:
+                if arg != '\n':
+                    self.visit(arg)
+                self.code += ', '
+            self.code = self.code.rstrip(', ')
+            self.code += ')'
+        self.code += '\n'
+
+    def visit_BinaryOp(self, node):
+        if node.op == '*':
+            self.code += 'Multiply('
+        elif node.op == '/':
+            self.code += 'Divide('
+        elif node.op == '+':
+            self.code += 'Add('
+        elif node.op == '-':
+            self.code += 'Subtract('
+        self.visit(node.left)
+        self.code += (', ')
+        self.visit(node.right)
+        self.code += ')'
 
     def visit_Number(self, node):
         self.code += string.capwords(node.value) + '('
-        if node.block:
-            self.visit(node.block)
+        if node.args:
+            for arg in node.args:
+                if arg != '\n':
+                    self.visit(arg)
         self.code += ')'
+
+    def visit_Time(self, node):
+        time = node.value
+        if time.endswith('ms'):
+            time = str(float(time.rstrip('ms')) / 1000)
+        elif time.endswith('s'):
+            time = time.rstrip('s')
+        elif time.endswith('min'):
+            time = str(float(time.rstrip('min')) * 60)
+        self.code += time
 
     def visit_NumberConst(self, node):
         self.code += node.value
+
+    def visit_Negate(self, node):
+        self.code += node.op
+        self.visit(node.right)
 
     def visit_Name(self, node):
         if node.value in self.global_vars:

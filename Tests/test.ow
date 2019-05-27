@@ -1,0 +1,5 @@
+rule("Trigonometry In Vectors") {
+	actions {
+		Set Player Variable At Index(Event Player, A, 0, Vector(Sine From Degrees(90), Cosine From Degrees(90), 0));
+	}
+}

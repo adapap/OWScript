@@ -1,0 +1,16 @@
+Rule "Arithmetic Expressions & Time Manipulation"
+    event
+        ongoing - each player
+        all
+        all; /* semicolons are optional for "those" types of people */
+    
+    actions
+        pVar formula = <sin(pVar num_heroes * 360 / count of
+            allowed heroes
+                event player /* Call me crazy for supporting inline blocks! */
+        ), cos(pVar num_heroes * 360 / count of(allowed heroes(event player))), 0>
+        pVar num_heroes += 1
+        Wait(16ms)
+        Wait 3.5s
+        Wait /* It takes a parameter, so indent if you please! */
+            0.35min

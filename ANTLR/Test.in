@@ -1,0 +1,5 @@
+Rule "My Rule"
+    Event
+        Ongoing - Global
+        All
+        All

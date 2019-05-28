@@ -1,0 +1,16 @@
+T__0=1
+T__1=2
+T__2=3
+T__3=4
+T__4=5
+STRING=6
+INTEGER=7
+NAME=8
+NEWLINE=9
+SKIP_=10
+UNKNOWN_CHAR=11
+'%'=1
+'Rule'=2
+'Event'=3
+'Conditions'=4
+'Actions'=5

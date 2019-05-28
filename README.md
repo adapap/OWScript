@@ -6,7 +6,7 @@ Python-like scripting language which transpiles into Overwatch Workshop script r
 ~3. Run the command `python owscript.py <filename>` to convert a file into workshop rules.~ 
 
 ## Documentation
-*See example code in the `Tests/` folder. `.ows` files are input, `.ow` files are output.*
+*See example code in the `Examples/` folder. `.ows` files are input, `.ow` files are output.*
 
 ### Annotations / Comments
 Annotations are ways to remind yourself what the type of a variable. It is written as text followed by a colon. Comments are written as most traditional languages (`/* comment */`)

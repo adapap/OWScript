@@ -2,12 +2,35 @@ from AST import *
 from ply import yacc
 from Lexer import tokens
 
+def p_program(p):
+    """program : function program
+               | ruleset program
+               | empty"""
+    p[0] = Program(definitions=[p[1]])
+    if len(p) == 3:
+        p[0].definitions += p[2].definitions
+
+def p_function(p):
+    """function : FUNCTION funcbody"""
+    p[0] = Function(name=p[1], body=p[2])
+
+def p_funcbody(p):
+    """funcbody : ruleset
+                | rule
+                | ruleblock
+                | block
+                | value
+                | NEWLINE empty"""
+    p[0] = p[1]
+    if len(p) == 3:
+        p[0] = None
+
 def p_ruleset(p):
     """ruleset : rule
-               | rule ruleset"""
+               | ruleset rule"""
     p[0] = Ruleset(rules=[p[1]])
     if len(p) == 3:
-        p[0].rules += p[2].rules
+        p[0].rules += [p[2]]
 
 def p_rule(p):
     """rule : RULE 
@@ -108,6 +131,7 @@ def p_value(p):
              | array
              | time
              | '(' compare ')'
+             | function
              | empty"""
     p[0] = p[1]
     if len(p) == 4:

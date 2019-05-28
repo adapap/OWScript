@@ -61,6 +61,10 @@ class Transpiler:
     def generic_visit(self, node):
         raise Exception(f'No visit_{type(node).__name__} method')
 
+    def visit_Program(self, node):
+        for definition in node.definitions:
+            self.visit(definition)
+
     def visit_Ruleset(self, node):
         for rule in node.rules:
             self.visit(rule)
@@ -133,7 +137,7 @@ class Transpiler:
                 self.code += ', '
             self.code = self.code.rstrip(', ')
             self.code += ')'
-        self.code += '\n'
+        self.code += ';\n'
 
     def visit_BinaryOp(self, node):
         if node.op == '*':

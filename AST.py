@@ -1,6 +1,21 @@
 class AST:
     pass
 
+class Program(AST):
+    def __init__(self, definitions=None):
+        self.definitions = definitions or []
+
+    def __repr__(self):
+        return f'{self.definitions}'
+
+class Function(AST):
+    def __init__(self, name, body=None):
+        self.name = name
+        self.body = body
+
+    def __repr__(self):
+        return f'{self.name}: {self.body}'
+
 class Ruleset(AST):
     def __init__(self, rules=None):
         self.rules = rules or []
@@ -16,7 +31,7 @@ class Rule(AST):
         self.actions = actions
 
     def __repr__(self):
-        return 'Rule {}\n\t{}\n\t{}\n\t{}\n' \
+        return '{}\n\t{}\n\t{}\n\t{}\n' \
             .format(self.rulename, self.event, self.conditions, self.actions)
 
 class Ruleblock(AST):

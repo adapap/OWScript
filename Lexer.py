@@ -12,6 +12,9 @@ reserved_list.extend([(x, 'NUMBER') for x in types.get('NUMBER').get('values')])
 reserved_list.extend([('EVENT', 'EVENT'), ('CONDITIONS', 'CONDITIONS'), ('ACTIONS', 'ACTIONS')])
 reserved = dict(reserved_list)
 aliases = {
+    'ON GLOBAL': 'ONGOING - GLOBAL',
+    'ON EACH PLAYER': 'ONGOING - EACH PLAYER',
+    'PLAYERS IN RADIUS': 'PLAYERS WITHIN RADIUS',
     'ROUND': 'ROUND TO INTEGER',
     'SIN': 'SINE FROM DEGREES',
     'SINR': 'SINE FROM RADIANS',
@@ -24,7 +27,6 @@ tokens = (
     'COMMENT',
     'ANNOTATION',
     'ASSIGN',
-    'MAP',
     'RULE',
     'QUOTE',
     'TIME',
@@ -36,18 +38,16 @@ tokens = (
     'WHITESPACE',
     'NEWLINE',
     'INDENT',
-    'DEDENT',
-    'EOF'
+    'DEDENT'
 ) + (
-    'ACTION', 'VALUE', 'EVENT_TYPE', 'NUMBER',
-    'FUNC', 'GLOBAL_VAR', 'PLAYER_VAR',
+    'ACTION', 'VALUE', 'NUMBER',
+    'FUNCTION', 'GLOBAL_VAR', 'PLAYER_VAR',
     'EVENT', 'CONDITIONS', 'ACTIONS'
 )
 
 literals = '+-*/%^:(),[]'
 
 t_ASSIGN = r'(?<!=)=(?!=)|\+=|-=|\*=|\/=|\^='
-t_MAP = r'\->'
 t_QUOTE = r'(\'|\")'
 t_BOOLEAN = r'(True|False)'
 t_FLOAT = r'\d+\.\d+'
@@ -70,6 +70,10 @@ def _new_token(type_, lineno, lexpos, value=None):
     tok.lineno = lineno
     tok.lexpos = lexpos
     return tok
+
+def t_FUNCTION(t):
+    r'%[_a-zA-Z][_a-zA-Z0-9]*'
+    return t
 
 def t_RULE(t):
     r'Rule\s+("[^"]+")'

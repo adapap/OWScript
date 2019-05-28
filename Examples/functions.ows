@@ -1,0 +1,12 @@
+%myfunc
+    a = 1
+%myfunc2
+%myfunc3
+Rule "Test"
+    Event
+        Ongoing - Global
+
+Rule "Test"
+    Event
+        Ongoing - Global
+%myfunc4

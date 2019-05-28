@@ -1,0 +1,29 @@
+Rule "Check if being goomba'd"
+    Event
+        On Each Player
+        All
+        All
+
+    Conditions
+        Players In Radius
+            Eye Position(Event Player)
+            1.5
+            Opposite Team Of
+                Team Of(Event Player)
+        == True
+        Altitude Of
+            Players In Radius
+                Eye Position(Event Player)
+                1.5
+                Opposite Team Of
+                    Team Of(Event Player)
+        > Altitude Of(Event Player)
+
+    Actions
+        Kill
+            Player: Event Player
+            Attacker: Players In Radius
+                Eye Position(Event Player)
+                0.5
+                Opposite Team Of
+                    Team Of(Event Player)

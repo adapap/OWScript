@@ -19,3 +19,27 @@ for type_ in data.get('types'):
     key = type_.pop('name')
     value = {k: type_.get(k) for k in type_.keys()}
     types.update({key: value})
+
+if __name__ == '__main__':
+    reserved_list = []
+    reserved_list.extend([(x, 'ACTION') for x in actions])
+    reserved_list.extend([(x, 'VALUE') for x in values])
+    reserved_list.extend([(x, 'NAME') for x in types.get('EVENT').get('values')])
+    reserved_list.extend([(x, 'NUMBER') for x in types.get('NUMBER').get('values')])
+    reserved_list.extend([('EVENT', 'EVENT'), ('CONDITIONS', 'CONDITIONS'), ('ACTIONS', 'ACTIONS')])
+    reserved = dict(reserved_list)
+    aliases = {
+        'ON GLOBAL': 'ONGOING - GLOBAL',
+        'ON EACH PLAYER': 'ONGOING - EACH PLAYER',
+        'PLAYERS IN RADIUS': 'PLAYERS WITHIN RADIUS',
+        'ROUND': 'ROUND TO INTEGER',
+        'SIN': 'SINE FROM DEGREES',
+        'SINR': 'SINE FROM RADIANS',
+        'COS': 'COSINE FROM DEGREES',
+        'COSR': 'COSINE FROM RADIANS'
+    }
+    for k, v in aliases.items():
+        reserved[k] = reserved.get(v)
+
+    for k, v in sorted(reserved.items(), key=lambda x: (x[1], x[0])):
+        print(f"('{k}', '{v}'),")

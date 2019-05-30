@@ -7,54 +7,93 @@ import sys
 
 def serializedATN():
     with StringIO() as buf:
-        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\2\16")
-        buf.write("\u008a\b\1\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7")
+        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\2\33")
+        buf.write("\u00c9\b\1\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7")
         buf.write("\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r")
-        buf.write("\4\16\t\16\4\17\t\17\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\4\3")
-        buf.write("\4\3\4\3\4\3\4\3\4\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5")
-        buf.write("\3\5\3\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\7\3\7\7\7B")
-        buf.write("\n\7\f\7\16\7E\13\7\3\7\3\7\3\b\6\bJ\n\b\r\b\16\bK\3\t")
-        buf.write("\6\tO\n\t\r\t\16\tP\3\t\3\t\6\tU\n\t\r\t\16\tV\3\n\7\n")
-        buf.write("Z\n\n\f\n\16\n]\13\n\3\n\3\n\3\n\3\13\3\13\3\13\5\13e")
-        buf.write("\n\13\3\13\3\13\5\13i\n\13\3\13\5\13l\n\13\5\13n\n\13")
-        buf.write("\3\13\3\13\3\f\3\f\5\ft\n\f\3\f\3\f\3\r\3\r\3\16\6\16")
-        buf.write("{\n\16\r\16\16\16|\3\17\3\17\3\17\3\17\7\17\u0083\n\17")
-        buf.write("\f\17\16\17\u0086\13\17\3\17\3\17\3\17\3\u0084\2\20\3")
-        buf.write("\3\5\4\7\5\t\6\13\7\r\b\17\t\21\n\23\13\25\f\27\r\31\16")
-        buf.write("\33\2\35\2\3\2\7\6\2\f\f\16\17$$^^\3\2\62;\b\2\"\"//\62")
-        buf.write(";C\\aac|\5\2C\\aac|\4\2\13\13\"\"\2\u0093\2\3\3\2\2\2")
-        buf.write("\2\5\3\2\2\2\2\7\3\2\2\2\2\t\3\2\2\2\2\13\3\2\2\2\2\r")
-        buf.write("\3\2\2\2\2\17\3\2\2\2\2\21\3\2\2\2\2\23\3\2\2\2\2\25\3")
-        buf.write("\2\2\2\2\27\3\2\2\2\2\31\3\2\2\2\3\37\3\2\2\2\5!\3\2\2")
-        buf.write("\2\7&\3\2\2\2\t,\3\2\2\2\13\67\3\2\2\2\r?\3\2\2\2\17I")
-        buf.write("\3\2\2\2\21N\3\2\2\2\23[\3\2\2\2\25m\3\2\2\2\27s\3\2\2")
-        buf.write("\2\31w\3\2\2\2\33z\3\2\2\2\35~\3\2\2\2\37 \7\'\2\2 \4")
-        buf.write("\3\2\2\2!\"\7T\2\2\"#\7w\2\2#$\7n\2\2$%\7g\2\2%\6\3\2")
-        buf.write("\2\2&\'\7G\2\2\'(\7x\2\2()\7g\2\2)*\7p\2\2*+\7v\2\2+\b")
-        buf.write("\3\2\2\2,-\7E\2\2-.\7q\2\2./\7p\2\2/\60\7f\2\2\60\61\7")
-        buf.write("k\2\2\61\62\7v\2\2\62\63\7k\2\2\63\64\7q\2\2\64\65\7p")
-        buf.write("\2\2\65\66\7u\2\2\66\n\3\2\2\2\678\7C\2\289\7e\2\29:\7")
-        buf.write("v\2\2:;\7k\2\2;<\7q\2\2<=\7p\2\2=>\7u\2\2>\f\3\2\2\2?")
-        buf.write("C\7$\2\2@B\n\2\2\2A@\3\2\2\2BE\3\2\2\2CA\3\2\2\2CD\3\2")
-        buf.write("\2\2DF\3\2\2\2EC\3\2\2\2FG\7$\2\2G\16\3\2\2\2HJ\t\3\2")
-        buf.write("\2IH\3\2\2\2JK\3\2\2\2KI\3\2\2\2KL\3\2\2\2L\20\3\2\2\2")
-        buf.write("MO\t\3\2\2NM\3\2\2\2OP\3\2\2\2PN\3\2\2\2PQ\3\2\2\2QR\3")
-        buf.write("\2\2\2RT\7\60\2\2SU\t\3\2\2TS\3\2\2\2UV\3\2\2\2VT\3\2")
-        buf.write("\2\2VW\3\2\2\2W\22\3\2\2\2XZ\t\4\2\2YX\3\2\2\2Z]\3\2\2")
-        buf.write("\2[Y\3\2\2\2[\\\3\2\2\2\\^\3\2\2\2][\3\2\2\2^_\t\5\2\2")
-        buf.write("_`\b\n\2\2`\24\3\2\2\2ab\6\13\2\2bn\5\33\16\2ce\7\17\2")
-        buf.write("\2dc\3\2\2\2de\3\2\2\2ef\3\2\2\2fi\7\f\2\2gi\4\16\17\2")
-        buf.write("hd\3\2\2\2hg\3\2\2\2ik\3\2\2\2jl\5\33\16\2kj\3\2\2\2k")
-        buf.write("l\3\2\2\2ln\3\2\2\2ma\3\2\2\2mh\3\2\2\2no\3\2\2\2op\b")
-        buf.write("\13\3\2p\26\3\2\2\2qt\5\33\16\2rt\5\35\17\2sq\3\2\2\2")
-        buf.write("sr\3\2\2\2tu\3\2\2\2uv\b\f\4\2v\30\3\2\2\2wx\13\2\2\2")
-        buf.write("x\32\3\2\2\2y{\t\6\2\2zy\3\2\2\2{|\3\2\2\2|z\3\2\2\2|")
-        buf.write("}\3\2\2\2}\34\3\2\2\2~\177\7\61\2\2\177\u0080\7,\2\2\u0080")
-        buf.write("\u0084\3\2\2\2\u0081\u0083\13\2\2\2\u0082\u0081\3\2\2")
-        buf.write("\2\u0083\u0086\3\2\2\2\u0084\u0085\3\2\2\2\u0084\u0082")
-        buf.write("\3\2\2\2\u0085\u0087\3\2\2\2\u0086\u0084\3\2\2\2\u0087")
-        buf.write("\u0088\7,\2\2\u0088\u0089\7\61\2\2\u0089\36\3\2\2\2\17")
-        buf.write("\2CKPV[dhkms|\u0084\5\3\n\2\3\13\3\b\2\2")
+        buf.write("\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22\4\23")
+        buf.write("\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30")
+        buf.write("\4\31\t\31\4\32\t\32\4\33\t\33\4\34\t\34\3\2\3\2\3\3\3")
+        buf.write("\3\3\4\3\4\3\5\3\5\3\6\3\6\3\7\3\7\3\b\3\b\3\t\3\t\3\n")
+        buf.write("\3\n\3\13\3\13\3\13\3\f\3\f\3\r\3\r\3\r\3\r\3\16\3\16")
+        buf.write("\3\17\3\17\3\20\3\20\3\21\3\21\3\21\3\21\3\21\3\21\3\21")
+        buf.write("\3\21\3\21\5\21d\n\21\3\22\3\22\3\22\3\22\3\22\3\22\3")
+        buf.write("\22\3\22\3\22\3\22\3\22\3\22\3\22\5\22s\n\22\3\23\3\23")
+        buf.write("\7\23w\n\23\f\23\16\23z\13\23\3\23\3\23\3\24\6\24\177")
+        buf.write("\n\24\r\24\16\24\u0080\3\25\6\25\u0084\n\25\r\25\16\25")
+        buf.write("\u0085\3\25\3\25\6\25\u008a\n\25\r\25\16\25\u008b\3\26")
+        buf.write("\3\26\7\26\u0090\n\26\f\26\16\26\u0093\13\26\3\26\3\26")
+        buf.write("\3\27\3\27\7\27\u0099\n\27\f\27\16\27\u009c\13\27\3\27")
+        buf.write("\3\27\3\30\3\30\3\30\5\30\u00a3\n\30\3\30\3\30\5\30\u00a7")
+        buf.write("\n\30\3\30\5\30\u00aa\n\30\5\30\u00ac\n\30\3\30\3\30\3")
+        buf.write("\31\3\31\3\31\5\31\u00b3\n\31\3\31\3\31\3\32\3\32\3\33")
+        buf.write("\6\33\u00ba\n\33\r\33\16\33\u00bb\3\34\3\34\3\34\3\34")
+        buf.write("\7\34\u00c2\n\34\f\34\16\34\u00c5\13\34\3\34\3\34\3\34")
+        buf.write("\3\u00c3\2\35\3\3\5\4\7\5\t\6\13\7\r\b\17\t\21\n\23\13")
+        buf.write("\25\f\27\r\31\16\33\17\35\20\37\21!\22#\23%\24\'\25)\26")
+        buf.write("+\27-\30/\31\61\32\63\33\65\2\67\2\3\2\t\4\2>>@@\6\2\f")
+        buf.write("\f\16\17$$^^\3\2\62;\5\2C\\aac|\6\2\62;C\\aac|\b\2\"\"")
+        buf.write("/\60\62;C\\aac|\4\2\13\13\"\"\2\u00de\2\3\3\2\2\2\2\5")
+        buf.write("\3\2\2\2\2\7\3\2\2\2\2\t\3\2\2\2\2\13\3\2\2\2\2\r\3\2")
+        buf.write("\2\2\2\17\3\2\2\2\2\21\3\2\2\2\2\23\3\2\2\2\2\25\3\2\2")
+        buf.write("\2\2\27\3\2\2\2\2\31\3\2\2\2\2\33\3\2\2\2\2\35\3\2\2\2")
+        buf.write("\2\37\3\2\2\2\2!\3\2\2\2\2#\3\2\2\2\2%\3\2\2\2\2\'\3\2")
+        buf.write("\2\2\2)\3\2\2\2\2+\3\2\2\2\2-\3\2\2\2\2/\3\2\2\2\2\61")
+        buf.write("\3\2\2\2\2\63\3\2\2\2\39\3\2\2\2\5;\3\2\2\2\7=\3\2\2\2")
+        buf.write("\t?\3\2\2\2\13A\3\2\2\2\rC\3\2\2\2\17E\3\2\2\2\21G\3\2")
+        buf.write("\2\2\23I\3\2\2\2\25K\3\2\2\2\27N\3\2\2\2\31P\3\2\2\2\33")
+        buf.write("T\3\2\2\2\35V\3\2\2\2\37X\3\2\2\2!c\3\2\2\2#r\3\2\2\2")
+        buf.write("%t\3\2\2\2\'~\3\2\2\2)\u0083\3\2\2\2+\u008d\3\2\2\2-\u0096")
+        buf.write("\3\2\2\2/\u00ab\3\2\2\2\61\u00b2\3\2\2\2\63\u00b6\3\2")
+        buf.write("\2\2\65\u00b9\3\2\2\2\67\u00bd\3\2\2\29:\7\'\2\2:\4\3")
+        buf.write("\2\2\2;<\7`\2\2<\6\3\2\2\2=>\7,\2\2>\b\3\2\2\2?@\7\61")
+        buf.write("\2\2@\n\3\2\2\2AB\7-\2\2B\f\3\2\2\2CD\7/\2\2D\16\3\2\2")
+        buf.write("\2EF\7*\2\2F\20\3\2\2\2GH\7+\2\2H\22\3\2\2\2IJ\7.\2\2")
+        buf.write("J\24\3\2\2\2KL\7o\2\2LM\7u\2\2M\26\3\2\2\2NO\7u\2\2O\30")
+        buf.write("\3\2\2\2PQ\7o\2\2QR\7k\2\2RS\7p\2\2S\32\3\2\2\2TU\7B\2")
+        buf.write("\2U\34\3\2\2\2VW\7>\2\2W\36\3\2\2\2XY\7@\2\2Y \3\2\2\2")
+        buf.write("Z[\7?\2\2[d\7?\2\2\\]\7>\2\2]d\7?\2\2^_\7@\2\2_d\7?\2")
+        buf.write("\2`a\7#\2\2ad\7?\2\2bd\t\2\2\2cZ\3\2\2\2c\\\3\2\2\2c^")
+        buf.write("\3\2\2\2c`\3\2\2\2cb\3\2\2\2d\"\3\2\2\2es\7?\2\2fg\7-")
+        buf.write("\2\2gs\7?\2\2hi\7/\2\2is\7?\2\2jk\7,\2\2ks\7?\2\2lm\7")
+        buf.write("\61\2\2ms\7?\2\2no\7`\2\2os\7?\2\2pq\7\'\2\2qs\7?\2\2")
+        buf.write("re\3\2\2\2rf\3\2\2\2rh\3\2\2\2rj\3\2\2\2rl\3\2\2\2rn\3")
+        buf.write("\2\2\2rp\3\2\2\2s$\3\2\2\2tx\7$\2\2uw\n\3\2\2vu\3\2\2")
+        buf.write("\2wz\3\2\2\2xv\3\2\2\2xy\3\2\2\2y{\3\2\2\2zx\3\2\2\2{")
+        buf.write("|\7$\2\2|&\3\2\2\2}\177\t\4\2\2~}\3\2\2\2\177\u0080\3")
+        buf.write("\2\2\2\u0080~\3\2\2\2\u0080\u0081\3\2\2\2\u0081(\3\2\2")
+        buf.write("\2\u0082\u0084\t\4\2\2\u0083\u0082\3\2\2\2\u0084\u0085")
+        buf.write("\3\2\2\2\u0085\u0083\3\2\2\2\u0085\u0086\3\2\2\2\u0086")
+        buf.write("\u0087\3\2\2\2\u0087\u0089\7\60\2\2\u0088\u008a\t\4\2")
+        buf.write("\2\u0089\u0088\3\2\2\2\u008a\u008b\3\2\2\2\u008b\u0089")
+        buf.write("\3\2\2\2\u008b\u008c\3\2\2\2\u008c*\3\2\2\2\u008d\u0091")
+        buf.write("\t\5\2\2\u008e\u0090\t\6\2\2\u008f\u008e\3\2\2\2\u0090")
+        buf.write("\u0093\3\2\2\2\u0091\u008f\3\2\2\2\u0091\u0092\3\2\2\2")
+        buf.write("\u0092\u0094\3\2\2\2\u0093\u0091\3\2\2\2\u0094\u0095\7")
+        buf.write("<\2\2\u0095,\3\2\2\2\u0096\u009a\t\5\2\2\u0097\u0099\t")
+        buf.write("\7\2\2\u0098\u0097\3\2\2\2\u0099\u009c\3\2\2\2\u009a\u0098")
+        buf.write("\3\2\2\2\u009a\u009b\3\2\2\2\u009b\u009d\3\2\2\2\u009c")
+        buf.write("\u009a\3\2\2\2\u009d\u009e\b\27\2\2\u009e.\3\2\2\2\u009f")
+        buf.write("\u00a0\6\30\2\2\u00a0\u00ac\5\65\33\2\u00a1\u00a3\7\17")
+        buf.write("\2\2\u00a2\u00a1\3\2\2\2\u00a2\u00a3\3\2\2\2\u00a3\u00a4")
+        buf.write("\3\2\2\2\u00a4\u00a7\7\f\2\2\u00a5\u00a7\4\16\17\2\u00a6")
+        buf.write("\u00a2\3\2\2\2\u00a6\u00a5\3\2\2\2\u00a7\u00a9\3\2\2\2")
+        buf.write("\u00a8\u00aa\5\65\33\2\u00a9\u00a8\3\2\2\2\u00a9\u00aa")
+        buf.write("\3\2\2\2\u00aa\u00ac\3\2\2\2\u00ab\u009f\3\2\2\2\u00ab")
+        buf.write("\u00a6\3\2\2\2\u00ac\u00ad\3\2\2\2\u00ad\u00ae\b\30\3")
+        buf.write("\2\u00ae\60\3\2\2\2\u00af\u00b3\5\65\33\2\u00b0\u00b3")
+        buf.write("\5\67\34\2\u00b1\u00b3\7=\2\2\u00b2\u00af\3\2\2\2\u00b2")
+        buf.write("\u00b0\3\2\2\2\u00b2\u00b1\3\2\2\2\u00b3\u00b4\3\2\2\2")
+        buf.write("\u00b4\u00b5\b\31\4\2\u00b5\62\3\2\2\2\u00b6\u00b7\13")
+        buf.write("\2\2\2\u00b7\64\3\2\2\2\u00b8\u00ba\t\b\2\2\u00b9\u00b8")
+        buf.write("\3\2\2\2\u00ba\u00bb\3\2\2\2\u00bb\u00b9\3\2\2\2\u00bb")
+        buf.write("\u00bc\3\2\2\2\u00bc\66\3\2\2\2\u00bd\u00be\7\61\2\2\u00be")
+        buf.write("\u00bf\7,\2\2\u00bf\u00c3\3\2\2\2\u00c0\u00c2\13\2\2\2")
+        buf.write("\u00c1\u00c0\3\2\2\2\u00c2\u00c5\3\2\2\2\u00c3\u00c4\3")
+        buf.write("\2\2\2\u00c3\u00c1\3\2\2\2\u00c4\u00c6\3\2\2\2\u00c5\u00c3")
+        buf.write("\3\2\2\2\u00c6\u00c7\7,\2\2\u00c7\u00c8\7\61\2\2\u00c8")
+        buf.write("8\3\2\2\2\22\2crx\u0080\u0085\u008b\u0091\u009a\u00a2")
+        buf.write("\u00a6\u00a9\u00ab\u00b2\u00bb\u00c3\5\3\27\2\3\30\3\b")
+        buf.write("\2\2")
         return buf.getvalue()
 
 
@@ -69,27 +108,44 @@ class OWScriptLexer(Lexer):
     T__2 = 3
     T__3 = 4
     T__4 = 5
-    STRING = 6
-    INTEGER = 7
-    FLOAT = 8
-    NAME = 9
-    NEWLINE = 10
-    SKIP_ = 11
-    UNKNOWN_CHAR = 12
+    T__5 = 6
+    T__6 = 7
+    T__7 = 8
+    T__8 = 9
+    T__9 = 10
+    T__10 = 11
+    T__11 = 12
+    T__12 = 13
+    T__13 = 14
+    T__14 = 15
+    COMPARE = 16
+    ASSIGN = 17
+    STRING = 18
+    INTEGER = 19
+    FLOAT = 20
+    ANNOTATION = 21
+    NAME = 22
+    NEWLINE = 23
+    SKIP_ = 24
+    UNKNOWN_CHAR = 25
 
     channelNames = [ u"DEFAULT_TOKEN_CHANNEL", u"HIDDEN" ]
 
     modeNames = [ "DEFAULT_MODE" ]
 
     literalNames = [ "<INVALID>",
-            "'%'", "'Rule'", "'Event'", "'Conditions'", "'Actions'" ]
+            "'%'", "'^'", "'*'", "'/'", "'+'", "'-'", "'('", "')'", "','", 
+            "'ms'", "'s'", "'min'", "'@'", "'<'", "'>'" ]
 
     symbolicNames = [ "<INVALID>",
-            "STRING", "INTEGER", "FLOAT", "NAME", "NEWLINE", "SKIP_", "UNKNOWN_CHAR" ]
+            "COMPARE", "ASSIGN", "STRING", "INTEGER", "FLOAT", "ANNOTATION", 
+            "NAME", "NEWLINE", "SKIP_", "UNKNOWN_CHAR" ]
 
-    ruleNames = [ "T__0", "T__1", "T__2", "T__3", "T__4", "STRING", "INTEGER", 
-                  "FLOAT", "NAME", "NEWLINE", "SKIP_", "UNKNOWN_CHAR", "SPACES", 
-                  "COMMENT" ]
+    ruleNames = [ "T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "T__6", 
+                  "T__7", "T__8", "T__9", "T__10", "T__11", "T__12", "T__13", 
+                  "T__14", "COMPARE", "ASSIGN", "STRING", "INTEGER", "FLOAT", 
+                  "ANNOTATION", "NAME", "NEWLINE", "SKIP_", "UNKNOWN_CHAR", 
+                  "SPACES", "COMMENT" ]
 
     grammarFileName = "OWScript.g4"
 
@@ -229,9 +285,34 @@ class OWScriptLexer(Lexer):
             ('WAIT', 'ACTION'),
             ('ACTIONS', 'ACTIONS'),
             ('CONDITIONS', 'CONDITIONS'),
+            ('ALL HEROES', 'CONST'),
+            ('ATTACKER', 'CONST'),
+            ('BACKWARD', 'CONST'),
+            ('CONTROL MODE SCORING TEAM', 'CONST'),
+            ('CURRENT ARRAY ELEMENT', 'CONST'),
+            ('DOWN', 'CONST'),
+            ('EMPTY ARRAY', 'CONST'),
+            ('EVENT PLAYER', 'CONST'),
+            ('EVENT WAS CRITICAL HIT', 'CONST'),
+            ('FALSE', 'CONST'),
+            ('FORWARD', 'CONST'),
+            ('IS ASSEMBLING HEROES', 'CONST'),
+            ('IS BETWEEN ROUNDS', 'CONST'),
+            ('IS CONTROL MODE POINT LOCKED', 'CONST'),
+            ('IS CTF MODE IN SUDDEN DEATH', 'CONST'),
+            ('IS GAME IN PROGRESS', 'CONST'),
+            ('IS IN SETUP', 'CONST'),
+            ('IS MATCH COMPLETE', 'CONST'),
+            ('IS WAITING FOR PLAYERS', 'CONST'),
+            ('LAST CREATED ENTITY', 'CONST'),
+            ('LEFT', 'CONST'),
+            ('NULL', 'CONST'),
+            ('PAYLOAD POSITION', 'CONST'),
+            ('RIGHT', 'CONST'),
+            ('TRUE', 'CONST'),
+            ('UP', 'CONST'),
+            ('VICTIM', 'CONST'),
             ('EVENT', 'EVENT'),
-            ('ON EACH PLAYER', 'NAME'),
-            ('ON GLOBAL', 'NAME'),
             ('ONGOING - EACH PLAYER', 'NAME'),
             ('ONGOING - GLOBAL', 'NAME'),
             ('PLAYER DEALT DAMAGE', 'NAME'),
@@ -239,135 +320,69 @@ class OWScriptLexer(Lexer):
             ('PLAYER DIED', 'NAME'),
             ('PLAYER EARNED ELIMINATION', 'NAME'),
             ('PLAYER TOOK DAMAGE', 'NAME'),
-            ('ABSOLUTE VALUE', 'NUMBER'),
-            ('ALTITUDE OF', 'NUMBER'),
-            ('ANGLE DIFFERENCE', 'NUMBER'),
-            ('CONTROL MODE SCORING PERCENTAGE', 'NUMBER'),
-            ('COS', 'NUMBER'),
-            ('COSINE FROM DEGREES', 'NUMBER'),
-            ('COSINE FROM RADIANS', 'NUMBER'),
-            ('COSR', 'NUMBER'),
-            ('COUNT OF', 'NUMBER'),
-            ('DISTANCE BETWEEN', 'NUMBER'),
-            ('DOT PRODUCT', 'NUMBER'),
-            ('EVENT DAMAGE', 'NUMBER'),
-            ('HEALTH', 'NUMBER'),
-            ('HEALTH PERCENT', 'NUMBER'),
-            ('HORIZONTAL ANGLE FROM DIRECTION', 'NUMBER'),
-            ('HORIZONTAL ANGLE TOWARDS', 'NUMBER'),
-            ('HORIZONTAL FACING ANGLE OF', 'NUMBER'),
-            ('HORIZONTAL SPEED OF', 'NUMBER'),
-            ('LAST DAMAGE MODIFICATION ID', 'NUMBER'),
-            ('LAST DAMAGE OVER TIME ID', 'NUMBER'),
-            ('LAST HEAL OVER TIME ID', 'NUMBER'),
-            ('LAST TEXT ID', 'NUMBER'),
-            ('MATCH ROUND', 'NUMBER'),
-            ('MATCH TIME', 'NUMBER'),
-            ('MAX', 'NUMBER'),
-            ('MAX HEALTH', 'NUMBER'),
-            ('MIN', 'NUMBER'),
-            ('MODULO', 'NUMBER'),
-            ('NUMBER', 'NUMBER'),
-            ('NUMBER OF DEAD PLAYERS', 'NUMBER'),
-            ('NUMBER OF DEATHS', 'NUMBER'),
-            ('NUMBER OF ELIMINATIONS', 'NUMBER'),
-            ('NUMBER OF FINAL BLOWS', 'NUMBER'),
-            ('NUMBER OF HEROES', 'NUMBER'),
-            ('NUMBER OF LIVING PLAYERS', 'NUMBER'),
-            ('NUMBER OF PLAYERS', 'NUMBER'),
-            ('NUMBER OF PLAYERS ON OBJECTIVE', 'NUMBER'),
-            ('OBJECTIVE INDEX', 'NUMBER'),
-            ('PAYLOAD PROGRESS PERCENTAGE', 'NUMBER'),
-            ('POINT CAPTURE PERCENTAGE', 'NUMBER'),
-            ('RAISE TO POWER', 'NUMBER'),
-            ('RANDOM INTEGER', 'NUMBER'),
-            ('RANDOM REAL', 'NUMBER'),
-            ('ROUND', 'NUMBER'),
-            ('ROUND TO INTEGER', 'NUMBER'),
-            ('SCORE OF', 'NUMBER'),
-            ('SIN', 'NUMBER'),
-            ('SINE FROM DEGREES', 'NUMBER'),
-            ('SINE FROM RADIANS', 'NUMBER'),
-            ('SINR', 'NUMBER'),
-            ('SLOT OF', 'NUMBER'),
-            ('SPEED OF', 'NUMBER'),
-            ('SPEED OF IN DIRECTION', 'NUMBER'),
-            ('SQUARE ROOT', 'NUMBER'),
-            ('TEAM SCORE', 'NUMBER'),
-            ('TOTAL TIME ELAPSED', 'NUMBER'),
-            ('ULTIMATE CHARGE PERCENT', 'NUMBER'),
-            ('VERTICAL ANGLE FROM DIRECTION', 'NUMBER'),
-            ('VERTICAL ANGLE TOWARDS', 'NUMBER'),
-            ('VERTICAL FACING ANGLE OF', 'NUMBER'),
-            ('VERTICAL SPEED OF', 'NUMBER'),
-            ('X COMPONENT OF', 'NUMBER'),
-            ('Y COMPONENT OF', 'NUMBER'),
-            ('Z COMPONENT OF', 'NUMBER'),
+            ('ABSOLUTE VALUE', 'VALUE'),
             ('ADD', 'VALUE'),
             ('ALL DEAD PLAYERS', 'VALUE'),
-            ('ALL HEROES', 'VALUE'),
             ('ALL LIVING PLAYERS', 'VALUE'),
             ('ALL PLAYERS', 'VALUE'),
             ('ALL PLAYERS NOT ON OBJECTIVE', 'VALUE'),
             ('ALL PLAYERS ON OBJECTIVE', 'VALUE'),
             ('ALLOWED HEROES', 'VALUE'),
+            ('ALTITUDE OF', 'VALUE'),
             ('AND', 'VALUE'),
+            ('ANGLE DIFFERENCE', 'VALUE'),
             ('APPEND TO ARRAY', 'VALUE'),
             ('ARRAY SLICE', 'VALUE'),
-            ('ATTACKER', 'VALUE'),
-            ('BACKWARD', 'VALUE'),
             ('CLOSEST PLAYER TO', 'VALUE'),
             ('COMPARE', 'VALUE'),
-            ('CONTROL MODE SCORING TEAM', 'VALUE'),
+            ('CONTROL MODE SCORING PERCENTAGE', 'VALUE'),
+            ('COSINE FROM DEGREES', 'VALUE'),
+            ('COSINE FROM RADIANS', 'VALUE'),
+            ('COUNT OF', 'VALUE'),
             ('CROSS PRODUCT', 'VALUE'),
-            ('CURRENT ARRAY ELEMENT', 'VALUE'),
             ('DIRECTION FROM ANGLES', 'VALUE'),
             ('DIRECTION TOWARDS', 'VALUE'),
+            ('DISTANCE BETWEEN', 'VALUE'),
             ('DIVIDE', 'VALUE'),
-            ('DOWN', 'VALUE'),
-            ('EMPTY ARRAY', 'VALUE'),
+            ('DOT PRODUCT', 'VALUE'),
             ('ENTITY EXISTS', 'VALUE'),
-            ('EVENT PLAYER', 'VALUE'),
-            ('EVENT WAS CRITICAL HIT', 'VALUE'),
+            ('EVENT DAMAGE', 'VALUE'),
             ('EYE POSITION', 'VALUE'),
             ('FACING DIRECTION OF', 'VALUE'),
-            ('FALSE', 'VALUE'),
             ('FARTHEST PLAYER FROM', 'VALUE'),
             ('FILTERED ARRAY', 'VALUE'),
             ('FIRST OF', 'VALUE'),
             ('FLAG POSITION', 'VALUE'),
-            ('FORWARD', 'VALUE'),
             ('GLOBAL VARIABLE', 'VALUE'),
             ('HAS SPAWNED', 'VALUE'),
             ('HAS STATUS', 'VALUE'),
+            ('HEALTH', 'VALUE'),
+            ('HEALTH PERCENT', 'VALUE'),
             ('HERO', 'VALUE'),
             ('HERO ICON STRING', 'VALUE'),
             ('HERO OF', 'VALUE'),
+            ('HORIZONTAL ANGLE FROM DIRECTION', 'VALUE'),
+            ('HORIZONTAL ANGLE TOWARDS', 'VALUE'),
+            ('HORIZONTAL FACING ANGLE OF', 'VALUE'),
+            ('HORIZONTAL SPEED OF', 'VALUE'),
             ('INDEX OF ARRAY VALUE', 'VALUE'),
             ('IS ALIVE', 'VALUE'),
-            ('IS ASSEMBLING HEROES', 'VALUE'),
-            ('IS BETWEEN ROUNDS', 'VALUE'),
             ('IS BUTTON HELD', 'VALUE'),
             ('IS COMMUNICATING', 'VALUE'),
             ('IS COMMUNICATING ANY', 'VALUE'),
             ('IS COMMUNICATING ANY EMOTE', 'VALUE'),
             ('IS COMMUNICATING ANY VOICE LINE', 'VALUE'),
-            ('IS CONTROL MODE POINT LOCKED', 'VALUE'),
             ('IS CROUCHING', 'VALUE'),
-            ('IS CTF MODE IN SUDDEN DEATH', 'VALUE'),
             ('IS DEAD', 'VALUE'),
             ('IS FIRING PRIMARY', 'VALUE'),
             ('IS FIRING SECONDARY', 'VALUE'),
             ('IS FLAG AT BASE', 'VALUE'),
             ('IS FLAG BEING CARRIED', 'VALUE'),
-            ('IS GAME IN PROGRESS', 'VALUE'),
             ('IS HERO BEING PLAYED', 'VALUE'),
             ('IS IN AIR', 'VALUE'),
             ('IS IN LINE OF SIGHT', 'VALUE'),
-            ('IS IN SETUP', 'VALUE'),
             ('IS IN SPAWN ROOM', 'VALUE'),
             ('IS IN VIEW ANGLE', 'VALUE'),
-            ('IS MATCH COMPLETE', 'VALUE'),
             ('IS MOVING', 'VALUE'),
             ('IS OBJECTIVE COMPLETE', 'VALUE'),
             ('IS ON GROUND', 'VALUE'),
@@ -382,50 +397,94 @@ class OWScriptLexer(Lexer):
             ('IS USING ABILITY 1', 'VALUE'),
             ('IS USING ABILITY 2', 'VALUE'),
             ('IS USING ULTIMATE', 'VALUE'),
-            ('IS WAITING FOR PLAYERS', 'VALUE'),
-            ('LAST CREATED ENTITY', 'VALUE'),
+            ('LAST DAMAGE MODIFICATION ID', 'VALUE'),
+            ('LAST DAMAGE OVER TIME ID', 'VALUE'),
+            ('LAST HEAL OVER TIME ID', 'VALUE'),
             ('LAST OF', 'VALUE'),
-            ('LEFT', 'VALUE'),
+            ('LAST TEXT ID', 'VALUE'),
             ('LOCAL VECTOR OF', 'VALUE'),
+            ('MATCH ROUND', 'VALUE'),
+            ('MATCH TIME', 'VALUE'),
+            ('MAX', 'VALUE'),
+            ('MAX HEALTH', 'VALUE'),
+            ('MIN', 'VALUE'),
+            ('MODULO', 'VALUE'),
             ('MULTIPLY', 'VALUE'),
             ('NEAREST WALKABLE POSITION', 'VALUE'),
             ('NORMALIZE', 'VALUE'),
             ('NOT', 'VALUE'),
-            ('NULL', 'VALUE'),
+            ('NUMBER', 'VALUE'),
+            ('NUMBER OF DEAD PLAYERS', 'VALUE'),
+            ('NUMBER OF DEATHS', 'VALUE'),
+            ('NUMBER OF ELIMINATIONS', 'VALUE'),
+            ('NUMBER OF FINAL BLOWS', 'VALUE'),
+            ('NUMBER OF HEROES', 'VALUE'),
+            ('NUMBER OF LIVING PLAYERS', 'VALUE'),
+            ('NUMBER OF PLAYERS', 'VALUE'),
+            ('NUMBER OF PLAYERS ON OBJECTIVE', 'VALUE'),
+            ('OBJECTIVE INDEX', 'VALUE'),
             ('OBJECTIVE POSITION', 'VALUE'),
             ('OPPOSITE TEAM OF', 'VALUE'),
             ('OR', 'VALUE'),
-            ('PAYLOAD POSITION', 'VALUE'),
+            ('PAYLOAD PROGRESS PERCENTAGE', 'VALUE'),
             ('PLAYER CARRYING FLAG', 'VALUE'),
             ('PLAYER CLOSEST TO RETICLE', 'VALUE'),
             ('PLAYER VARIABLE', 'VALUE'),
-            ('PLAYERS IN RADIUS', 'VALUE'),
             ('PLAYERS IN SLOT', 'VALUE'),
             ('PLAYERS IN VIEW ANGLE', 'VALUE'),
             ('PLAYERS ON HERO', 'VALUE'),
             ('PLAYERS WITHIN RADIUS', 'VALUE'),
+            ('POINT CAPTURE PERCENTAGE', 'VALUE'),
             ('POSITION OF', 'VALUE'),
+            ('RAISE TO POWER', 'VALUE'),
+            ('RANDOM INTEGER', 'VALUE'),
+            ('RANDOM REAL', 'VALUE'),
             ('RANDOM VALUE IN ARRAY', 'VALUE'),
             ('RANDOMIZED ARRAY', 'VALUE'),
             ('RAY CAST HIT NORMAL', 'VALUE'),
             ('RAY CAST HIT PLAYER', 'VALUE'),
             ('RAY CAST HIT POSITION', 'VALUE'),
             ('REMOVE FROM ARRAY', 'VALUE'),
-            ('RIGHT', 'VALUE'),
+            ('ROUND TO INTEGER', 'VALUE'),
+            ('SCORE OF', 'VALUE'),
+            ('SINE FROM DEGREES', 'VALUE'),
+            ('SINE FROM RADIANS', 'VALUE'),
+            ('SLOT OF', 'VALUE'),
             ('SORTED ARRAY', 'VALUE'),
+            ('SPEED OF', 'VALUE'),
+            ('SPEED OF IN DIRECTION', 'VALUE'),
+            ('SQUARE ROOT', 'VALUE'),
             ('STRING', 'VALUE'),
             ('SUBTRACT', 'VALUE'),
             ('TEAM', 'VALUE'),
             ('TEAM OF', 'VALUE'),
+            ('TEAM SCORE', 'VALUE'),
             ('THROTTLE OF', 'VALUE'),
-            ('TRUE', 'VALUE'),
-            ('UP', 'VALUE'),
+            ('TOTAL TIME ELAPSED', 'VALUE'),
+            ('ULTIMATE CHARGE PERCENT', 'VALUE'),
             ('VALUE IN ARRAY', 'VALUE'),
             ('VECTOR', 'VALUE'),
             ('VECTOR TOWARDS', 'VALUE'),
             ('VELOCITY OF', 'VALUE'),
-            ('VICTIM', 'VALUE'),
-            ('WORLD VECTOR OF', 'VALUE')
+            ('VERTICAL ANGLE FROM DIRECTION', 'VALUE'),
+            ('VERTICAL ANGLE TOWARDS', 'VALUE'),
+            ('VERTICAL FACING ANGLE OF', 'VALUE'),
+            ('VERTICAL SPEED OF', 'VALUE'),
+            ('WORLD VECTOR OF', 'VALUE'),
+            ('X COMPONENT OF', 'VALUE'),
+            ('Y COMPONENT OF', 'VALUE'),
+            ('Z COMPONENT OF', 'VALUE')
+        ])
+        self.aliases = dict([
+            ('ALL TRUE', 'IS TRUE FOR ALL'),
+            ('COS', 'COSINE FROM DEGREES'),
+            ('COSR', 'COSINE FROM RADIANS'),
+            ('ON EACH PLAYER', 'ONGOING - EACH PLAYER'),
+            ('ON GLOBAL', 'ONGOING - GLOBAL'),
+            ('PLAYERS IN RADIUS', 'PLAYERS WITHIN RADIUS'),
+            ('ROUND', 'ROUND TO INTEGER'),
+            ('SIN', 'SINE FROM DEGREES'),
+            ('SINR', 'SINE FROM RADIANS')
         ])
         # A queue where extra tokens are pushed on (see the NEWLINE lexer rule).
         self.tokens = []
@@ -449,7 +508,7 @@ class OWScriptLexer(Lexer):
                 del self.tokens[-1]
 
             # First emit an extra line break that serves as the end of the statement.
-            self.emitToken(self.common_token(OWScriptLexer.NEWLINE, '\n'));
+            self.emitToken(self.common_token(OWScriptLexer.NEWLINE, '\n', alias='NEWLINE'));
 
             # Now emit as much DEDENT tokens as needed.
             while len(self.indents) != 0:
@@ -457,7 +516,7 @@ class OWScriptLexer(Lexer):
                 del self.indents[-1]
 
             # Put the EOF back on the token stream.
-            self.emitToken(self.common_token(Token.EOF, '<EOF>'));
+            self.emitToken(self.common_token(Token.EOF, '<EOF>', alias='EOF'));
 
         next = super().nextToken();
 
@@ -474,7 +533,7 @@ class OWScriptLexer(Lexer):
 
     def create_dedent(self):
         from OWScriptParser import OWScriptParser
-        dedent = self.common_token(OWScriptParser.DEDENT, '')
+        dedent = self.common_token(OWScriptParser.DEDENT, '', alias='DEDENT')
         dedent.line = self.last_token.line
         return dedent
 
@@ -487,6 +546,9 @@ class OWScriptLexer(Lexer):
             start = stop - len(self.text) + 1
         token = CommonToken(self._tokenFactorySourcePair, _type, Lexer.DEFAULT_TOKEN_CHANNEL, start, stop)
         token._text = ''
+        if alias is not None:
+            pass
+            token._text = alias
         return token
 
     def getIndentationCount(self, spaces):
@@ -505,8 +567,8 @@ class OWScriptLexer(Lexer):
     def action(self, localctx:RuleContext, ruleIndex:int, actionIndex:int):
         if self._actions is None:
             actions = dict()
-            actions[8] = self.NAME_action 
-            actions[9] = self.NEWLINE_action 
+            actions[21] = self.NAME_action 
+            actions[22] = self.NEWLINE_action 
             self._actions = actions
         action = self._actions.get(ruleIndex, None)
         if action is not None:
@@ -518,10 +580,24 @@ class OWScriptLexer(Lexer):
         if actionIndex == 0:
 
                 from OWScriptParser import OWScriptParser
-                if self.text.upper() in self.workshop_rules:
-                    attr = self.workshop_rules.get(self.text.upper())
-                    print('attr:', attr)
-                    self.type = getattr(OWScriptParser, attr)
+                self.text = self.text.strip()
+                if self.text.startswith('gVar'):
+                    self.type = OWScriptParser.GLOBAL_VAR
+                    self.text = self.text.lstrip('gVar').lstrip()
+                elif self.text.startswith('pVar'):
+                    self.type = OWScriptParser.PLAYER_VAR
+                    self.text = self.text.lstrip('pVar').lstrip()
+                else:
+                    text = self.text.upper()
+                    if text == 'RULE':
+                        self.type = OWScriptParser.RULE
+                    elif text in ('EVENT', 'CONDITIONS', 'ACTIONS'):
+                        self.type = OWScriptParser.RULEBLOCK
+                    elif text in self.aliases or text in self.workshop_rules:
+                        text = self.aliases.get(text, text)
+                        attr = self.workshop_rules.get(text)
+                        self.type = getattr(OWScriptParser, attr)
+                        self.text = text
                 
      
 
@@ -537,7 +613,7 @@ class OWScriptLexer(Lexer):
                 if self.opened > 0 or next == '\r' or next == '\n' or next == '\f':
                     self.skip()
                 else:
-                    self.emitToken(self.common_token(self.NEWLINE, new_line))
+                    self.emitToken(self.common_token(self.NEWLINE, new_line, 'NEWLINE'))
 
                     indent = self.getIndentationCount(spaces)
                     if len(self.indents) == 0:
@@ -549,7 +625,7 @@ class OWScriptLexer(Lexer):
                         self.skip()
                     elif indent > previous:
                         self.indents.append(indent)
-                        self.emitToken(self.common_token(OWScriptParser.INDENT, spaces))
+                        self.emitToken(self.common_token(OWScriptParser.INDENT, spaces, alias='INDENT'))
                     else:
                         while len(self.indents) > 0 and self.indents[-1] > indent:
                             self.emitToken(self.create_dedent())
@@ -560,7 +636,7 @@ class OWScriptLexer(Lexer):
     def sempred(self, localctx:RuleContext, ruleIndex:int, predIndex:int):
         if self._predicates is None:
             preds = dict()
-            preds[9] = self.NEWLINE_sempred
+            preds[22] = self.NEWLINE_sempred
             self._predicates = preds
         pred = self._predicates.get(ruleIndex, None)
         if pred is not None:

@@ -1,7 +1,7 @@
 grammar OWScript;
 
 /* Parser Rules */
-tokens { INDENT, DEDENT, ACTION, VALUE, NUMBER }
+tokens { INDENT, DEDENT, RULE, RULEBLOCK, ACTION, VALUE, CONST, GLOBAL_VAR, PLAYER_VAR }
 
 @lexer::members {
     # Workshop Ruleset
@@ -132,9 +132,34 @@ tokens { INDENT, DEDENT, ACTION, VALUE, NUMBER }
         ('WAIT', 'ACTION'),
         ('ACTIONS', 'ACTIONS'),
         ('CONDITIONS', 'CONDITIONS'),
+        ('ALL HEROES', 'CONST'),
+        ('ATTACKER', 'CONST'),
+        ('BACKWARD', 'CONST'),
+        ('CONTROL MODE SCORING TEAM', 'CONST'),
+        ('CURRENT ARRAY ELEMENT', 'CONST'),
+        ('DOWN', 'CONST'),
+        ('EMPTY ARRAY', 'CONST'),
+        ('EVENT PLAYER', 'CONST'),
+        ('EVENT WAS CRITICAL HIT', 'CONST'),
+        ('FALSE', 'CONST'),
+        ('FORWARD', 'CONST'),
+        ('IS ASSEMBLING HEROES', 'CONST'),
+        ('IS BETWEEN ROUNDS', 'CONST'),
+        ('IS CONTROL MODE POINT LOCKED', 'CONST'),
+        ('IS CTF MODE IN SUDDEN DEATH', 'CONST'),
+        ('IS GAME IN PROGRESS', 'CONST'),
+        ('IS IN SETUP', 'CONST'),
+        ('IS MATCH COMPLETE', 'CONST'),
+        ('IS WAITING FOR PLAYERS', 'CONST'),
+        ('LAST CREATED ENTITY', 'CONST'),
+        ('LEFT', 'CONST'),
+        ('NULL', 'CONST'),
+        ('PAYLOAD POSITION', 'CONST'),
+        ('RIGHT', 'CONST'),
+        ('TRUE', 'CONST'),
+        ('UP', 'CONST'),
+        ('VICTIM', 'CONST'),
         ('EVENT', 'EVENT'),
-        ('ON EACH PLAYER', 'NAME'),
-        ('ON GLOBAL', 'NAME'),
         ('ONGOING - EACH PLAYER', 'NAME'),
         ('ONGOING - GLOBAL', 'NAME'),
         ('PLAYER DEALT DAMAGE', 'NAME'),
@@ -142,135 +167,69 @@ tokens { INDENT, DEDENT, ACTION, VALUE, NUMBER }
         ('PLAYER DIED', 'NAME'),
         ('PLAYER EARNED ELIMINATION', 'NAME'),
         ('PLAYER TOOK DAMAGE', 'NAME'),
-        ('ABSOLUTE VALUE', 'NUMBER'),
-        ('ALTITUDE OF', 'NUMBER'),
-        ('ANGLE DIFFERENCE', 'NUMBER'),
-        ('CONTROL MODE SCORING PERCENTAGE', 'NUMBER'),
-        ('COS', 'NUMBER'),
-        ('COSINE FROM DEGREES', 'NUMBER'),
-        ('COSINE FROM RADIANS', 'NUMBER'),
-        ('COSR', 'NUMBER'),
-        ('COUNT OF', 'NUMBER'),
-        ('DISTANCE BETWEEN', 'NUMBER'),
-        ('DOT PRODUCT', 'NUMBER'),
-        ('EVENT DAMAGE', 'NUMBER'),
-        ('HEALTH', 'NUMBER'),
-        ('HEALTH PERCENT', 'NUMBER'),
-        ('HORIZONTAL ANGLE FROM DIRECTION', 'NUMBER'),
-        ('HORIZONTAL ANGLE TOWARDS', 'NUMBER'),
-        ('HORIZONTAL FACING ANGLE OF', 'NUMBER'),
-        ('HORIZONTAL SPEED OF', 'NUMBER'),
-        ('LAST DAMAGE MODIFICATION ID', 'NUMBER'),
-        ('LAST DAMAGE OVER TIME ID', 'NUMBER'),
-        ('LAST HEAL OVER TIME ID', 'NUMBER'),
-        ('LAST TEXT ID', 'NUMBER'),
-        ('MATCH ROUND', 'NUMBER'),
-        ('MATCH TIME', 'NUMBER'),
-        ('MAX', 'NUMBER'),
-        ('MAX HEALTH', 'NUMBER'),
-        ('MIN', 'NUMBER'),
-        ('MODULO', 'NUMBER'),
-        ('NUMBER', 'NUMBER'),
-        ('NUMBER OF DEAD PLAYERS', 'NUMBER'),
-        ('NUMBER OF DEATHS', 'NUMBER'),
-        ('NUMBER OF ELIMINATIONS', 'NUMBER'),
-        ('NUMBER OF FINAL BLOWS', 'NUMBER'),
-        ('NUMBER OF HEROES', 'NUMBER'),
-        ('NUMBER OF LIVING PLAYERS', 'NUMBER'),
-        ('NUMBER OF PLAYERS', 'NUMBER'),
-        ('NUMBER OF PLAYERS ON OBJECTIVE', 'NUMBER'),
-        ('OBJECTIVE INDEX', 'NUMBER'),
-        ('PAYLOAD PROGRESS PERCENTAGE', 'NUMBER'),
-        ('POINT CAPTURE PERCENTAGE', 'NUMBER'),
-        ('RAISE TO POWER', 'NUMBER'),
-        ('RANDOM INTEGER', 'NUMBER'),
-        ('RANDOM REAL', 'NUMBER'),
-        ('ROUND', 'NUMBER'),
-        ('ROUND TO INTEGER', 'NUMBER'),
-        ('SCORE OF', 'NUMBER'),
-        ('SIN', 'NUMBER'),
-        ('SINE FROM DEGREES', 'NUMBER'),
-        ('SINE FROM RADIANS', 'NUMBER'),
-        ('SINR', 'NUMBER'),
-        ('SLOT OF', 'NUMBER'),
-        ('SPEED OF', 'NUMBER'),
-        ('SPEED OF IN DIRECTION', 'NUMBER'),
-        ('SQUARE ROOT', 'NUMBER'),
-        ('TEAM SCORE', 'NUMBER'),
-        ('TOTAL TIME ELAPSED', 'NUMBER'),
-        ('ULTIMATE CHARGE PERCENT', 'NUMBER'),
-        ('VERTICAL ANGLE FROM DIRECTION', 'NUMBER'),
-        ('VERTICAL ANGLE TOWARDS', 'NUMBER'),
-        ('VERTICAL FACING ANGLE OF', 'NUMBER'),
-        ('VERTICAL SPEED OF', 'NUMBER'),
-        ('X COMPONENT OF', 'NUMBER'),
-        ('Y COMPONENT OF', 'NUMBER'),
-        ('Z COMPONENT OF', 'NUMBER'),
+        ('ABSOLUTE VALUE', 'VALUE'),
         ('ADD', 'VALUE'),
         ('ALL DEAD PLAYERS', 'VALUE'),
-        ('ALL HEROES', 'VALUE'),
         ('ALL LIVING PLAYERS', 'VALUE'),
         ('ALL PLAYERS', 'VALUE'),
         ('ALL PLAYERS NOT ON OBJECTIVE', 'VALUE'),
         ('ALL PLAYERS ON OBJECTIVE', 'VALUE'),
         ('ALLOWED HEROES', 'VALUE'),
+        ('ALTITUDE OF', 'VALUE'),
         ('AND', 'VALUE'),
+        ('ANGLE DIFFERENCE', 'VALUE'),
         ('APPEND TO ARRAY', 'VALUE'),
         ('ARRAY SLICE', 'VALUE'),
-        ('ATTACKER', 'VALUE'),
-        ('BACKWARD', 'VALUE'),
         ('CLOSEST PLAYER TO', 'VALUE'),
         ('COMPARE', 'VALUE'),
-        ('CONTROL MODE SCORING TEAM', 'VALUE'),
+        ('CONTROL MODE SCORING PERCENTAGE', 'VALUE'),
+        ('COSINE FROM DEGREES', 'VALUE'),
+        ('COSINE FROM RADIANS', 'VALUE'),
+        ('COUNT OF', 'VALUE'),
         ('CROSS PRODUCT', 'VALUE'),
-        ('CURRENT ARRAY ELEMENT', 'VALUE'),
         ('DIRECTION FROM ANGLES', 'VALUE'),
         ('DIRECTION TOWARDS', 'VALUE'),
+        ('DISTANCE BETWEEN', 'VALUE'),
         ('DIVIDE', 'VALUE'),
-        ('DOWN', 'VALUE'),
-        ('EMPTY ARRAY', 'VALUE'),
+        ('DOT PRODUCT', 'VALUE'),
         ('ENTITY EXISTS', 'VALUE'),
-        ('EVENT PLAYER', 'VALUE'),
-        ('EVENT WAS CRITICAL HIT', 'VALUE'),
+        ('EVENT DAMAGE', 'VALUE'),
         ('EYE POSITION', 'VALUE'),
         ('FACING DIRECTION OF', 'VALUE'),
-        ('FALSE', 'VALUE'),
         ('FARTHEST PLAYER FROM', 'VALUE'),
         ('FILTERED ARRAY', 'VALUE'),
         ('FIRST OF', 'VALUE'),
         ('FLAG POSITION', 'VALUE'),
-        ('FORWARD', 'VALUE'),
         ('GLOBAL VARIABLE', 'VALUE'),
         ('HAS SPAWNED', 'VALUE'),
         ('HAS STATUS', 'VALUE'),
+        ('HEALTH', 'VALUE'),
+        ('HEALTH PERCENT', 'VALUE'),
         ('HERO', 'VALUE'),
         ('HERO ICON STRING', 'VALUE'),
         ('HERO OF', 'VALUE'),
+        ('HORIZONTAL ANGLE FROM DIRECTION', 'VALUE'),
+        ('HORIZONTAL ANGLE TOWARDS', 'VALUE'),
+        ('HORIZONTAL FACING ANGLE OF', 'VALUE'),
+        ('HORIZONTAL SPEED OF', 'VALUE'),
         ('INDEX OF ARRAY VALUE', 'VALUE'),
         ('IS ALIVE', 'VALUE'),
-        ('IS ASSEMBLING HEROES', 'VALUE'),
-        ('IS BETWEEN ROUNDS', 'VALUE'),
         ('IS BUTTON HELD', 'VALUE'),
         ('IS COMMUNICATING', 'VALUE'),
         ('IS COMMUNICATING ANY', 'VALUE'),
         ('IS COMMUNICATING ANY EMOTE', 'VALUE'),
         ('IS COMMUNICATING ANY VOICE LINE', 'VALUE'),
-        ('IS CONTROL MODE POINT LOCKED', 'VALUE'),
         ('IS CROUCHING', 'VALUE'),
-        ('IS CTF MODE IN SUDDEN DEATH', 'VALUE'),
         ('IS DEAD', 'VALUE'),
         ('IS FIRING PRIMARY', 'VALUE'),
         ('IS FIRING SECONDARY', 'VALUE'),
         ('IS FLAG AT BASE', 'VALUE'),
         ('IS FLAG BEING CARRIED', 'VALUE'),
-        ('IS GAME IN PROGRESS', 'VALUE'),
         ('IS HERO BEING PLAYED', 'VALUE'),
         ('IS IN AIR', 'VALUE'),
         ('IS IN LINE OF SIGHT', 'VALUE'),
-        ('IS IN SETUP', 'VALUE'),
         ('IS IN SPAWN ROOM', 'VALUE'),
         ('IS IN VIEW ANGLE', 'VALUE'),
-        ('IS MATCH COMPLETE', 'VALUE'),
         ('IS MOVING', 'VALUE'),
         ('IS OBJECTIVE COMPLETE', 'VALUE'),
         ('IS ON GROUND', 'VALUE'),
@@ -285,50 +244,94 @@ tokens { INDENT, DEDENT, ACTION, VALUE, NUMBER }
         ('IS USING ABILITY 1', 'VALUE'),
         ('IS USING ABILITY 2', 'VALUE'),
         ('IS USING ULTIMATE', 'VALUE'),
-        ('IS WAITING FOR PLAYERS', 'VALUE'),
-        ('LAST CREATED ENTITY', 'VALUE'),
+        ('LAST DAMAGE MODIFICATION ID', 'VALUE'),
+        ('LAST DAMAGE OVER TIME ID', 'VALUE'),
+        ('LAST HEAL OVER TIME ID', 'VALUE'),
         ('LAST OF', 'VALUE'),
-        ('LEFT', 'VALUE'),
+        ('LAST TEXT ID', 'VALUE'),
         ('LOCAL VECTOR OF', 'VALUE'),
+        ('MATCH ROUND', 'VALUE'),
+        ('MATCH TIME', 'VALUE'),
+        ('MAX', 'VALUE'),
+        ('MAX HEALTH', 'VALUE'),
+        ('MIN', 'VALUE'),
+        ('MODULO', 'VALUE'),
         ('MULTIPLY', 'VALUE'),
         ('NEAREST WALKABLE POSITION', 'VALUE'),
         ('NORMALIZE', 'VALUE'),
         ('NOT', 'VALUE'),
-        ('NULL', 'VALUE'),
+        ('NUMBER', 'VALUE'),
+        ('NUMBER OF DEAD PLAYERS', 'VALUE'),
+        ('NUMBER OF DEATHS', 'VALUE'),
+        ('NUMBER OF ELIMINATIONS', 'VALUE'),
+        ('NUMBER OF FINAL BLOWS', 'VALUE'),
+        ('NUMBER OF HEROES', 'VALUE'),
+        ('NUMBER OF LIVING PLAYERS', 'VALUE'),
+        ('NUMBER OF PLAYERS', 'VALUE'),
+        ('NUMBER OF PLAYERS ON OBJECTIVE', 'VALUE'),
+        ('OBJECTIVE INDEX', 'VALUE'),
         ('OBJECTIVE POSITION', 'VALUE'),
         ('OPPOSITE TEAM OF', 'VALUE'),
         ('OR', 'VALUE'),
-        ('PAYLOAD POSITION', 'VALUE'),
+        ('PAYLOAD PROGRESS PERCENTAGE', 'VALUE'),
         ('PLAYER CARRYING FLAG', 'VALUE'),
         ('PLAYER CLOSEST TO RETICLE', 'VALUE'),
         ('PLAYER VARIABLE', 'VALUE'),
-        ('PLAYERS IN RADIUS', 'VALUE'),
         ('PLAYERS IN SLOT', 'VALUE'),
         ('PLAYERS IN VIEW ANGLE', 'VALUE'),
         ('PLAYERS ON HERO', 'VALUE'),
         ('PLAYERS WITHIN RADIUS', 'VALUE'),
+        ('POINT CAPTURE PERCENTAGE', 'VALUE'),
         ('POSITION OF', 'VALUE'),
+        ('RAISE TO POWER', 'VALUE'),
+        ('RANDOM INTEGER', 'VALUE'),
+        ('RANDOM REAL', 'VALUE'),
         ('RANDOM VALUE IN ARRAY', 'VALUE'),
         ('RANDOMIZED ARRAY', 'VALUE'),
         ('RAY CAST HIT NORMAL', 'VALUE'),
         ('RAY CAST HIT PLAYER', 'VALUE'),
         ('RAY CAST HIT POSITION', 'VALUE'),
         ('REMOVE FROM ARRAY', 'VALUE'),
-        ('RIGHT', 'VALUE'),
+        ('ROUND TO INTEGER', 'VALUE'),
+        ('SCORE OF', 'VALUE'),
+        ('SINE FROM DEGREES', 'VALUE'),
+        ('SINE FROM RADIANS', 'VALUE'),
+        ('SLOT OF', 'VALUE'),
         ('SORTED ARRAY', 'VALUE'),
+        ('SPEED OF', 'VALUE'),
+        ('SPEED OF IN DIRECTION', 'VALUE'),
+        ('SQUARE ROOT', 'VALUE'),
         ('STRING', 'VALUE'),
         ('SUBTRACT', 'VALUE'),
         ('TEAM', 'VALUE'),
         ('TEAM OF', 'VALUE'),
+        ('TEAM SCORE', 'VALUE'),
         ('THROTTLE OF', 'VALUE'),
-        ('TRUE', 'VALUE'),
-        ('UP', 'VALUE'),
+        ('TOTAL TIME ELAPSED', 'VALUE'),
+        ('ULTIMATE CHARGE PERCENT', 'VALUE'),
         ('VALUE IN ARRAY', 'VALUE'),
         ('VECTOR', 'VALUE'),
         ('VECTOR TOWARDS', 'VALUE'),
         ('VELOCITY OF', 'VALUE'),
-        ('VICTIM', 'VALUE'),
-        ('WORLD VECTOR OF', 'VALUE')
+        ('VERTICAL ANGLE FROM DIRECTION', 'VALUE'),
+        ('VERTICAL ANGLE TOWARDS', 'VALUE'),
+        ('VERTICAL FACING ANGLE OF', 'VALUE'),
+        ('VERTICAL SPEED OF', 'VALUE'),
+        ('WORLD VECTOR OF', 'VALUE'),
+        ('X COMPONENT OF', 'VALUE'),
+        ('Y COMPONENT OF', 'VALUE'),
+        ('Z COMPONENT OF', 'VALUE')
+    ])
+    self.aliases = dict([
+        ('ALL TRUE', 'IS TRUE FOR ALL'),
+        ('COS', 'COSINE FROM DEGREES'),
+        ('COSR', 'COSINE FROM RADIANS'),
+        ('ON EACH PLAYER', 'ONGOING - EACH PLAYER'),
+        ('ON GLOBAL', 'ONGOING - GLOBAL'),
+        ('PLAYERS IN RADIUS', 'PLAYERS WITHIN RADIUS'),
+        ('ROUND', 'ROUND TO INTEGER'),
+        ('SIN', 'SINE FROM DEGREES'),
+        ('SINR', 'SINE FROM RADIANS')
     ])
     # A queue where extra tokens are pushed on (see the NEWLINE lexer rule).
     self.tokens = []
@@ -352,7 +355,7 @@ def nextToken(self):
             del self.tokens[-1]
 
         # First emit an extra line break that serves as the end of the statement.
-        self.emitToken(self.common_token(OWScriptLexer.NEWLINE, '\n'));
+        self.emitToken(self.common_token(OWScriptLexer.NEWLINE, '\n', alias='NEWLINE'));
 
         # Now emit as much DEDENT tokens as needed.
         while len(self.indents) != 0:
@@ -360,7 +363,7 @@ def nextToken(self):
             del self.indents[-1]
 
         # Put the EOF back on the token stream.
-        self.emitToken(self.common_token(Token.EOF, '<EOF>'));
+        self.emitToken(self.common_token(Token.EOF, '<EOF>', alias='EOF'));
 
     next = super().nextToken();
 
@@ -377,7 +380,7 @@ def nextToken(self):
 
 def create_dedent(self):
     from OWScriptParser import OWScriptParser
-    dedent = self.common_token(OWScriptParser.DEDENT, '')
+    dedent = self.common_token(OWScriptParser.DEDENT, '', alias='DEDENT')
     dedent.line = self.last_token.line
     return dedent
 
@@ -390,6 +393,9 @@ def common_token(self, _type, text, alias=None):
         start = stop - len(self.text) + 1
     token = CommonToken(self._tokenFactorySourcePair, _type, Lexer.DEFAULT_TOKEN_CHANNEL, start, stop)
     token._text = ''
+    if alias is not None:
+        pass
+        token._text = alias
     return token
 
 def getIndentationCount(self, spaces):
@@ -404,46 +410,100 @@ def getIndentationCount(self, spaces):
 def atStartOfInput(self):
     return self._interp.column == 0 and self._interp.line == 1
 }
-
+/*
+Parser Grammar
+*/
 script : (NEWLINE | stmt)* EOF;
-stmt : (funcdef | ruleset);
+stmt : (funcdef | call | ruleset);
 
-funcdef : '%' NAME;// funcbody?;
-//funcbody : '1';
+funcdef : '%' NAME funcbody;
+funcbody : (NEWLINE INDENT (ruleset | ruledef | rulebody) DEDENT) | block;
 
 ruleset : ruledef+;
-ruledef : 'Rule' rulename rulebody*;
+ruledef : RULE rulename (NEWLINE INDENT rulebody* DEDENT)*;
 rulename : STRING;
-rulebody : NEWLINE INDENT ('Event' | 'Conditions' | 'Actions') block? DEDENT;
+rulebody : RULEBLOCK ruleblock
+         | call NEWLINE;
 
-block : NEWLINE INDENT line+ DEDENT;
-line : action
-     | value
-     | number
+ruleblock : block;
+block : NEWLINE INDENT line+ DEDENT
+      | line;
+line : call
      | assign
-     | name
-     | NEWLINE;
+     | expr
+     | ANNOTATION line;
 
-name : NAME;
+assign : variable ASSIGN expr;
+expr : compare;
+compare : arith COMPARE arith
+        | arith;
+arith : arith '^' arith # Pow
+      | arith '*' arith # Mul
+      | arith '/' arith # Div
+      | arith '+' arith # Add
+      | arith '-' arith # Sub
+      | arith '%' arith # Mod
+      | '(' arith ')' # Parens
+      | primary # ArithPrimary;
 
+primary : action
+        | value
+        | const
+        | variable
+        | vector
+        | time
+        | numeral
+        | name
+        | NEWLINE;
 action : ACTION after_line;
 value : VALUE after_line;
-number : NUMBER after_line;
+const : CONST;
+after_line : '(' arg_list ')'
+           | block
+           | NEWLINE;
+arg_list : primary (',' primary)*;
 
-assign : INTEGER ASSIGN INTEGER;
+call : '%' NAME '(' ')';
 
-after_line : NEWLINE;
+name : NAME;
+time : numeral ('ms' | 's' | 'min');
+numeral : num_const=FLOAT
+        | num_const=INTEGER;
+variable : global_var
+         | player_var
+         | name;
+global_var : scope=GLOBAL_VAR;
+player_var : scope=PLAYER_VAR ('@' value)?;
+vector : '<' primary ',' primary ',' primary '>';
+
 
 /* Lexer Rules */
+COMPARE : ('=='|'<='|'>='|'!='|'>'|'<');
+ASSIGN : ('='|'+='|'-='|'*='|'/='|'^='|'%=');
 STRING : '"' ~[\\\r\n\f"]* '"';
 INTEGER : [0-9]+;
 FLOAT : [0-9]+'.'[0-9]+;
-NAME : [_a-zA-Z0-9\- ]*[_a-zA-Z] {
+ANNOTATION : [_a-zA-Z][_a-zA-Z0-9]* ':';
+NAME : [_a-zA-Z][_a-zA-Z0-9\- .]* {
     from OWScriptParser import OWScriptParser
-    if self.text.upper() in self.workshop_rules:
-        attr = self.workshop_rules.get(self.text.upper())
-        print('attr:', attr)
-        self.type = getattr(OWScriptParser, attr)
+    self.text = self.text.strip()
+    if self.text.startswith('gVar'):
+        self.type = OWScriptParser.GLOBAL_VAR
+        self.text = self.text.lstrip('gVar').lstrip()
+    elif self.text.startswith('pVar'):
+        self.type = OWScriptParser.PLAYER_VAR
+        self.text = self.text.lstrip('pVar').lstrip()
+    else:
+        text = self.text.upper()
+        if text == 'RULE':
+            self.type = OWScriptParser.RULE
+        elif text in ('EVENT', 'CONDITIONS', 'ACTIONS'):
+            self.type = OWScriptParser.RULEBLOCK
+        elif text in self.aliases or text in self.workshop_rules:
+            text = self.aliases.get(text, text)
+            attr = self.workshop_rules.get(text)
+            self.type = getattr(OWScriptParser, attr)
+            self.text = text
     };
 NEWLINE : ( {self.atStartOfInput()}? SPACES
         | ( '\r'? '\n' | '\r' | '\f' ) SPACES?
@@ -458,7 +518,7 @@ NEWLINE : ( {self.atStartOfInput()}? SPACES
     if self.opened > 0 or next == '\r' or next == '\n' or next == '\f':
         self.skip()
     else:
-        self.emitToken(self.common_token(self.NEWLINE, new_line))
+        self.emitToken(self.common_token(self.NEWLINE, new_line, 'NEWLINE'))
 
         indent = self.getIndentationCount(spaces)
         if len(self.indents) == 0:
@@ -470,13 +530,13 @@ NEWLINE : ( {self.atStartOfInput()}? SPACES
             self.skip()
         elif indent > previous:
             self.indents.append(indent)
-            self.emitToken(self.common_token(OWScriptParser.INDENT, spaces))
+            self.emitToken(self.common_token(OWScriptParser.INDENT, spaces, alias='INDENT'))
         else:
             while len(self.indents) > 0 and self.indents[-1] > indent:
                 self.emitToken(self.create_dedent())
                 del self.indents[-1]
 };
-SKIP_ : (SPACES | COMMENT) -> skip;
+SKIP_ : (SPACES | COMMENT | ';') -> skip;
 UNKNOWN_CHAR : .;
 
 fragment SPACES : [ \t]+;

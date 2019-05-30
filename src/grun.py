@@ -9,7 +9,7 @@ from antlr4 import *
 
 # this is a python version of TestRig
 def beautify_lisp_string(in_string):
-    indent_size = 3
+    indent_size = 2
     add_indent = ' ' * indent_size
     out_string = in_string[0]  # no indent for 1st (
     indent = ''

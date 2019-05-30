@@ -23,12 +23,13 @@ for type_ in data.get('types'):
 if __name__ == '__main__':
     reserved_list = []
     reserved_list.extend([(x, 'ACTION') for x in actions])
-    reserved_list.extend([(x, 'VALUE') for x in values])
+    reserved_list.extend([(x, 'VALUE') if values.get(x).get('args') else (x, 'CONST') for x in values])
     reserved_list.extend([(x, 'NAME') for x in types.get('EVENT').get('values')])
-    reserved_list.extend([(x, 'NUMBER') for x in types.get('NUMBER').get('values')])
+    reserved_list.extend([(x, 'VALUE') for x in types.get('NUMBER').get('values')])
     reserved_list.extend([('EVENT', 'EVENT'), ('CONDITIONS', 'CONDITIONS'), ('ACTIONS', 'ACTIONS')])
     reserved = dict(reserved_list)
     aliases = {
+        'ALL TRUE': 'IS TRUE FOR ALL',
         'ON GLOBAL': 'ONGOING - GLOBAL',
         'ON EACH PLAYER': 'ONGOING - EACH PLAYER',
         'PLAYERS IN RADIUS': 'PLAYERS WITHIN RADIUS',
@@ -38,8 +39,6 @@ if __name__ == '__main__':
         'COS': 'COSINE FROM DEGREES',
         'COSR': 'COSINE FROM RADIANS'
     }
-    for k, v in aliases.items():
-        reserved[k] = reserved.get(v)
 
     for k, v in sorted(reserved.items(), key=lambda x: (x[1], x[0])):
         print(f"('{k}', '{v}'),")

@@ -1,17 +1,19 @@
 Rule "My First Rule"
     Event
-        Type: Ongoing - Each Player
-        Team: Team 2
-        Player: All
+        On Global
+        All
+        All
 
-     Conditions
+    Conditions
         All True
             Array: All Players
                 Team: Team 2
             Condition: Has Spawned
                 Element: Current Array Element
-        ==
-            True
+        == True
 
     Actions
-        H = 1
+        pVar h@Event Player = 0
+        h = 1
+        b = h
+        c = pVar h

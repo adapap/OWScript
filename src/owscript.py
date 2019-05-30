@@ -1,17 +1,18 @@
 import sys
 from antlr4 import *
-from Grammar.OWScriptLexer import OWScriptLexer
-from Grammar.OWScriptParser import OWScriptParser
-from Grammar.OWScriptVisitor import OWScriptVisitor
+from OWScriptLexer import OWScriptLexer
+from OWScriptParser import OWScriptParser
+from ASTBuilder import ASTBuilder
+from Transpiler import Transpiler
  
 def main(argv):
     input_stream = FileStream(argv[1])
     lexer = OWScriptLexer(input_stream)
     stream = CommonTokenStream(lexer)
     parser = OWScriptParser(stream)
-    visitor = OWScriptVisitor()
-    tree = parser.script()
-    output = visitor.visit(tree)
+    ast = ASTBuilder().run(parser.script())
+    # print(ast)
+    output = Transpiler(ast).run()
     print(output)
  
 if __name__ == '__main__':

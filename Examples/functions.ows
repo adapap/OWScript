@@ -1,12 +1,28 @@
-%myfunc
-    a = 1
-%myfunc2
-%myfunc3
-Rule "Test"
+%player_event
     Event
-        Ongoing - Global
+        On Each Player
+        All
+        All
+%get_targets
+    targets = Players In Radius
+        Center: <1, 2, 3>
+        Radius: 5
+        Team: Team 2
+        LOS: Off
 
-Rule "Test"
-    Event
-        Ongoing - Global
-%myfunc4
+Rule "Death is Inevitable"
+    %player_event()
+    Conditions
+        Is Jumping(Event Player)
+
+    Actions
+        %get_targets()
+        %not_a_func()
+
+Rule "Death is Unavoidable"
+    %player_event()
+    Conditions
+        Is Crouching(Event Player)
+
+    Actions
+        Kill(targets)

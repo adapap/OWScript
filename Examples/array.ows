@@ -1,0 +1,6 @@
+Rule "Advanced Arrays"
+    Actions
+        x = []
+        y = [1, 2, 3]
+        x[0] = 2
+        x[1] = y[1] + y[2]

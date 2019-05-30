@@ -11,16 +11,16 @@
         LOS: Off
 
 Rule "Death is Inevitable"
-    %player_event()
+    player_event()
     Conditions
-        Is Jumping(Event Player)
+        Is In Air(Event Player)
 
     Actions
-        %get_targets()
-        %not_a_func()
+        get_targets()
+        not_a_func()
 
 Rule "Death is Unavoidable"
-    %player_event()
+    player_event()
     Conditions
         Is Crouching(Event Player)
 

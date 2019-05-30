@@ -2,6 +2,11 @@ import AST
 from collections import defaultdict
 from itertools import count
 from string import capwords
+class Scopes:
+    def __init__(self):
+        pass # do the scope thingy
+
+
 class Transpiler:
     """Parses an AST into a string of Workshop code."""
     def __init__(self, tree):
@@ -93,10 +98,7 @@ class Transpiler:
             self.visit(line)
 
     def visitAssign(self, node):
-        name = node.left.name
         value = node.right
-        scope = 'player' if type(node.left) == AST.PlayerVar else 'global'
-        player = node.left.player if type(node.left) == AST.PlayerVar else 'Event Player'
         if node.op == '+=':
             value = AST.BinaryOp(left=node.left, op='+', right=value)
         if node.op == '-=':
@@ -109,7 +111,21 @@ class Transpiler:
             value = AST.BinaryOp(left=node.left, op='^', right=value)
         if node.op == '%=':
             value = AST.BinaryOp(left=node.left, op='%', right=value)
-        self.assign(name=name, value=value, scope=scope, player=player)
+        if type(node.left) == AST.Item:
+            item = node.left
+            if type(item.array) in (AST.Name, AST.GlobalVar):
+                self.code += f'Set Global Variable At Index('
+            elif type(item.array) == AST.PlayerVar:
+                self.code += f'Set Player Variable At Index({item.array.player}, '
+            self.visit(item.array)
+            self.code += f', {item.index}, '
+            self.visit(value)
+            self.code += ')'
+        else:
+            name = node.left.name
+            scope = 'player' if type(node.left) == AST.PlayerVar else 'global'
+            player = node.left.player if type(node.left) == AST.PlayerVar else 'Event Player'
+            self.assign(name=name, value=value, scope=scope, player=player)
 
     def visitCompare(self, node):
         self.visit(node.left)
@@ -172,6 +188,24 @@ class Transpiler:
         self.visit(node.right)
         self.code += ')'
 
+    def visitArray(self, node):
+        if not node.elements:
+            self.code += 'Empty Array'
+        else:
+            num_elems = len(node.elements)
+            self.code += 'Append To Array(' * num_elems
+            self.code += 'Empty Array, '
+            for elem in node.elements:
+                self.visit(elem)
+                self.code += '), '
+            self.code = self.code.rstrip(', ')
+
+    def visitItem(self, node):
+        self.code += 'Value In Array('
+        self.visit(node.array)
+        self.code += ', '
+        self.visit(node.index)
+        self.code += ')'
 
     def visitTime(self, node):
         time = node.value

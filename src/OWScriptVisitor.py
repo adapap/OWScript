@@ -154,6 +154,11 @@ class OWScriptVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by OWScriptParser#item.
+    def visitItem(self, ctx:OWScriptParser.ItemContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by OWScriptParser#name.
     def visitName(self, ctx:OWScriptParser.NameContext):
         return self.visitChildren(ctx)
@@ -186,6 +191,11 @@ class OWScriptVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by OWScriptParser#vector.
     def visitVector(self, ctx:OWScriptParser.VectorContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by OWScriptParser#array.
+    def visitArray(self, ctx:OWScriptParser.ArrayContext):
         return self.visitChildren(ctx)
 
 

@@ -269,6 +269,15 @@ class OWScriptListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by OWScriptParser#item.
+    def enterItem(self, ctx:OWScriptParser.ItemContext):
+        pass
+
+    # Exit a parse tree produced by OWScriptParser#item.
+    def exitItem(self, ctx:OWScriptParser.ItemContext):
+        pass
+
+
     # Enter a parse tree produced by OWScriptParser#name.
     def enterName(self, ctx:OWScriptParser.NameContext):
         pass
@@ -329,6 +338,15 @@ class OWScriptListener(ParseTreeListener):
 
     # Exit a parse tree produced by OWScriptParser#vector.
     def exitVector(self, ctx:OWScriptParser.VectorContext):
+        pass
+
+
+    # Enter a parse tree produced by OWScriptParser#array.
+    def enterArray(self, ctx:OWScriptParser.ArrayContext):
+        pass
+
+    # Exit a parse tree produced by OWScriptParser#array.
+    def exitArray(self, ctx:OWScriptParser.ArrayContext):
         pass
 
 

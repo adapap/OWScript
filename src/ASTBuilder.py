@@ -87,7 +87,7 @@ class ASTBuilder(OWScriptVisitor):
 
     def visitAssign(self, ctx):
         assign = Assign()
-        assign.left = self.visit(ctx.variable())
+        assign.left = self.visit(ctx.children[0])
         assign.op = ctx.ASSIGN().getText()
         assign.right = self.visit(ctx.expr())
         return assign
@@ -133,6 +133,17 @@ class ASTBuilder(OWScriptVisitor):
             if x:
                 arg_list.lines.append(x)
         return arg_list
+
+    def visitArray(self, ctx):
+        array = Array()
+        if len(ctx.children) == 3:
+            array.elements = self.visit(ctx.children[1]).lines
+        return array
+
+    def visitItem(self, ctx):
+        array = self.visit(ctx.children[0])
+        index = self.visit(ctx.children[2])
+        return Item(array=array, index=index)
 
     def visitName(self, ctx):
         text = ctx.NAME().getText()

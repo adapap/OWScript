@@ -420,7 +420,7 @@ funcdef : '%' NAME funcbody;
 funcbody : (NEWLINE INDENT (ruleset | ruledef | rulebody) DEDENT) | block;
 
 ruleset : ruledef+;
-ruledef : RULE rulename (NEWLINE INDENT rulebody* DEDENT)*;
+ruledef : RULE rulename (NEWLINE INDENT rulebody* DEDENT)+;
 rulename : STRING;
 rulebody : RULEBLOCK ruleblock
          | call NEWLINE;
@@ -433,7 +433,7 @@ line : call
      | expr
      | ANNOTATION line;
 
-assign : variable ASSIGN expr;
+assign : (variable | item) ASSIGN expr;
 expr : compare;
 compare : arith COMPARE arith
         | arith;
@@ -449,8 +449,10 @@ arith : arith '^' arith # Pow
 primary : action
         | value
         | const
+        | item
         | variable
         | vector
+        | array
         | time
         | numeral
         | name
@@ -463,7 +465,8 @@ after_line : '(' arg_list ')'
            | NEWLINE;
 arg_list : primary (',' primary)*;
 
-call : '%' NAME '(' ')';
+call : NAME '(' ')';
+item : variable '[' expr ']';
 
 name : NAME;
 time : numeral ('ms' | 's' | 'min');
@@ -475,6 +478,7 @@ variable : global_var
 global_var : scope=GLOBAL_VAR;
 player_var : scope=PLAYER_VAR ('@' value)?;
 vector : '<' primary ',' primary ',' primary '>';
+array : '[' arg_list? ']';
 
 
 /* Lexer Rules */

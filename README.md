@@ -109,8 +109,18 @@ Wait
 
 Arrays
 ======
-Arrays are created, modified, and accessed as in Python notation.
-*WIP - Currently, only Empty Arrays work by setting a variable equal to*`[]`
+Arrays are created, modified, and accessed as in Python notation. Arrays can be nested inside the global/player variables, which allows for more complex operations on arrays. (No slice support yet)
+
+**Creation**
+```
+empty = []
+costs = [5, 15, 30]
+```
+**Modification**
+```
+costs[1] = 20
+total = costs[0] + costs[1] + costs[2]
+```
 
 Functions
 =========
@@ -124,7 +134,7 @@ Functions allow you to write a block of code once and reuse it many times (param
         All
         All
 Rule "Function Demo"
-    %event_func()
+    event_func()
     Actions
         X = 1
 ```

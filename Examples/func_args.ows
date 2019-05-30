@@ -1,0 +1,5 @@
+%recurse
+    x = [1, 2, 3]
+Rule "test"
+    Actions
+        recurse()

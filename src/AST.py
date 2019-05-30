@@ -104,6 +104,21 @@ class PlayerVar(AST):
     def __repr__(self):
         return f'{self.name}@{self.player}'
 
+class Array(AST):
+    def __init__(self, elements=None):
+        self.elements = elements or []
+
+    def __repr__(self):
+        return f'{self.elements}'
+
+class Item(AST):
+    def __init__(self, array, index):
+        self.array = array
+        self.index = index
+
+    def __repr__(self):
+        return f'{self.array}[{self.index}]'
+
 class Function(AST):
     def __init__(self, name, body):
         self.name = name

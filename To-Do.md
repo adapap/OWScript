@@ -13,6 +13,11 @@
 [Conditionals]
 - If / Elif / Else
 
+[Attributes]
+- Common properties should be accessed using dot notation
+- <Vector>.X -> X Component Of(Vector)
+- <Player>.jumping, <Player>.crouching, <Player>.ability1?
+
 [Tests]
 - Make more tests, document them
 - Create gamemodes using the language to prove its effectiveness

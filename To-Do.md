@@ -1,7 +1,6 @@
 [Functions]
 - Functions create scope-contained variables
 - These are names that must resolve to parameters
-- Functions grammar is `function : function funcbody | funcbody -> funcbody : rule | ruleblock | block | value | empty`
 
 [Array Manipulation]
 - Assign at index `myvar[0] = 1`

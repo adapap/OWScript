@@ -13,7 +13,7 @@ def main(argv):
     ast = ASTBuilder().run(parser.script())
     # print(ast)
     output = Transpiler(ast).run()
-    print(output)
+    sys.stdout.write(output)
  
 if __name__ == '__main__':
     main(sys.argv)

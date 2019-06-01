@@ -27,7 +27,7 @@ class Rule(AST):
         return f'Rule {self.rulename}\n\t{ruleblocks}\n'
 
 class Ruleblock(AST):
-    def __init__(self, type_, block=None):
+    def __init__(self, type_=None, block=None):
         self.type = type_
         self.block = block
 
@@ -163,9 +163,12 @@ class Call(AST):
         return f'%{self.func}({self.args})'
 
 class If(AST):
-    def __init__(self, cond, block):
+    def __init__(self, cond, block, elif_conds, elif_blocks, else_block):
         self.cond = cond
         self.block = block
+        self.elif_conds = elif_conds
+        self.elif_blocks = elif_blocks
+        self.else_block = else_block
 
     def __repr__(self):
-        return f'if {self.cond}: {self.block}'
+        return f'if ... elif ... * {len(self.elif_conds)} else ...'

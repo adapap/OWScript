@@ -1234,6 +1234,7 @@ class OWScriptParser ( Parser ):
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
             self.parser = parser
+            self.else_block = None # BlockContext
 
         def expr(self, i:int=None):
             if i is None:
@@ -1307,7 +1308,7 @@ class OWScriptParser ( Parser ):
                 self.state = 174
                 self.match(OWScriptParser.T__4)
                 self.state = 175
-                self.block()
+                localctx.else_block = self.block()
 
 
         except RecognitionException as re:

@@ -18,7 +18,7 @@ class Transpiler:
         self.player_vars = {}
         self.global_index = count()
         self.player_index = defaultdict(count)
-        self.line_count = 0
+        self.line = 0
         self.functions = {}
 
     @property
@@ -26,48 +26,45 @@ class Transpiler:
         return ' ' * self.indent_size * self.indent_level
 
     def array_modify(self, array, elem, index):
-        self.code += f'Append To Array(Append To Array(Array Slice('
+        code += f'Append To Array(Append To Array(Array Slice('
         if type(array) == str:
-            self.code += array
+            code += array
         else:
-            self.visit(array)
-        self.code += f', 0, '
-        self.visit(index)
-        self.code += '), '
+            code += self.visit(array)
+        code += f', 0, ' + self.visit(index) + '), '
         if type(elem) == AST.ArrayModify:
-            self.code += 'Append To Array(Empty Array, '
-        self.visit(elem)
+            code += 'Append To Array(Empty Array, '
+        code += self.visit(elem)
         if type(elem) == AST.ArrayModify:
-            self.code += ')'
-        self.code += '), Array Slice('
+            code += ')'
+        code += '), Array Slice('
         if type(array) == str:
-            self.code += array
+            code += array
         else:
-            self.visit(array)
-        self.code += f', Add('
-        self.visit(index)
-        self.code += ', 1), Count Of('
+            visit(array)
+        code += f', Add(' + self.visit(index) + ', 1), Count Of('
         if type(array) == str:
-            self.code += array
+            code += array
         else:
-            self.visit(array)
-        self.code += ')))'
+            visit(array)
+        code += ')))'
 
     def assign(self, name, value='0', scope='global', player='Event Player'):
+        code = ''
         if scope == 'global':
             index = self.global_vars.get(name)
             if index is None:
                 index = next(self.global_index)
                 self.global_vars[name] = index
-            self.code += f'Set Global Variable At Index(A, {index}, '
+            code += f'Set Global Variable At Index(A, {index}, '
         elif scope == 'player':
             index = self.player_vars.get((player, name))
             if index is None:
                 index = next(self.player_index[player])
                 self.player_vars[(player, name)] = index
-            self.code += f'Set Player Variable At Index({player}, A, {index}, '
-        self.visit(value)
-        self.code += ')';
+            code += f'Set Player Variable At Index({player}, A, {index}, '
+        code += self.visit(value) + ')'
+        return code
 
     def lookup(self, name, scope='global', player='Event Player'):
         if scope == 'global':
@@ -82,70 +79,103 @@ class Transpiler:
             return index
 
     def visitScript(self, node):
+        code = ''
         for function in node.functions:
             self.visit(function)
         for ruleset in node.rulesets:
-            self.visit(ruleset)
-        self.code = self.code.rstrip('\n')
+            code += self.visit(ruleset)
+        code = code.rstrip('\n')
+        return code
 
     def visitFunction(self, node):
         self.functions[node.name] = node.body
 
     def visitCall(self, node):
+        code = ''
         try:
             body = self.functions[node.func]
-            self.visit(body)
+            code = self.visit(body)
         except KeyError:
-            self.code += f'<Unknown function {node.func}>'
+            code = f'<Unknown function {node.func}>'
+        return code
 
     def visitRuleset(self, node):
+        code = ''
         for rule in node.rules:
-            self.visit(rule)
+            code += self.visit(rule)
+        return code
 
     def visitRule(self, node):
-        self.code += f'rule({node.rulename}) ' + '{\n'
+        code = f'rule({node.rulename}) ' + '{\n'
         self.indent_level += 1
         for ruleblock in node.rulebody:
-            self.visit(ruleblock)
-            self.code += '\n'
-        self.code = self.code.rstrip('\n') + '\n'
+            code += self.visit(ruleblock) + '\n'
+        code = code.rstrip('\n') + '\n'
         self.indent_level -= 1
-        self.code += '}\n\n'
+        code += '}\n\n'
+        return code
 
     def visitRuleblock(self, node):
+        code = ''
         if node.type is not None:
-            self.code += self.tabs + node.type + ' {\n'
+            code += self.tabs + node.type + ' {\n'
             self.indent_level += 1
             for line in node.block.lines:
-                self.code += self.tabs
-                self.visit(line)
-                self.code += ';\n'
-                self.line_count += 1
+                code += self.tabs + self.visit(line) + ';\n'
+                self.line += 1
             self.indent_level -= 1
-            self.code += self.tabs + '}\n'
+            code += self.tabs + '}\n'
         else:
             for line in node.block.lines:
-                self.code += self.tabs
-                self.visit(line)
-                self.code += ';\n'
-                self.line_count += 1
+                code += self.tabs + self.visit(line) + ';\n'
+                self.line += 1
+        return code
 
     def visitBlock(self, node):
+        code = ''
         for line in node.lines:
-            self.visit(line)
+            code += self.visit(line)
+        return code
 
     def visitIf(self, node):
-        self.line_count = 0
-        self.code += 'Skip If(Not('
-        self.visit(node.cond)
-        self.code += '), '
-        code_index = len(self.code)
-        self.visit(node.block)
-        code_block = self.code[code_index:]
-        self.code = self.code[:code_index] + f'{self.line_count});\n'
-        self.code += code_block.rstrip('\n').rstrip(';')
+        start_line = self.line
+        if_cond = self.visit(node.cond)
+        if_block = self.visit(node.block)
+        if_line = self.line - start_line
+        elif_conds = []
+        elif_blocks = []
+        elif_lines = []
+        else_block = None
+        else_line = -1
+        if node.elif_conds:
+            for elif_ in zip(node.elif_conds, node.elif_blocks):
+                cond, block = elif_
+                elif_conds.append(self.visit(cond))
+                elif_blocks.append(self.visit(block))
+                elif_lines.append(self.line - start_line - if_line - sum(elif_lines))
+        if node.else_block:
+            else_block = self.visit(node.else_block)
+            else_line = self.line - start_line - if_line - sum(elif_lines)
+        if else_block or elif_conds:
+            if_line += 1
+            elif_lines = list(map(lambda x: x + 1, elif_lines))
+        code = f'Skip If(Not({if_cond}), {if_line});\n{if_block}'
+        if else_block or elif_conds:
+            num_skips = sum(map(lambda x: x + 1, elif_lines)) + else_line
+            code += f'{self.tabs}Skip({num_skips});\n'
+        for i, elif_ in enumerate(zip(elif_conds, elif_blocks, elif_lines)):
+            cond, block, line = elif_
+            code += f'{self.tabs}Skip If(Not({cond}), {line});\n{block}'
+            if else_block or elif_conds:
+                num_skips = sum(map(lambda x: x + 1, elif_lines[i + 1:])) + else_line
+                if num_skips > 0:
+                    code += f'{self.tabs}Skip({num_skips});\n'
+        if else_block:
+            code += f'{else_block}'
+        return code.rstrip('\n').rstrip(';')
 
     def visitAssign(self, node):
+        code = ''
         value = node.right
         if node.op == '+=':
             value = AST.BinaryOp(left=node.left, op='+', right=value)
@@ -163,126 +193,107 @@ class Transpiler:
             item = node.left
             index = self.lookup(item.array.name)
             if type(item.array) in (AST.Name, AST.GlobalVar):
-                self.code += f'Set Global Variable(A, '
+                code += f'Set Global Variable(A, '
             elif type(item.array) == AST.PlayerVar:
-                self.code += f'Set Player Variable({item.array.player}, A, '
+                code += f'Set Player Variable({item.array.player}, A, '
             inner = AST.ArrayModify(array=item.array, value=value, index=item.index)
             self.array_modify('Global Variable(A)', inner, AST.Numeral(value=str(index)))
-            self.code += ')'
+            code += ')'
         else:
             name = node.left.name
             scope = 'player' if type(node.left) == AST.PlayerVar else 'global'
             player = node.left.player if type(node.left) == AST.PlayerVar else 'Event Player'
-            self.assign(name=name, value=value, scope=scope, player=player)
+            code += self.assign(name=name, value=value, scope=scope, player=player)
+        return code
 
     def visitArrayModify(self, node):
         self.array_modify(node.array, node.value, node.index)
 
     def visitCompare(self, node):
+        code = ''
         if node.op == '==':
-            self.visit(node.left)
-            self.code += f' {node.op} '
-            self.visit(node.right)
+            code += self.visit(node.left) + f' {node.op} ' + self.visit(node.right)
         else:
-            self.code += 'Compare('
-            self.visit(node.left)
-            self.code += ', ' + node.op + ', '
-            self.visit(node.right)
-            self.code += ')'
+            code += 'Compare(' + self.visit(node.left) + f', {node.op}, ' + self.visit(node.right) + ')'
+        return code
 
     def visitOr(self, node):
-        self.code += 'Or('
-        self.visit(node.left)
-        self.code += ', '
-        self.visit(node.right)
-        self.code += ')'
+        return f'Or({self.visit(node.left)}, {self.visit(node.right)})'
 
     def visitAnd(self, node):
-        self.code += 'And('
-        self.visit(node.left)
-        self.code += ', '
-        self.visit(node.right)
-        self.code += ')'
+        return f'And({self.visit(node.left)}, {self.visit(node.right)})'
 
     def visitNot(self, node):
-        self.code += 'Not('
-        self.visit(node.right)
-        self.code += ')'
+        return f'Not({self.visit(node.right)})'
 
     def visitValue(self, node):
-        self.code += node.value
+        code = node.value
         if node.args:
-            self.code += '('
+            code += '('
             for arg in node.args:
                 if type(arg) == AST.Block:
                     for line in arg.lines:
-                        self.visit(line)
-                        self.code += ', '
+                        code += self.visit(line) + ', '
                 else:
-                    self.visit(arg)
-                    self.code += ', '
-            self.code = self.code.rstrip(', ') + ')'
+                    code += self.visit(arg) + ', '
+            code = code.rstrip(', ') + ')'
+        return code
 
     def visitAction(self, node):
-        self.code += node.value
+        code = node.value
         if node.args:
-            self.code += '('
+            code += '('
             for arg in node.args:
                 if type(arg) == AST.Block:
                     for line in arg.lines:
-                        self.visit(line)
-                        self.code += ', '
+                        code += self.visit(line) + ', '
                 else:
-                    self.visit(arg)
-                    self.code += ', '
-            self.code = self.code.rstrip(', ') + ')'
+                    code += self.visit(arg) + ', '
+            code = code.rstrip(', ') + ')'
+        return code
 
     def visitName(self, node):
         if node.value in self.global_vars:
             index = self.lookup(node.value)
-            self.code += f'Value In Array(Global Variable(A), {index})'
+            return f'Value In Array(Global Variable(A), {index})'
         else:
-            self.code += capwords(node.value)
+            return capwords(node.value)
 
     def visitNumeral(self, node):
-        self.code += node.value
+        return node.value
 
     def visitBinaryOp(self, node):
+        code = ''
         if node.op == '+':
-            self.code += 'Add('
+            code = 'Add('
         elif node.op == '-':
-            self.code += 'Subtract('
+            code = 'Subtract('
         elif node.op == '*':
-            self.code += 'Multiply('
+            code = 'Multiply('
         elif node.op == '/':
-            self.code += 'Divide('
+            code = 'Divide('
         elif node.op == '^':
-            self.code += 'Raise To Power('
+            code = 'Raise To Power('
         elif node.op == '%':
-            self.code += 'Modulo('
-        self.visit(node.left)
-        self.code += ', '
-        self.visit(node.right)
-        self.code += ')'
+            code = 'Modulo('
+        code += f'{self.visit(node.left)}, {self.visit(node.right)})'
+        return code
 
     def visitArray(self, node):
+        code = ''
         if not node.elements:
-            self.code += 'Empty Array'
+            code += 'Empty Array'
         else:
             num_elems = len(node.elements)
-            self.code += 'Append To Array(' * num_elems
-            self.code += 'Empty Array, '
+            code += 'Append To Array(' * num_elems
+            code += 'Empty Array, '
             for elem in node.elements:
-                self.visit(elem)
-                self.code += '), '
-            self.code = self.code.rstrip(', ')
+                code += self.visit(elem) + '), '
+            code = code.rstrip(', ')
+        return code
 
     def visitItem(self, node):
-        self.code += 'Value In Array('
-        self.visit(node.array)
-        self.code += ', '
-        self.visit(node.index)
-        self.code += ')'
+        return f'Value In Array({self.visit(node.array)}, {self.visit(node.index)})'
 
     def visitTime(self, node):
         time = node.value
@@ -292,23 +303,24 @@ class Transpiler:
             time = float(time.rstrip('s'))
         elif time.endswith('min'):
             time = float(time.rstrip('min')) * 60
-        self.code += str(round(time, 3))
+        return str(round(time, 3))
 
     def visitPlayerVar(self, node):
         index = self.lookup(name=node.name, scope='player', player=node.player)
-        self.code += f'Value In Array(Player Variable('
+        code = f'Value In Array(Player Variable('
         if type(node.player) != str:
-            self.visit(node.player)
+            code += self.visit(node.player)
         else:
-            self.code += node.player
-        self.code += f', A), {index})'
+            code += node.player
+        code += f', A), {index})'
+        return code
 
     def visitGlobalVar(self, node):
         index = self.lookup(name=node.name)
-        self.code += f'Value In Array(Global Variable(A), {index})'
+        return f'Value In Array(Global Variable(A), {index})'
 
     def run(self):
-        self.visit(self.tree)
+        self.code = self.visit(self.tree)
         #print(self.code)
         return self.code
 

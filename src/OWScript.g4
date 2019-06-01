@@ -431,7 +431,7 @@ line : expr
      | NEWLINE;
 
 assign : (variable item?) ASSIGN expr;
-if_stmt : 'if' expr ':' block ('elif' expr ':' block)* ('else:' block)?;
+if_stmt : 'if' expr ':' block ('elif' expr ':' block)* ('else:' else_block=block)?;
 expr : logic_or;
 logic_or : logic_and ('or' logic_and)*;
 logic_and : logic_not ('and' logic_not)*;

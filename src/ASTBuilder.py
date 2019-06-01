@@ -136,10 +136,23 @@ class ASTBuilder(OWScriptVisitor):
         return self.visit(ctx.arith()[0])
 
     def visitIf_stmt(self, ctx):
-        cond = self.visit(ctx.expr())
-        block = Ruleblock(type_=None, block=self.visit(ctx.block()))
-        # Add elif/else support. Reorder skip ifs to match logic
-        return If(cond=cond, block=block)
+        expr = ctx.expr()
+        block = ctx.block()
+        if_cond = self.visit(expr[0])
+        if_block = Ruleblock(block=self.visit(block[0]))
+        elif_conds = []
+        elif_blocks = []
+        else_block = None
+        if len(expr) > 1:
+            elif_conds = [self.visit(x) for x in expr[1:]]
+            if len(block) > len(expr):
+                elif_blocks = [Ruleblock(block=self.visit(x)) for x in block[1:-1]]
+                else_block = Ruleblock(block=self.visit(block[-1]))
+            else:
+                elif_blocks = [Ruleblock(block=self.visit(x)) for x in block[1:]]
+        elif len(block) > len(expr):
+            else_block = Ruleblock(block=self.visit(block[-1]))
+        return If(cond=if_cond, block=if_block, elif_conds=elif_conds, elif_blocks=elif_blocks, else_block=else_block)
 
     def visitValue(self, ctx):
         value = Value(value=capwords(ctx.VALUE().getText()))

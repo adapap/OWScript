@@ -5,7 +5,7 @@ import sys
 import os
 import importlib
 from antlr4 import *
-
+from OWScriptParser import OWScriptParser
 
 # this is a python version of TestRig
 def beautify_lisp_string(in_string):
@@ -121,7 +121,7 @@ if __name__ == '__main__':
         token_stream.fill()
         if options.token:  # need to show token
             for tok in token_stream.tokens:
-                print(tok)
+                print(f"'{tok.text}', <{OWScriptParser.symbolicNames[tok.type]}>")
         if start_rule == 'tokens':
             return
 

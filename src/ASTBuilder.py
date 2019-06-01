@@ -29,12 +29,12 @@ class ASTBuilder(OWScriptVisitor):
     def visitRulename(self, ctx):
         return ctx.STRING()
 
-    def visitRulebody(self, ctx):
+    def visitRulebodyBlock(self, ctx):
         if ctx.RULEBLOCK():
             ruleblock = Ruleblock(type_=ctx.RULEBLOCK().getText())
             ruleblock.block = self.visit(ctx.ruleblock())
             return ruleblock
-        return self.visit(ctx.call())
+        return self.visit(ctx.RCall())
 
     def visitBlock(self, ctx):
         block = Block()
@@ -45,37 +45,71 @@ class ASTBuilder(OWScriptVisitor):
         return block
 
     def visitAdd(self, ctx):
-        left = self.visit(ctx.children[0])
-        right = self.visit(ctx.children[2])
-        return BinaryOp(left=left, op='+', right=right)
+        if len(ctx.children) > 1:
+            left = self.visit(ctx.children[0])
+            right = self.visit(ctx.children[2])
+            return BinaryOp(left=left, op='+', right=right)
+        return self.visitChildren(ctx)
 
     def visitSub(self, ctx):
-        left = self.visit(ctx.children[0])
-        right = self.visit(ctx.children[2])
-        return BinaryOp(left=left, op='-', right=right)
+        if len(ctx.children) > 1:
+            left = self.visit(ctx.children[0])
+            right = self.visit(ctx.children[2])
+            return BinaryOp(left=left, op='-', right=right)
+        return self.visitChildren(ctx)
 
     def visitMul(self, ctx):
-        left = self.visit(ctx.children[0])
-        right = self.visit(ctx.children[2])
-        return BinaryOp(left=left, op='*', right=right)
+        if len(ctx.children) > 1:
+            left = self.visit(ctx.children[0])
+            right = self.visit(ctx.children[2])
+            return BinaryOp(left=left, op='*', right=right)
+        return self.visitChildren(ctx)
 
     def visitDiv(self, ctx):
-        left = self.visit(ctx.children[0])
-        right = self.visit(ctx.children[2])
-        return BinaryOp(left=left, op='/', right=right)
+        if len(ctx.children) > 1:
+            left = self.visit(ctx.children[0])
+            right = self.visit(ctx.children[2])
+            return BinaryOp(left=left, op='/', right=right)
+        return self.visitChildren(ctx)
 
     def visitPow(self, ctx):
-        left = self.visit(ctx.children[0])
-        right = self.visit(ctx.children[2])
-        return BinaryOp(left=left, op='^', right=right)
+        if len(ctx.children) > 1:
+            left = self.visit(ctx.children[0])
+            right = self.visit(ctx.children[2])
+            return BinaryOp(left=left, op='^', right=right)
+        return self.visitChildren(ctx)
 
     def visitMod(self, ctx):
-        left = self.visit(ctx.children[0])
-        right = self.visit(ctx.children[2])
-        return BinaryOp(left=left, op='%', right=right)
+        if len(ctx.children) > 1:
+            left = self.visit(ctx.children[0])
+            right = self.visit(ctx.children[2])
+            return BinaryOp(left=left, op='%', right=right)
+        return self.visitChildren(ctx)
 
-    def visitParens(self, ctx):
-        return self.visit(ctx.children[1])
+
+    def visitPrimary(self, ctx):
+        if len(ctx.children) == 3:
+            return self.visit(ctx.children[1])
+        return self.visit(ctx.children[0])
+
+    def visitLogic_or(self, ctx):
+        if len(ctx.children) == 3:
+            left = self.visit(ctx.children[0])
+            right = self.visit(ctx.children[2])
+            return Or(left=left, op='or', right=right)
+        return self.visitChildren(ctx)
+
+    def visitLogic_and(self, ctx):
+        if len(ctx.children) == 3:
+            left = self.visit(ctx.children[0])
+            right = self.visit(ctx.children[2])
+            return And(left=left, op='and', right=right)
+        return self.visitChildren(ctx)
+
+    def visitLogic_not(self, ctx):
+        if len(ctx.children) == 2:
+            return Not(op='not', right=self.visit(ctx.children[1]))
+        return self.visit(ctx.compare())
 
     def visitFuncdef(self, ctx):
         funcname = ctx.NAME().getText()
@@ -93,13 +127,19 @@ class ASTBuilder(OWScriptVisitor):
         return assign
 
     def visitCompare(self, ctx):
-        if len(ctx.arith()) == 2:
+        if len(ctx.children) == 3:
             compare = Compare()
-            compare.left = self.visit(ctx.arith()[0])
-            compare.op = ctx.COMPARE().getText()
-            compare.right = self.visit(ctx.arith()[1])
+            compare.left = self.visit(ctx.children[0])
+            compare.op = ctx.children[1].getText()
+            compare.right = self.visit(ctx.children[2])
             return compare
         return self.visit(ctx.arith()[0])
+
+    def visitIf_stmt(self, ctx):
+        cond = self.visit(ctx.expr())
+        block = Ruleblock(type_=None, block=self.visit(ctx.block()))
+        # Add elif/else support. Reorder skip ifs to match logic
+        return If(cond=cond, block=block)
 
     def visitValue(self, ctx):
         value = Value(value=capwords(ctx.VALUE().getText()))
@@ -173,17 +213,29 @@ class ASTBuilder(OWScriptVisitor):
         return vector
 
     def visitGlobal_var(self, ctx):
-        gvar = GlobalVar(name=ctx.scope.text)
+        gvar = GlobalVar(name=ctx.varname.text)
         return gvar
 
     def visitPlayer_var(self, ctx):
-        pvar = PlayerVar(name=ctx.scope.text)
+        pvar = PlayerVar(name=ctx.varname.text)
         if len(ctx.children) == 3:
             pvar.player = self.visit(ctx.children[-1])
         return pvar
 
+    def visitRCall(self, ctx):
+        func = self.visit(ctx.children[0])
+        args = self.visit(ctx.children[1])
+        return Call(func=func.name, args=args)
+
+    def visitPCall(self, ctx):
+        func = self.visit(ctx.children[0])
+        args = self.visit(ctx.children[1])
+        return Call(func=func.name, args=args)
+
     def visitCall(self, ctx):
-        return Call(func=ctx.NAME().getText())
+        if ctx.arg_list():
+            return self.visit(ctx.arg_list())
+        return None
 
     def run(self, parse_tree):
         return self.visit(parse_tree)

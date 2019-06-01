@@ -1,0 +1,6 @@
+Rule "Boolean Operators"
+    Event
+        On Global
+
+    Actions
+        x = 1 and 2 or 3 and not 4

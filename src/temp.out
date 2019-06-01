@@ -1,0 +1,9 @@
+rule("Boolean Operators") {
+   Event {
+      Ongoing - Global;
+   }
+
+   Actions {
+      Set Global Variable At Index(A, 0, Or(And(1, 2), And(3, Not(4))));
+   }
+}

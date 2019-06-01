@@ -1,4 +1,7 @@
 Rule "Advanced Arrays"
+    Event
+        On Global
+
     Actions
         x = []
         y = [1, 2, 3]

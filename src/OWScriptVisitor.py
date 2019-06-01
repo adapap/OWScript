@@ -44,8 +44,13 @@ class OWScriptVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by OWScriptParser#rulebody.
-    def visitRulebody(self, ctx:OWScriptParser.RulebodyContext):
+    # Visit a parse tree produced by OWScriptParser#RulebodyBlock.
+    def visitRulebodyBlock(self, ctx:OWScriptParser.RulebodyBlockContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by OWScriptParser#RCall.
+    def visitRCall(self, ctx:OWScriptParser.RCallContext):
         return self.visitChildren(ctx)
 
 
@@ -69,13 +74,43 @@ class OWScriptVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by OWScriptParser#if_stmt.
+    def visitIf_stmt(self, ctx:OWScriptParser.If_stmtContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by OWScriptParser#expr.
     def visitExpr(self, ctx:OWScriptParser.ExprContext):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by OWScriptParser#logic_or.
+    def visitLogic_or(self, ctx:OWScriptParser.Logic_orContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by OWScriptParser#logic_and.
+    def visitLogic_and(self, ctx:OWScriptParser.Logic_andContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by OWScriptParser#logic_not.
+    def visitLogic_not(self, ctx:OWScriptParser.Logic_notContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by OWScriptParser#compare.
     def visitCompare(self, ctx:OWScriptParser.CompareContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by OWScriptParser#Pow.
+    def visitPow(self, ctx:OWScriptParser.PowContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by OWScriptParser#Mul.
+    def visitMul(self, ctx:OWScriptParser.MulContext):
         return self.visitChildren(ctx)
 
 
@@ -94,28 +129,28 @@ class OWScriptVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by OWScriptParser#ArithPrimary.
-    def visitArithPrimary(self, ctx:OWScriptParser.ArithPrimaryContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by OWScriptParser#Mod.
     def visitMod(self, ctx:OWScriptParser.ModContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by OWScriptParser#Mul.
-    def visitMul(self, ctx:OWScriptParser.MulContext):
+    # Visit a parse tree produced by OWScriptParser#ArithPrimary.
+    def visitArithPrimary(self, ctx:OWScriptParser.ArithPrimaryContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by OWScriptParser#Parens.
-    def visitParens(self, ctx:OWScriptParser.ParensContext):
+    # Visit a parse tree produced by OWScriptParser#PItem.
+    def visitPItem(self, ctx:OWScriptParser.PItemContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by OWScriptParser#Pow.
-    def visitPow(self, ctx:OWScriptParser.PowContext):
+    # Visit a parse tree produced by OWScriptParser#PCall.
+    def visitPCall(self, ctx:OWScriptParser.PCallContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by OWScriptParser#PrimaryNone.
+    def visitPrimaryNone(self, ctx:OWScriptParser.PrimaryNoneContext):
         return self.visitChildren(ctx)
 
 
@@ -149,13 +184,13 @@ class OWScriptVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by OWScriptParser#call.
-    def visitCall(self, ctx:OWScriptParser.CallContext):
+    # Visit a parse tree produced by OWScriptParser#item.
+    def visitItem(self, ctx:OWScriptParser.ItemContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by OWScriptParser#item.
-    def visitItem(self, ctx:OWScriptParser.ItemContext):
+    # Visit a parse tree produced by OWScriptParser#call.
+    def visitCall(self, ctx:OWScriptParser.CallContext):
         return self.visitChildren(ctx)
 
 

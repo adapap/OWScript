@@ -18,12 +18,40 @@ class Transpiler:
         self.player_vars = {}
         self.global_index = count()
         self.player_index = defaultdict(count)
-        self.inline = 0
+        self.line_count = 0
         self.functions = {}
 
     @property
     def tabs(self):
         return ' ' * self.indent_size * self.indent_level
+
+    def array_modify(self, array, elem, index):
+        self.code += f'Append To Array(Append To Array(Array Slice('
+        if type(array) == str:
+            self.code += array
+        else:
+            self.visit(array)
+        self.code += f', 0, '
+        self.visit(index)
+        self.code += '), '
+        if type(elem) == AST.ArrayModify:
+            self.code += 'Append To Array(Empty Array, '
+        self.visit(elem)
+        if type(elem) == AST.ArrayModify:
+            self.code += ')'
+        self.code += '), Array Slice('
+        if type(array) == str:
+            self.code += array
+        else:
+            self.visit(array)
+        self.code += f', Add('
+        self.visit(index)
+        self.code += ', 1), Count Of('
+        if type(array) == str:
+            self.code += array
+        else:
+            self.visit(array)
+        self.code += ')))'
 
     def assign(self, name, value='0', scope='global', player='Event Player'):
         if scope == 'global':
@@ -58,6 +86,7 @@ class Transpiler:
             self.visit(function)
         for ruleset in node.rulesets:
             self.visit(ruleset)
+        self.code = self.code.rstrip('\n')
 
     def visitFunction(self, node):
         self.functions[node.name] = node.body
@@ -81,21 +110,40 @@ class Transpiler:
             self.code += '\n'
         self.code = self.code.rstrip('\n') + '\n'
         self.indent_level -= 1
-        self.code += '}\n'
+        self.code += '}\n\n'
 
     def visitRuleblock(self, node):
-        self.code += self.tabs + node.type + ' {\n'
-        self.indent_level += 1
-        for line in node.block.lines:
-            self.code += self.tabs
-            self.visit(line)
-            self.code += ';\n'
-        self.indent_level -= 1
-        self.code += self.tabs + '}\n'
+        if node.type is not None:
+            self.code += self.tabs + node.type + ' {\n'
+            self.indent_level += 1
+            for line in node.block.lines:
+                self.code += self.tabs
+                self.visit(line)
+                self.code += ';\n'
+                self.line_count += 1
+            self.indent_level -= 1
+            self.code += self.tabs + '}\n'
+        else:
+            for line in node.block.lines:
+                self.code += self.tabs
+                self.visit(line)
+                self.code += ';\n'
+                self.line_count += 1
 
     def visitBlock(self, node):
         for line in node.lines:
             self.visit(line)
+
+    def visitIf(self, node):
+        self.line_count = 0
+        self.code += 'Skip If(Not('
+        self.visit(node.cond)
+        self.code += '), '
+        code_index = len(self.code)
+        self.visit(node.block)
+        code_block = self.code[code_index:]
+        self.code = self.code[:code_index] + f'{self.line_count});\n'
+        self.code += code_block.rstrip('\n').rstrip(';')
 
     def visitAssign(self, node):
         value = node.right
@@ -113,13 +161,13 @@ class Transpiler:
             value = AST.BinaryOp(left=node.left, op='%', right=value)
         if type(node.left) == AST.Item:
             item = node.left
+            index = self.lookup(item.array.name)
             if type(item.array) in (AST.Name, AST.GlobalVar):
-                self.code += f'Set Global Variable At Index('
+                self.code += f'Set Global Variable(A, '
             elif type(item.array) == AST.PlayerVar:
-                self.code += f'Set Player Variable At Index({item.array.player}, '
-            self.visit(item.array)
-            self.code += f', {item.index}, '
-            self.visit(value)
+                self.code += f'Set Player Variable({item.array.player}, A, '
+            inner = AST.ArrayModify(array=item.array, value=value, index=item.index)
+            self.array_modify('Global Variable(A)', inner, AST.Numeral(value=str(index)))
             self.code += ')'
         else:
             name = node.left.name
@@ -127,10 +175,39 @@ class Transpiler:
             player = node.left.player if type(node.left) == AST.PlayerVar else 'Event Player'
             self.assign(name=name, value=value, scope=scope, player=player)
 
+    def visitArrayModify(self, node):
+        self.array_modify(node.array, node.value, node.index)
+
     def visitCompare(self, node):
+        if node.op == '==':
+            self.visit(node.left)
+            self.code += f' {node.op} '
+            self.visit(node.right)
+        else:
+            self.code += 'Compare('
+            self.visit(node.left)
+            self.code += ', ' + node.op + ', '
+            self.visit(node.right)
+            self.code += ')'
+
+    def visitOr(self, node):
+        self.code += 'Or('
         self.visit(node.left)
-        self.code += f' {node.op} '
+        self.code += ', '
         self.visit(node.right)
+        self.code += ')'
+
+    def visitAnd(self, node):
+        self.code += 'And('
+        self.visit(node.left)
+        self.code += ', '
+        self.visit(node.right)
+        self.code += ')'
+
+    def visitNot(self, node):
+        self.code += 'Not('
+        self.visit(node.right)
+        self.code += ')'
 
     def visitValue(self, node):
         self.code += node.value

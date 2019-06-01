@@ -1,7 +1,7 @@
 grammar OWScript;
 
 /* Parser Rules */
-tokens { INDENT, DEDENT, RULE, RULEBLOCK, ACTION, VALUE, CONST, GLOBAL_VAR, PLAYER_VAR }
+tokens { INDENT, DEDENT, ACTION, VALUE, CONST, GLOBAL_VAR, PLAYER_VAR }
 
 @lexer::members {
     # Workshop Ruleset
@@ -130,8 +130,6 @@ tokens { INDENT, DEDENT, RULE, RULEBLOCK, ACTION, VALUE, CONST, GLOBAL_VAR, PLAY
         ('TELEPORT', 'ACTION'),
         ('UNPAUSE MATCH TIME', 'ACTION'),
         ('WAIT', 'ACTION'),
-        ('ACTIONS', 'ACTIONS'),
-        ('CONDITIONS', 'CONDITIONS'),
         ('ALL HEROES', 'CONST'),
         ('ATTACKER', 'CONST'),
         ('BACKWARD', 'CONST'),
@@ -159,7 +157,6 @@ tokens { INDENT, DEDENT, RULE, RULEBLOCK, ACTION, VALUE, CONST, GLOBAL_VAR, PLAY
         ('TRUE', 'CONST'),
         ('UP', 'CONST'),
         ('VICTIM', 'CONST'),
-        ('EVENT', 'EVENT'),
         ('ONGOING - EACH PLAYER', 'NAME'),
         ('ONGOING - GLOBAL', 'NAME'),
         ('PLAYER DEALT DAMAGE', 'NAME'),
@@ -176,7 +173,6 @@ tokens { INDENT, DEDENT, RULE, RULEBLOCK, ACTION, VALUE, CONST, GLOBAL_VAR, PLAY
         ('ALL PLAYERS ON OBJECTIVE', 'VALUE'),
         ('ALLOWED HEROES', 'VALUE'),
         ('ALTITUDE OF', 'VALUE'),
-        ('AND', 'VALUE'),
         ('ANGLE DIFFERENCE', 'VALUE'),
         ('APPEND TO ARRAY', 'VALUE'),
         ('ARRAY SLICE', 'VALUE'),
@@ -259,7 +255,6 @@ tokens { INDENT, DEDENT, RULE, RULEBLOCK, ACTION, VALUE, CONST, GLOBAL_VAR, PLAY
         ('MULTIPLY', 'VALUE'),
         ('NEAREST WALKABLE POSITION', 'VALUE'),
         ('NORMALIZE', 'VALUE'),
-        ('NOT', 'VALUE'),
         ('NUMBER', 'VALUE'),
         ('NUMBER OF DEAD PLAYERS', 'VALUE'),
         ('NUMBER OF DEATHS', 'VALUE'),
@@ -272,7 +267,6 @@ tokens { INDENT, DEDENT, RULE, RULEBLOCK, ACTION, VALUE, CONST, GLOBAL_VAR, PLAY
         ('OBJECTIVE INDEX', 'VALUE'),
         ('OBJECTIVE POSITION', 'VALUE'),
         ('OPPOSITE TEAM OF', 'VALUE'),
-        ('OR', 'VALUE'),
         ('PAYLOAD PROGRESS PERCENTAGE', 'VALUE'),
         ('PLAYER CARRYING FLAG', 'VALUE'),
         ('PLAYER CLOSEST TO RETICLE', 'VALUE'),
@@ -333,6 +327,8 @@ tokens { INDENT, DEDENT, RULE, RULEBLOCK, ACTION, VALUE, CONST, GLOBAL_VAR, PLAY
         ('SIN', 'SINE FROM DEGREES'),
         ('SINR', 'SINE FROM RADIANS')
     ])
+    self.keywords = ['if', 'elif', 'else', 'pVar', 'gVar']
+
     # A queue where extra tokens are pushed on (see the NEWLINE lexer rule).
     self.tokens = []
 
@@ -414,7 +410,7 @@ def atStartOfInput(self):
 Parser Grammar
 */
 script : (NEWLINE | stmt)* EOF;
-stmt : (funcdef | call | ruleset);
+stmt : (funcdef | ruleset);
 
 funcdef : '%' NAME funcbody;
 funcbody : (NEWLINE INDENT (ruleset | ruledef | rulebody) DEDENT) | block;
@@ -422,41 +418,46 @@ funcbody : (NEWLINE INDENT (ruleset | ruledef | rulebody) DEDENT) | block;
 ruleset : ruledef+;
 ruledef : RULE rulename (NEWLINE INDENT rulebody* DEDENT)+;
 rulename : STRING;
-rulebody : RULEBLOCK ruleblock
-         | call NEWLINE;
+rulebody : RULEBLOCK ruleblock #RulebodyBlock
+         | primary call NEWLINE #RCall;
 
 ruleblock : block;
 block : NEWLINE INDENT line+ DEDENT
       | line;
-line : call
+line : expr
      | assign
-     | expr
-     | ANNOTATION line;
+     | if_stmt
+     | ANNOTATION line
+     | NEWLINE;
 
-assign : (variable | item) ASSIGN expr;
-expr : compare;
-compare : arith COMPARE arith
-        | arith;
-arith : arith '^' arith # Pow
-      | arith '*' arith # Mul
-      | arith '/' arith # Div
-      | arith '+' arith # Add
-      | arith '-' arith # Sub
-      | arith '%' arith # Mod
-      | '(' arith ')' # Parens
-      | primary # ArithPrimary;
+assign : (variable item?) ASSIGN expr;
+if_stmt : 'if' expr ':' block ('elif' expr ':' block)* ('else:' block)?;
+expr : logic_or;
+logic_or : logic_and ('or' logic_and)*;
+logic_and : logic_not ('and' logic_not)*;
+logic_not : ('not' logic_not) | compare;
+compare : arith (('<'|'>'|'=='|'>='|'<='|'!=') arith)*;
+arith : primary_expr ('^' arith)* # Pow
+      | primary_expr ('*' arith)* # Mul
+      | primary_expr ('/' arith)* # Div
+      | primary_expr ('+' arith)* # Add
+      | primary_expr ('-' arith)* # Sub
+      | primary_expr ('%' arith)* # Mod
+      | primary_expr #ArithPrimary;
 
+primary_expr : primary_expr item #PItem
+             | primary_expr call #PCall
+             | primary #PrimaryNone;
 primary : action
         | value
         | const
-        | item
         | variable
         | vector
         | array
         | time
         | numeral
         | name
-        | NEWLINE;
+        | '(' expr ')';
 action : ACTION after_line;
 value : VALUE after_line;
 const : CONST;
@@ -465,8 +466,8 @@ after_line : '(' arg_list ')'
            | NEWLINE;
 arg_list : primary (',' primary)*;
 
-call : NAME '(' ')';
-item : variable '[' expr ']';
+item : '[' expr ']';
+call : '(' arg_list? ')';
 
 name : NAME;
 time : numeral ('ms' | 's' | 'min');
@@ -475,40 +476,28 @@ numeral : num_const=FLOAT
 variable : global_var
          | player_var
          | name;
-global_var : scope=GLOBAL_VAR;
-player_var : scope=PLAYER_VAR ('@' value)?;
+global_var : 'gVar' varname=NAME;
+player_var : 'pVar' varname=NAME ('@' primary)?;
 vector : '<' primary ',' primary ',' primary '>';
 array : '[' arg_list? ']';
 
 
 /* Lexer Rules */
-COMPARE : ('=='|'<='|'>='|'!='|'>'|'<');
 ASSIGN : ('='|'+='|'-='|'*='|'/='|'^='|'%=');
 STRING : '"' ~[\\\r\n\f"]* '"';
 INTEGER : [0-9]+;
 FLOAT : [0-9]+'.'[0-9]+;
 ANNOTATION : [_a-zA-Z][_a-zA-Z0-9]* ':';
-NAME : [_a-zA-Z][_a-zA-Z0-9\- .]* {
-    from OWScriptParser import OWScriptParser
-    self.text = self.text.strip()
-    if self.text.startswith('gVar'):
-        self.type = OWScriptParser.GLOBAL_VAR
-        self.text = self.text.lstrip('gVar').lstrip()
-    elif self.text.startswith('pVar'):
-        self.type = OWScriptParser.PLAYER_VAR
-        self.text = self.text.lstrip('pVar').lstrip()
-    else:
-        text = self.text.upper()
-        if text == 'RULE':
-            self.type = OWScriptParser.RULE
-        elif text in ('EVENT', 'CONDITIONS', 'ACTIONS'):
-            self.type = OWScriptParser.RULEBLOCK
-        elif text in self.aliases or text in self.workshop_rules:
-            text = self.aliases.get(text, text)
-            attr = self.workshop_rules.get(text)
-            self.type = getattr(OWScriptParser, attr)
-            self.text = text
-    };
+RULE : [a-zA-Z]+ {self.text.upper() == 'RULE'}?;
+RULEBLOCK : [a-zA-Z]+ {self.text.upper() in ['EVENT', 'ACTIONS', 'CONDITIONS']}?;
+NAME : [_a-zA-Z0-9\- ]*[a-zA-Z0-9] {self.text.split()[0] not in self.keywords}?
+{from OWScriptParser import OWScriptParser
+if self.text.strip().upper() in self.aliases or self.text.strip().upper() in self.workshop_rules:
+    text = self.aliases.get(self.text.strip().upper(), self.text.strip().upper())
+    attr = self.workshop_rules.get(text)
+    self.type = getattr(OWScriptParser, attr)
+    self.text = text}
+    | [_a-zA-Z0-9][_a-zA-Z0-9]*;
 NEWLINE : ( {self.atStartOfInput()}? SPACES
         | ( '\r'? '\n' | '\r' | '\f' ) SPACES?
         )

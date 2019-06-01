@@ -56,6 +56,27 @@ class Assign(BinaryOp):
 class Compare(BinaryOp):
     pass
 
+class Or(BinaryOp):
+    pass
+
+class And(BinaryOp):
+    pass
+
+class UnaryOp(AST):
+    def __init__(self, op=None, right=None):
+        self.op = op
+        self.right = right
+
+    def __repr__(self):
+        return f'{self.op}{self.right}'
+
+class Negate(UnaryOp):
+    pass
+
+class Not(UnaryOp):
+    def __repr__(self):
+        return f'{self.op} {self.right}'
+
 class Type(AST):
     def __init__(self, value, args=None):
         self.value = value
@@ -111,6 +132,12 @@ class Array(AST):
     def __repr__(self):
         return f'{self.elements}'
 
+class ArrayModify(AST):
+    def __init__(self, array, value, index):
+        self.array = array
+        self.value = value
+        self.index = index
+
 class Item(AST):
     def __init__(self, array, index):
         self.array = array
@@ -128,8 +155,17 @@ class Function(AST):
         return f'%{self.name}'
 
 class Call(AST):
-    def __init__(self, func):
+    def __init__(self, func, args=None):
         self.func = func
+        self.args = args
 
     def __repr__(self):
-        return f'%{self.func}()'
+        return f'%{self.func}({self.args})'
+
+class If(AST):
+    def __init__(self, cond, block):
+        self.cond = cond
+        self.block = block
+
+    def __repr__(self):
+        return f'if {self.cond}: {self.block}'

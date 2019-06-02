@@ -1,7 +1,7 @@
 grammar OWScript;
 
 /* Parser Rules */
-tokens { INDENT, DEDENT, ACTION, VALUE, CONST, GLOBAL_VAR, PLAYER_VAR }
+tokens { INDENT, DEDENT, ACTION, COMPARE, VALUE, CONST, GLOBAL_VAR, PLAYER_VAR }
 
 @lexer::members {
     # Workshop Ruleset
@@ -476,7 +476,7 @@ expr : logic_or;
 logic_or : logic_and ('or' logic_and)*;
 logic_and : logic_not ('and' logic_not)*;
 logic_not : ('not' logic_not) | compare;
-compare : arith (('<'|'>'|'=='|'>='|'<='|'!=') arith)*;
+compare : arith (('<'|'>'|'=='|'>='|'<='|'!='|COMPARE) arith)*;
 arith : primary_expr ('^' arith)* # Pow
       | primary_expr ('*' arith)* # Mul
       | primary_expr ('/' arith)* # Div
@@ -531,7 +531,7 @@ INTEGER : [0-9]+;
 ANNOTATION : [_a-zA-Z][_a-zA-Z0-9]* ':';
 RULE : [a-zA-Z]+ {self.text.upper() == 'RULE'}?;
 RULEBLOCK : [a-zA-Z]+ {self.text.upper() in ['EVENT', 'ACTIONS', 'CONDITIONS']}?;
-NAME : [_a-zA-Z0-9\- ]*[a-zA-Z0-9] {self.text.split()[0] not in self.keywords}?
+NAME : [_a-zA-Z\- ]*[a-zA-Z0-9] {self.text.split()[0] not in self.keywords}?
 {from OWScriptParser import OWScriptParser
 self.text = self.text.strip()
 if self.text.upper() in self.aliases or self.text.upper() in self.workshop_rules:
@@ -539,6 +539,8 @@ if self.text.upper() in self.aliases or self.text.upper() in self.workshop_rules
     attr = self.workshop_rules.get(text, 'NAME')
     self.type = getattr(OWScriptParser, attr)
     self.text = text
+elif self.text in ['in', 'not in']:
+    self.type = OWScriptParser.COMPARE
 elif self.text.isnumeric():
     if '.' in self.text:
         self.type = OWScriptParser.FLOAT

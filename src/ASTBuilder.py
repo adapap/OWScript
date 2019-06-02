@@ -195,7 +195,7 @@ class ASTBuilder(OWScriptVisitor):
     def visitArray(self, ctx):
         array = Array()
         if len(ctx.children) == 3:
-            array.elements = self.visit(ctx.children[1]).lines
+            array.elements = self.visit(ctx.children[1])
         return array
 
     def visitItem(self, ctx):

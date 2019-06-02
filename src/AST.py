@@ -131,6 +131,14 @@ class Array(AST):
     def __repr__(self):
         return f'{self.elements}'
 
+class Contains(AST):
+    def __init__(self, value, array):
+        self.value = value
+        self.array = array
+
+    def __repr__(self):
+        return f'{self.value} in {self.array}'
+
 class ArrayModify(AST):
     def __init__(self, array, value, index):
         self.array = array

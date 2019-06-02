@@ -223,9 +223,13 @@ class Transpiler:
     def visitCompare(self, node):
         code = ''
         if node.op == '==':
-            code += self.visit(node.left) + f' {node.op} ' + self.visit(node.right)
+            code += f'{self.visit(node.left)} {node.op} {self.visit(node.right)}'
+        elif node.op == 'in':
+            code += f'Array Contains({self.visit(node.left)}, {self.visit(node.right)})'
+        elif node.op == 'not in':
+            code += f'Not(Array Contains({self.visit(node.left)}, {self.visit(node.right)}))'
         else:
-            code += 'Compare(' + self.visit(node.left) + f', {node.op}, ' + self.visit(node.right) + ')'
+            code += f'Compare({self.visit(node.left)}, {node.op}, {self.visit(node.right)})'
         return code
 
     def visitOr(self, node):

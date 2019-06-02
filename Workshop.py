@@ -26,6 +26,10 @@ if __name__ == '__main__':
     reserved_list.extend([(x, 'VALUE') if values.get(x).get('args') else (x, 'CONST') for x in values])
     reserved_list.extend([(x, 'NAME') for x in types.get('EVENT').get('values')])
     reserved_list.extend([(x, 'VALUE') for x in types.get('NUMBER').get('values')])
+    reserved_list.extend([(x, 'CONST') for x in types.get('EFFECT REEVALUATION').get('values')])
+    reserved_list.extend([(x, 'CONST') for x in types.get('LOS CHECK').get('values')])
+    reserved_list.extend([(x, 'CONST') for x in types.get('COLOR').get('values')])
+    reserved_list.extend([(x, 'CONST') for x in types.get('CREATE EFFECT').get('values')])
     reserved = dict(reserved_list)
     aliases = {
         'ALL TRUE': 'IS TRUE FOR ALL',

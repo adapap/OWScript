@@ -2,12 +2,11 @@ class AST:
     pass
 
 class Script(AST):
-    def __init__(self, functions=None, rulesets=None):
-        self.functions = functions or []
-        self.rulesets = rulesets or []
+    def __init__(self, statements=None):
+        self.statements = statements or []
 
     def __repr__(self):
-        return f'Functions: {self.functions}\nRulesets: {self.rulesets}'
+        return f'{self.statements}'
 
 class Ruleset(AST):
     def __init__(self, rules=None):
@@ -147,12 +146,13 @@ class Item(AST):
         return f'{self.array}[{self.index}]'
 
 class Function(AST):
-    def __init__(self, name, body):
+    def __init__(self, name, params=None, body=None):
         self.name = name
+        self.params = params or []
         self.body = body
 
     def __repr__(self):
-        return f'%{self.name}'
+        return f'%{self.name}({self.params})'
 
 class Call(AST):
     def __init__(self, func, args=None):

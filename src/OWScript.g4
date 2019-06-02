@@ -133,14 +133,24 @@ tokens { INDENT, DEDENT, ACTION, VALUE, CONST, GLOBAL_VAR, PLAYER_VAR }
         ('ALL HEROES', 'CONST'),
         ('ATTACKER', 'CONST'),
         ('BACKWARD', 'CONST'),
+        ('BAD AURA', 'CONST'),
+        ('BAD AURA SOUND', 'CONST'),
+        ('BEACON SOUND', 'CONST'),
+        ('BLUE', 'CONST'),
+        ('CLOUD', 'CONST'),
         ('CONTROL MODE SCORING TEAM', 'CONST'),
         ('CURRENT ARRAY ELEMENT', 'CONST'),
+        ('DECAL SOUND', 'CONST'),
         ('DOWN', 'CONST'),
         ('EMPTY ARRAY', 'CONST'),
+        ('ENERGY SOUND', 'CONST'),
         ('EVENT PLAYER', 'CONST'),
         ('EVENT WAS CRITICAL HIT', 'CONST'),
         ('FALSE', 'CONST'),
         ('FORWARD', 'CONST'),
+        ('GOOD AURA', 'CONST'),
+        ('GOOD AURA SOUND', 'CONST'),
+        ('GREEN', 'CONST'),
         ('IS ASSEMBLING HEROES', 'CONST'),
         ('IS BETWEEN ROUNDS', 'CONST'),
         ('IS CONTROL MODE POINT LOCKED', 'CONST'),
@@ -151,12 +161,34 @@ tokens { INDENT, DEDENT, ACTION, VALUE, CONST, GLOBAL_VAR, PLAYER_VAR }
         ('IS WAITING FOR PLAYERS', 'CONST'),
         ('LAST CREATED ENTITY', 'CONST'),
         ('LEFT', 'CONST'),
+        ('LIGHT SHAFT', 'CONST'),
+        ('NONE', 'CONST'),
         ('NULL', 'CONST'),
+        ('OFF', 'CONST'),
+        ('ORB', 'CONST'),
         ('PAYLOAD POSITION', 'CONST'),
+        ('PICK-UP SOUND', 'CONST'),
+        ('POSITION AND RADIUS', 'CONST'),
+        ('PURPLE', 'CONST'),
+        ('RED', 'CONST'),
         ('RIGHT', 'CONST'),
+        ('RING', 'CONST'),
+        ('SMOKE SOUND', 'CONST'),
+        ('SPARKLES', 'CONST'),
+        ('SPARKLES SOUND', 'CONST'),
+        ('SPHERE', 'CONST'),
+        ('SURFACES', 'CONST'),
+        ('SURFACES AND ALL BARRIERS', 'CONST'),
+        ('SURFACES AND ENEMY BARRIERS', 'CONST'),
+        ('TEAM 1', 'CONST'),
+        ('TEAM 2', 'CONST'),
         ('TRUE', 'CONST'),
         ('UP', 'CONST'),
         ('VICTIM', 'CONST'),
+        ('VISIBLE TO', 'CONST'),
+        ('VISIBLE TO, POSITION, AND RADIUS', 'CONST'),
+        ('WHITE', 'CONST'),
+        ('YELLOW', 'CONST'),
         ('ONGOING - EACH PLAYER', 'NAME'),
         ('ONGOING - GLOBAL', 'NAME'),
         ('PLAYER DEALT DAMAGE', 'NAME'),
@@ -173,8 +205,10 @@ tokens { INDENT, DEDENT, ACTION, VALUE, CONST, GLOBAL_VAR, PLAYER_VAR }
         ('ALL PLAYERS ON OBJECTIVE', 'VALUE'),
         ('ALLOWED HEROES', 'VALUE'),
         ('ALTITUDE OF', 'VALUE'),
+        ('AND', 'VALUE'),
         ('ANGLE DIFFERENCE', 'VALUE'),
         ('APPEND TO ARRAY', 'VALUE'),
+        ('ARRAY CONTAINS', 'VALUE'),
         ('ARRAY SLICE', 'VALUE'),
         ('CLOSEST PLAYER TO', 'VALUE'),
         ('COMPARE', 'VALUE'),
@@ -255,6 +289,7 @@ tokens { INDENT, DEDENT, ACTION, VALUE, CONST, GLOBAL_VAR, PLAYER_VAR }
         ('MULTIPLY', 'VALUE'),
         ('NEAREST WALKABLE POSITION', 'VALUE'),
         ('NORMALIZE', 'VALUE'),
+        ('NOT', 'VALUE'),
         ('NUMBER', 'VALUE'),
         ('NUMBER OF DEAD PLAYERS', 'VALUE'),
         ('NUMBER OF DEATHS', 'VALUE'),
@@ -267,6 +302,7 @@ tokens { INDENT, DEDENT, ACTION, VALUE, CONST, GLOBAL_VAR, PLAYER_VAR }
         ('OBJECTIVE INDEX', 'VALUE'),
         ('OBJECTIVE POSITION', 'VALUE'),
         ('OPPOSITE TEAM OF', 'VALUE'),
+        ('OR', 'VALUE'),
         ('PAYLOAD PROGRESS PERCENTAGE', 'VALUE'),
         ('PLAYER CARRYING FLAG', 'VALUE'),
         ('PLAYER CLOSEST TO RETICLE', 'VALUE'),
@@ -325,8 +361,12 @@ tokens { INDENT, DEDENT, ACTION, VALUE, CONST, GLOBAL_VAR, PLAYER_VAR }
         ('PLAYERS IN RADIUS', 'PLAYERS WITHIN RADIUS'),
         ('ROUND', 'ROUND TO INTEGER'),
         ('SIN', 'SINE FROM DEGREES'),
-        ('SINR', 'SINE FROM RADIANS')
+        ('SINR', 'SINE FROM RADIANS'),
+        ('VISIBLE TO POSITION AND RADIUS', 'VISIBLE TO, POSITION, AND RADIUS'),
+
+        ('EVERYONE', 'ALL PLAYERS(TEAM(ALL))')
     ])
+    self.comma_tokens = ['VISIBLE TO, POSITION, AND RADIUS']
     self.keywords = ['if', 'elif', 'else', 'pVar', 'gVar']
 
     # A queue where extra tokens are pushed on (see the NEWLINE lexer rule).
@@ -410,12 +450,12 @@ def atStartOfInput(self):
 Parser Grammar
 */
 script : (NEWLINE | stmt)* EOF;
-stmt : (funcdef | ruleset);
+stmt : (funcdef | ruleset | NAME call);
 
-funcdef : '%' NAME funcbody;
+funcdef : '%' NAME param_list? funcbody;
 funcbody : (NEWLINE INDENT (ruleset | ruledef | rulebody) DEDENT) | block;
 
-ruleset : ruledef+;
+ruleset : (ruledef NEWLINE?)+;
 ruledef : RULE rulename (NEWLINE INDENT rulebody* DEDENT)+;
 rulename : STRING;
 rulebody : RULEBLOCK ruleblock #RulebodyBlock
@@ -464,6 +504,7 @@ const : CONST;
 after_line : '(' arg_list ')'
            | block
            | NEWLINE;
+param_list : '(' NAME (',' NAME)* ')';
 arg_list : primary (',' primary)*;
 
 item : '[' expr ']';
@@ -485,18 +526,25 @@ array : '[' arg_list? ']';
 /* Lexer Rules */
 ASSIGN : ('='|'+='|'-='|'*='|'/='|'^='|'%=');
 STRING : '"' ~[\\\r\n\f"]* '"';
-INTEGER : [0-9]+;
 FLOAT : [0-9]+'.'[0-9]+;
+INTEGER : [0-9]+;
 ANNOTATION : [_a-zA-Z][_a-zA-Z0-9]* ':';
 RULE : [a-zA-Z]+ {self.text.upper() == 'RULE'}?;
 RULEBLOCK : [a-zA-Z]+ {self.text.upper() in ['EVENT', 'ACTIONS', 'CONDITIONS']}?;
 NAME : [_a-zA-Z0-9\- ]*[a-zA-Z0-9] {self.text.split()[0] not in self.keywords}?
 {from OWScriptParser import OWScriptParser
-if self.text.strip().upper() in self.aliases or self.text.strip().upper() in self.workshop_rules:
-    text = self.aliases.get(self.text.strip().upper(), self.text.strip().upper())
-    attr = self.workshop_rules.get(text)
+self.text = self.text.strip()
+if self.text.upper() in self.aliases or self.text.upper() in self.workshop_rules:
+    text = self.aliases.get(self.text.upper(), self.text.upper())
+    attr = self.workshop_rules.get(text, 'NAME')
     self.type = getattr(OWScriptParser, attr)
-    self.text = text}
+    self.text = text
+elif self.text.isnumeric():
+    if '.' in self.text:
+        self.type = OWScriptParser.FLOAT
+    else:
+        self.type = OWScriptParser.INTEGER
+}
     | [_a-zA-Z0-9][_a-zA-Z0-9]*;
 NEWLINE : ( {self.atStartOfInput()}? SPACES
         | ( '\r'? '\n' | '\r' | '\f' ) SPACES?

@@ -24,65 +24,65 @@ def serializedATN():
         buf.write("\3\35\3\35\3\35\3\35\3\36\3\36\3\36\3\36\3\36\3\37\3\37")
         buf.write("\3 \3 \3 \3 \3 \3 \3 \3 \3 \3 \3 \3 \3 \5 \u00bd\n \3")
         buf.write("!\3!\7!\u00c1\n!\f!\16!\u00c4\13!\3!\3!\3\"\6\"\u00c9")
-        buf.write("\n\"\r\"\16\"\u00ca\3#\6#\u00ce\n#\r#\16#\u00cf\3#\3#")
-        buf.write("\6#\u00d4\n#\r#\16#\u00d5\3$\3$\7$\u00da\n$\f$\16$\u00dd")
-        buf.write("\13$\3$\3$\3%\6%\u00e2\n%\r%\16%\u00e3\3%\3%\3&\6&\u00e9")
-        buf.write("\n&\r&\16&\u00ea\3&\3&\3\'\7\'\u00f0\n\'\f\'\16\'\u00f3")
-        buf.write("\13\'\3\'\3\'\3\'\3\'\3\'\7\'\u00fa\n\'\f\'\16\'\u00fd")
-        buf.write("\13\'\5\'\u00ff\n\'\3(\3(\3(\5(\u0104\n(\3(\3(\5(\u0108")
-        buf.write("\n(\3(\5(\u010b\n(\5(\u010d\n(\3(\3(\3)\3)\3)\5)\u0114")
-        buf.write("\n)\3)\3)\3*\3*\3+\6+\u011b\n+\r+\16+\u011c\3,\3,\3,\3")
-        buf.write(",\7,\u0123\n,\f,\16,\u0126\13,\3,\3,\3,\3\u0124\2-\3\3")
-        buf.write("\5\4\7\5\t\6\13\7\r\b\17\t\21\n\23\13\25\f\27\r\31\16")
-        buf.write("\33\17\35\20\37\21!\22#\23%\24\'\25)\26+\27-\30/\31\61")
-        buf.write("\32\63\33\65\34\67\359\36;\37= ?!A\"C#E$G%I&K\'M(O)Q*")
-        buf.write("S+U\2W\2\3\2\n\6\2\f\f\16\17$$^^\3\2\62;\5\2C\\aac|\6")
-        buf.write("\2\62;C\\aac|\4\2C\\c|\b\2\"\"//\62;C\\aac|\5\2\62;C\\")
-        buf.write("c|\4\2\13\13\"\"\2\u013f\2\3\3\2\2\2\2\5\3\2\2\2\2\7\3")
-        buf.write("\2\2\2\2\t\3\2\2\2\2\13\3\2\2\2\2\r\3\2\2\2\2\17\3\2\2")
-        buf.write("\2\2\21\3\2\2\2\2\23\3\2\2\2\2\25\3\2\2\2\2\27\3\2\2\2")
-        buf.write("\2\31\3\2\2\2\2\33\3\2\2\2\2\35\3\2\2\2\2\37\3\2\2\2\2")
-        buf.write("!\3\2\2\2\2#\3\2\2\2\2%\3\2\2\2\2\'\3\2\2\2\2)\3\2\2\2")
-        buf.write("\2+\3\2\2\2\2-\3\2\2\2\2/\3\2\2\2\2\61\3\2\2\2\2\63\3")
-        buf.write("\2\2\2\2\65\3\2\2\2\2\67\3\2\2\2\29\3\2\2\2\2;\3\2\2\2")
-        buf.write("\2=\3\2\2\2\2?\3\2\2\2\2A\3\2\2\2\2C\3\2\2\2\2E\3\2\2")
-        buf.write("\2\2G\3\2\2\2\2I\3\2\2\2\2K\3\2\2\2\2M\3\2\2\2\2O\3\2")
-        buf.write("\2\2\2Q\3\2\2\2\2S\3\2\2\2\3Y\3\2\2\2\5[\3\2\2\2\7^\3")
-        buf.write("\2\2\2\t`\3\2\2\2\13e\3\2\2\2\rk\3\2\2\2\17n\3\2\2\2\21")
-        buf.write("r\3\2\2\2\23v\3\2\2\2\25x\3\2\2\2\27z\3\2\2\2\31}\3\2")
-        buf.write("\2\2\33\u0080\3\2\2\2\35\u0083\3\2\2\2\37\u0086\3\2\2")
-        buf.write("\2!\u0088\3\2\2\2#\u008a\3\2\2\2%\u008c\3\2\2\2\'\u008e")
-        buf.write("\3\2\2\2)\u0090\3\2\2\2+\u0092\3\2\2\2-\u0094\3\2\2\2")
-        buf.write("/\u0096\3\2\2\2\61\u0098\3\2\2\2\63\u009a\3\2\2\2\65\u009d")
-        buf.write("\3\2\2\2\67\u009f\3\2\2\29\u00a3\3\2\2\2;\u00a8\3\2\2")
-        buf.write("\2=\u00ad\3\2\2\2?\u00bc\3\2\2\2A\u00be\3\2\2\2C\u00c8")
-        buf.write("\3\2\2\2E\u00cd\3\2\2\2G\u00d7\3\2\2\2I\u00e1\3\2\2\2")
-        buf.write("K\u00e8\3\2\2\2M\u00fe\3\2\2\2O\u010c\3\2\2\2Q\u0113\3")
-        buf.write("\2\2\2S\u0117\3\2\2\2U\u011a\3\2\2\2W\u011e\3\2\2\2YZ")
-        buf.write("\7\'\2\2Z\4\3\2\2\2[\\\7k\2\2\\]\7h\2\2]\6\3\2\2\2^_\7")
-        buf.write("<\2\2_\b\3\2\2\2`a\7g\2\2ab\7n\2\2bc\7k\2\2cd\7h\2\2d")
-        buf.write("\n\3\2\2\2ef\7g\2\2fg\7n\2\2gh\7u\2\2hi\7g\2\2ij\7<\2")
-        buf.write("\2j\f\3\2\2\2kl\7q\2\2lm\7t\2\2m\16\3\2\2\2no\7c\2\2o")
-        buf.write("p\7p\2\2pq\7f\2\2q\20\3\2\2\2rs\7p\2\2st\7q\2\2tu\7v\2")
-        buf.write("\2u\22\3\2\2\2vw\7>\2\2w\24\3\2\2\2xy\7@\2\2y\26\3\2\2")
-        buf.write("\2z{\7?\2\2{|\7?\2\2|\30\3\2\2\2}~\7@\2\2~\177\7?\2\2")
-        buf.write("\177\32\3\2\2\2\u0080\u0081\7>\2\2\u0081\u0082\7?\2\2")
-        buf.write("\u0082\34\3\2\2\2\u0083\u0084\7#\2\2\u0084\u0085\7?\2")
-        buf.write("\2\u0085\36\3\2\2\2\u0086\u0087\7`\2\2\u0087 \3\2\2\2")
-        buf.write("\u0088\u0089\7,\2\2\u0089\"\3\2\2\2\u008a\u008b\7\61\2")
-        buf.write("\2\u008b$\3\2\2\2\u008c\u008d\7-\2\2\u008d&\3\2\2\2\u008e")
-        buf.write("\u008f\7/\2\2\u008f(\3\2\2\2\u0090\u0091\7*\2\2\u0091")
-        buf.write("*\3\2\2\2\u0092\u0093\7+\2\2\u0093,\3\2\2\2\u0094\u0095")
-        buf.write("\7.\2\2\u0095.\3\2\2\2\u0096\u0097\7]\2\2\u0097\60\3\2")
-        buf.write("\2\2\u0098\u0099\7_\2\2\u0099\62\3\2\2\2\u009a\u009b\7")
-        buf.write("o\2\2\u009b\u009c\7u\2\2\u009c\64\3\2\2\2\u009d\u009e")
-        buf.write("\7u\2\2\u009e\66\3\2\2\2\u009f\u00a0\7o\2\2\u00a0\u00a1")
-        buf.write("\7k\2\2\u00a1\u00a2\7p\2\2\u00a28\3\2\2\2\u00a3\u00a4")
-        buf.write("\7i\2\2\u00a4\u00a5\7X\2\2\u00a5\u00a6\7c\2\2\u00a6\u00a7")
-        buf.write("\7t\2\2\u00a7:\3\2\2\2\u00a8\u00a9\7r\2\2\u00a9\u00aa")
-        buf.write("\7X\2\2\u00aa\u00ab\7c\2\2\u00ab\u00ac\7t\2\2\u00ac<\3")
-        buf.write("\2\2\2\u00ad\u00ae\7B\2\2\u00ae>\3\2\2\2\u00af\u00bd\7")
-        buf.write("?\2\2\u00b0\u00b1\7-\2\2\u00b1\u00bd\7?\2\2\u00b2\u00b3")
+        buf.write("\n\"\r\"\16\"\u00ca\3\"\3\"\6\"\u00cf\n\"\r\"\16\"\u00d0")
+        buf.write("\3#\6#\u00d4\n#\r#\16#\u00d5\3$\3$\7$\u00da\n$\f$\16$")
+        buf.write("\u00dd\13$\3$\3$\3%\6%\u00e2\n%\r%\16%\u00e3\3%\3%\3&")
+        buf.write("\6&\u00e9\n&\r&\16&\u00ea\3&\3&\3\'\7\'\u00f0\n\'\f\'")
+        buf.write("\16\'\u00f3\13\'\3\'\3\'\3\'\3\'\3\'\7\'\u00fa\n\'\f\'")
+        buf.write("\16\'\u00fd\13\'\5\'\u00ff\n\'\3(\3(\3(\5(\u0104\n(\3")
+        buf.write("(\3(\5(\u0108\n(\3(\5(\u010b\n(\5(\u010d\n(\3(\3(\3)\3")
+        buf.write(")\3)\5)\u0114\n)\3)\3)\3*\3*\3+\6+\u011b\n+\r+\16+\u011c")
+        buf.write("\3,\3,\3,\3,\7,\u0123\n,\f,\16,\u0126\13,\3,\3,\3,\3\u0124")
+        buf.write("\2-\3\3\5\4\7\5\t\6\13\7\r\b\17\t\21\n\23\13\25\f\27\r")
+        buf.write("\31\16\33\17\35\20\37\21!\22#\23%\24\'\25)\26+\27-\30")
+        buf.write("/\31\61\32\63\33\65\34\67\359\36;\37= ?!A\"C#E$G%I&K\'")
+        buf.write("M(O)Q*S+U\2W\2\3\2\n\6\2\f\f\16\17$$^^\3\2\62;\5\2C\\")
+        buf.write("aac|\6\2\62;C\\aac|\4\2C\\c|\b\2\"\"//\62;C\\aac|\5\2")
+        buf.write("\62;C\\c|\4\2\13\13\"\"\2\u013f\2\3\3\2\2\2\2\5\3\2\2")
+        buf.write("\2\2\7\3\2\2\2\2\t\3\2\2\2\2\13\3\2\2\2\2\r\3\2\2\2\2")
+        buf.write("\17\3\2\2\2\2\21\3\2\2\2\2\23\3\2\2\2\2\25\3\2\2\2\2\27")
+        buf.write("\3\2\2\2\2\31\3\2\2\2\2\33\3\2\2\2\2\35\3\2\2\2\2\37\3")
+        buf.write("\2\2\2\2!\3\2\2\2\2#\3\2\2\2\2%\3\2\2\2\2\'\3\2\2\2\2")
+        buf.write(")\3\2\2\2\2+\3\2\2\2\2-\3\2\2\2\2/\3\2\2\2\2\61\3\2\2")
+        buf.write("\2\2\63\3\2\2\2\2\65\3\2\2\2\2\67\3\2\2\2\29\3\2\2\2\2")
+        buf.write(";\3\2\2\2\2=\3\2\2\2\2?\3\2\2\2\2A\3\2\2\2\2C\3\2\2\2")
+        buf.write("\2E\3\2\2\2\2G\3\2\2\2\2I\3\2\2\2\2K\3\2\2\2\2M\3\2\2")
+        buf.write("\2\2O\3\2\2\2\2Q\3\2\2\2\2S\3\2\2\2\3Y\3\2\2\2\5[\3\2")
+        buf.write("\2\2\7^\3\2\2\2\t`\3\2\2\2\13e\3\2\2\2\rk\3\2\2\2\17n")
+        buf.write("\3\2\2\2\21r\3\2\2\2\23v\3\2\2\2\25x\3\2\2\2\27z\3\2\2")
+        buf.write("\2\31}\3\2\2\2\33\u0080\3\2\2\2\35\u0083\3\2\2\2\37\u0086")
+        buf.write("\3\2\2\2!\u0088\3\2\2\2#\u008a\3\2\2\2%\u008c\3\2\2\2")
+        buf.write("\'\u008e\3\2\2\2)\u0090\3\2\2\2+\u0092\3\2\2\2-\u0094")
+        buf.write("\3\2\2\2/\u0096\3\2\2\2\61\u0098\3\2\2\2\63\u009a\3\2")
+        buf.write("\2\2\65\u009d\3\2\2\2\67\u009f\3\2\2\29\u00a3\3\2\2\2")
+        buf.write(";\u00a8\3\2\2\2=\u00ad\3\2\2\2?\u00bc\3\2\2\2A\u00be\3")
+        buf.write("\2\2\2C\u00c8\3\2\2\2E\u00d3\3\2\2\2G\u00d7\3\2\2\2I\u00e1")
+        buf.write("\3\2\2\2K\u00e8\3\2\2\2M\u00fe\3\2\2\2O\u010c\3\2\2\2")
+        buf.write("Q\u0113\3\2\2\2S\u0117\3\2\2\2U\u011a\3\2\2\2W\u011e\3")
+        buf.write("\2\2\2YZ\7\'\2\2Z\4\3\2\2\2[\\\7k\2\2\\]\7h\2\2]\6\3\2")
+        buf.write("\2\2^_\7<\2\2_\b\3\2\2\2`a\7g\2\2ab\7n\2\2bc\7k\2\2cd")
+        buf.write("\7h\2\2d\n\3\2\2\2ef\7g\2\2fg\7n\2\2gh\7u\2\2hi\7g\2\2")
+        buf.write("ij\7<\2\2j\f\3\2\2\2kl\7q\2\2lm\7t\2\2m\16\3\2\2\2no\7")
+        buf.write("c\2\2op\7p\2\2pq\7f\2\2q\20\3\2\2\2rs\7p\2\2st\7q\2\2")
+        buf.write("tu\7v\2\2u\22\3\2\2\2vw\7>\2\2w\24\3\2\2\2xy\7@\2\2y\26")
+        buf.write("\3\2\2\2z{\7?\2\2{|\7?\2\2|\30\3\2\2\2}~\7@\2\2~\177\7")
+        buf.write("?\2\2\177\32\3\2\2\2\u0080\u0081\7>\2\2\u0081\u0082\7")
+        buf.write("?\2\2\u0082\34\3\2\2\2\u0083\u0084\7#\2\2\u0084\u0085")
+        buf.write("\7?\2\2\u0085\36\3\2\2\2\u0086\u0087\7`\2\2\u0087 \3\2")
+        buf.write("\2\2\u0088\u0089\7,\2\2\u0089\"\3\2\2\2\u008a\u008b\7")
+        buf.write("\61\2\2\u008b$\3\2\2\2\u008c\u008d\7-\2\2\u008d&\3\2\2")
+        buf.write("\2\u008e\u008f\7/\2\2\u008f(\3\2\2\2\u0090\u0091\7*\2")
+        buf.write("\2\u0091*\3\2\2\2\u0092\u0093\7+\2\2\u0093,\3\2\2\2\u0094")
+        buf.write("\u0095\7.\2\2\u0095.\3\2\2\2\u0096\u0097\7]\2\2\u0097")
+        buf.write("\60\3\2\2\2\u0098\u0099\7_\2\2\u0099\62\3\2\2\2\u009a")
+        buf.write("\u009b\7o\2\2\u009b\u009c\7u\2\2\u009c\64\3\2\2\2\u009d")
+        buf.write("\u009e\7u\2\2\u009e\66\3\2\2\2\u009f\u00a0\7o\2\2\u00a0")
+        buf.write("\u00a1\7k\2\2\u00a1\u00a2\7p\2\2\u00a28\3\2\2\2\u00a3")
+        buf.write("\u00a4\7i\2\2\u00a4\u00a5\7X\2\2\u00a5\u00a6\7c\2\2\u00a6")
+        buf.write("\u00a7\7t\2\2\u00a7:\3\2\2\2\u00a8\u00a9\7r\2\2\u00a9")
+        buf.write("\u00aa\7X\2\2\u00aa\u00ab\7c\2\2\u00ab\u00ac\7t\2\2\u00ac")
+        buf.write("<\3\2\2\2\u00ad\u00ae\7B\2\2\u00ae>\3\2\2\2\u00af\u00bd")
+        buf.write("\7?\2\2\u00b0\u00b1\7-\2\2\u00b1\u00bd\7?\2\2\u00b2\u00b3")
         buf.write("\7/\2\2\u00b3\u00bd\7?\2\2\u00b4\u00b5\7,\2\2\u00b5\u00bd")
         buf.write("\7?\2\2\u00b6\u00b7\7\61\2\2\u00b7\u00bd\7?\2\2\u00b8")
         buf.write("\u00b9\7`\2\2\u00b9\u00bd\7?\2\2\u00ba\u00bb\7\'\2\2\u00bb")
@@ -94,10 +94,10 @@ def serializedATN():
         buf.write("\u00c2\u00c3\3\2\2\2\u00c3\u00c5\3\2\2\2\u00c4\u00c2\3")
         buf.write("\2\2\2\u00c5\u00c6\7$\2\2\u00c6B\3\2\2\2\u00c7\u00c9\t")
         buf.write("\3\2\2\u00c8\u00c7\3\2\2\2\u00c9\u00ca\3\2\2\2\u00ca\u00c8")
-        buf.write("\3\2\2\2\u00ca\u00cb\3\2\2\2\u00cbD\3\2\2\2\u00cc\u00ce")
-        buf.write("\t\3\2\2\u00cd\u00cc\3\2\2\2\u00ce\u00cf\3\2\2\2\u00cf")
-        buf.write("\u00cd\3\2\2\2\u00cf\u00d0\3\2\2\2\u00d0\u00d1\3\2\2\2")
-        buf.write("\u00d1\u00d3\7\60\2\2\u00d2\u00d4\t\3\2\2\u00d3\u00d2")
+        buf.write("\3\2\2\2\u00ca\u00cb\3\2\2\2\u00cb\u00cc\3\2\2\2\u00cc")
+        buf.write("\u00ce\7\60\2\2\u00cd\u00cf\t\3\2\2\u00ce\u00cd\3\2\2")
+        buf.write("\2\u00cf\u00d0\3\2\2\2\u00d0\u00ce\3\2\2\2\u00d0\u00d1")
+        buf.write("\3\2\2\2\u00d1D\3\2\2\2\u00d2\u00d4\t\3\2\2\u00d3\u00d2")
         buf.write("\3\2\2\2\u00d4\u00d5\3\2\2\2\u00d5\u00d3\3\2\2\2\u00d5")
         buf.write("\u00d6\3\2\2\2\u00d6F\3\2\2\2\u00d7\u00db\t\4\2\2\u00d8")
         buf.write("\u00da\t\5\2\2\u00d9\u00d8\3\2\2\2\u00da\u00dd\3\2\2\2")
@@ -134,7 +134,7 @@ def serializedATN():
         buf.write("\3\2\2\2\u0123\u0126\3\2\2\2\u0124\u0125\3\2\2\2\u0124")
         buf.write("\u0122\3\2\2\2\u0125\u0127\3\2\2\2\u0126\u0124\3\2\2\2")
         buf.write("\u0127\u0128\7,\2\2\u0128\u0129\7\61\2\2\u0129X\3\2\2")
-        buf.write("\2\25\2\u00bc\u00c2\u00ca\u00cf\u00d5\u00db\u00e3\u00ea")
+        buf.write("\2\25\2\u00bc\u00c2\u00ca\u00d0\u00d5\u00db\u00e3\u00ea")
         buf.write("\u00f1\u00fb\u00fe\u0103\u0107\u010a\u010c\u0113\u011c")
         buf.write("\u0124\5\3\'\2\3(\3\b\2\2")
         return buf.getvalue()
@@ -178,8 +178,8 @@ class OWScriptLexer(Lexer):
     T__29 = 30
     ASSIGN = 31
     STRING = 32
-    INTEGER = 33
-    FLOAT = 34
+    FLOAT = 33
+    INTEGER = 34
     ANNOTATION = 35
     RULE = 36
     RULEBLOCK = 37
@@ -199,7 +199,7 @@ class OWScriptLexer(Lexer):
             "'ms'", "'s'", "'min'", "'gVar'", "'pVar'", "'@'" ]
 
     symbolicNames = [ "<INVALID>",
-            "ASSIGN", "STRING", "INTEGER", "FLOAT", "ANNOTATION", "RULE", 
+            "ASSIGN", "STRING", "FLOAT", "INTEGER", "ANNOTATION", "RULE", 
             "RULEBLOCK", "NAME", "NEWLINE", "SKIP_", "UNKNOWN_CHAR" ]
 
     ruleNames = [ "T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "T__6", 
@@ -207,7 +207,7 @@ class OWScriptLexer(Lexer):
                   "T__14", "T__15", "T__16", "T__17", "T__18", "T__19", 
                   "T__20", "T__21", "T__22", "T__23", "T__24", "T__25", 
                   "T__26", "T__27", "T__28", "T__29", "ASSIGN", "STRING", 
-                  "INTEGER", "FLOAT", "ANNOTATION", "RULE", "RULEBLOCK", 
+                  "FLOAT", "INTEGER", "ANNOTATION", "RULE", "RULEBLOCK", 
                   "NAME", "NEWLINE", "SKIP_", "UNKNOWN_CHAR", "SPACES", 
                   "COMMENT" ]
 
@@ -350,14 +350,24 @@ class OWScriptLexer(Lexer):
             ('ALL HEROES', 'CONST'),
             ('ATTACKER', 'CONST'),
             ('BACKWARD', 'CONST'),
+            ('BAD AURA', 'CONST'),
+            ('BAD AURA SOUND', 'CONST'),
+            ('BEACON SOUND', 'CONST'),
+            ('BLUE', 'CONST'),
+            ('CLOUD', 'CONST'),
             ('CONTROL MODE SCORING TEAM', 'CONST'),
             ('CURRENT ARRAY ELEMENT', 'CONST'),
+            ('DECAL SOUND', 'CONST'),
             ('DOWN', 'CONST'),
             ('EMPTY ARRAY', 'CONST'),
+            ('ENERGY SOUND', 'CONST'),
             ('EVENT PLAYER', 'CONST'),
             ('EVENT WAS CRITICAL HIT', 'CONST'),
             ('FALSE', 'CONST'),
             ('FORWARD', 'CONST'),
+            ('GOOD AURA', 'CONST'),
+            ('GOOD AURA SOUND', 'CONST'),
+            ('GREEN', 'CONST'),
             ('IS ASSEMBLING HEROES', 'CONST'),
             ('IS BETWEEN ROUNDS', 'CONST'),
             ('IS CONTROL MODE POINT LOCKED', 'CONST'),
@@ -368,12 +378,34 @@ class OWScriptLexer(Lexer):
             ('IS WAITING FOR PLAYERS', 'CONST'),
             ('LAST CREATED ENTITY', 'CONST'),
             ('LEFT', 'CONST'),
+            ('LIGHT SHAFT', 'CONST'),
+            ('NONE', 'CONST'),
             ('NULL', 'CONST'),
+            ('OFF', 'CONST'),
+            ('ORB', 'CONST'),
             ('PAYLOAD POSITION', 'CONST'),
+            ('PICK-UP SOUND', 'CONST'),
+            ('POSITION AND RADIUS', 'CONST'),
+            ('PURPLE', 'CONST'),
+            ('RED', 'CONST'),
             ('RIGHT', 'CONST'),
+            ('RING', 'CONST'),
+            ('SMOKE SOUND', 'CONST'),
+            ('SPARKLES', 'CONST'),
+            ('SPARKLES SOUND', 'CONST'),
+            ('SPHERE', 'CONST'),
+            ('SURFACES', 'CONST'),
+            ('SURFACES AND ALL BARRIERS', 'CONST'),
+            ('SURFACES AND ENEMY BARRIERS', 'CONST'),
+            ('TEAM 1', 'CONST'),
+            ('TEAM 2', 'CONST'),
             ('TRUE', 'CONST'),
             ('UP', 'CONST'),
             ('VICTIM', 'CONST'),
+            ('VISIBLE TO', 'CONST'),
+            ('VISIBLE TO, POSITION, AND RADIUS', 'CONST'),
+            ('WHITE', 'CONST'),
+            ('YELLOW', 'CONST'),
             ('ONGOING - EACH PLAYER', 'NAME'),
             ('ONGOING - GLOBAL', 'NAME'),
             ('PLAYER DEALT DAMAGE', 'NAME'),
@@ -390,8 +422,10 @@ class OWScriptLexer(Lexer):
             ('ALL PLAYERS ON OBJECTIVE', 'VALUE'),
             ('ALLOWED HEROES', 'VALUE'),
             ('ALTITUDE OF', 'VALUE'),
+            ('AND', 'VALUE'),
             ('ANGLE DIFFERENCE', 'VALUE'),
             ('APPEND TO ARRAY', 'VALUE'),
+            ('ARRAY CONTAINS', 'VALUE'),
             ('ARRAY SLICE', 'VALUE'),
             ('CLOSEST PLAYER TO', 'VALUE'),
             ('COMPARE', 'VALUE'),
@@ -472,6 +506,7 @@ class OWScriptLexer(Lexer):
             ('MULTIPLY', 'VALUE'),
             ('NEAREST WALKABLE POSITION', 'VALUE'),
             ('NORMALIZE', 'VALUE'),
+            ('NOT', 'VALUE'),
             ('NUMBER', 'VALUE'),
             ('NUMBER OF DEAD PLAYERS', 'VALUE'),
             ('NUMBER OF DEATHS', 'VALUE'),
@@ -484,6 +519,7 @@ class OWScriptLexer(Lexer):
             ('OBJECTIVE INDEX', 'VALUE'),
             ('OBJECTIVE POSITION', 'VALUE'),
             ('OPPOSITE TEAM OF', 'VALUE'),
+            ('OR', 'VALUE'),
             ('PAYLOAD PROGRESS PERCENTAGE', 'VALUE'),
             ('PLAYER CARRYING FLAG', 'VALUE'),
             ('PLAYER CLOSEST TO RETICLE', 'VALUE'),
@@ -542,8 +578,12 @@ class OWScriptLexer(Lexer):
             ('PLAYERS IN RADIUS', 'PLAYERS WITHIN RADIUS'),
             ('ROUND', 'ROUND TO INTEGER'),
             ('SIN', 'SINE FROM DEGREES'),
-            ('SINR', 'SINE FROM RADIANS')
+            ('SINR', 'SINE FROM RADIANS'),
+            ('VISIBLE TO POSITION AND RADIUS', 'VISIBLE TO, POSITION, AND RADIUS'),
+
+            ('EVERYONE', 'ALL PLAYERS(TEAM(ALL))')
         ])
+        self.comma_tokens = ['VISIBLE TO, POSITION, AND RADIUS']
         self.keywords = ['if', 'elif', 'else', 'pVar', 'gVar']
 
         # A queue where extra tokens are pushed on (see the NEWLINE lexer rule).
@@ -639,11 +679,18 @@ class OWScriptLexer(Lexer):
     def NAME_action(self, localctx:RuleContext , actionIndex:int):
         if actionIndex == 0:
             from OWScriptParser import OWScriptParser
-            if self.text.strip().upper() in self.aliases or self.text.strip().upper() in self.workshop_rules:
-                text = self.aliases.get(self.text.strip().upper(), self.text.strip().upper())
-                attr = self.workshop_rules.get(text)
+            self.text = self.text.strip()
+            if self.text.upper() in self.aliases or self.text.upper() in self.workshop_rules:
+                text = self.aliases.get(self.text.upper(), self.text.upper())
+                attr = self.workshop_rules.get(text, 'NAME')
                 self.type = getattr(OWScriptParser, attr)
                 self.text = text
+            elif self.text.isnumeric():
+                if '.' in self.text:
+                    self.type = OWScriptParser.FLOAT
+                else:
+                    self.type = OWScriptParser.INTEGER
+
      
 
     def NEWLINE_action(self, localctx:RuleContext , actionIndex:int):

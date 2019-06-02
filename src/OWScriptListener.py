@@ -314,6 +314,15 @@ class OWScriptListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by OWScriptParser#param_list.
+    def enterParam_list(self, ctx:OWScriptParser.Param_listContext):
+        pass
+
+    # Exit a parse tree produced by OWScriptParser#param_list.
+    def exitParam_list(self, ctx:OWScriptParser.Param_listContext):
+        pass
+
+
     # Enter a parse tree produced by OWScriptParser#arg_list.
     def enterArg_list(self, ctx:OWScriptParser.Arg_listContext):
         pass

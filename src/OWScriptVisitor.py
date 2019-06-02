@@ -179,6 +179,11 @@ class OWScriptVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by OWScriptParser#param_list.
+    def visitParam_list(self, ctx:OWScriptParser.Param_listContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by OWScriptParser#arg_list.
     def visitArg_list(self, ctx:OWScriptParser.Arg_listContext):
         return self.visitChildren(ctx)

@@ -1,14 +1,27 @@
-rule("If and Else") {
+rule("Create Portal") {
    Event {
-      Ongoing - Global;
+      Ongoing - Each Player;
+      All;
+      All;
    }
 
    Actions {
-      Set Global Variable At Index(A, 0, 1);
-      Skip If(Not(Compare(X, >, 1)), 3);
-      Set Global Variable At Index(A, 0, 2);
-      Set Global Variable At Index(A, 1, 1);
-      Skip(1)
-      Set Global Variable At Index(A, 0, 5);
+      Create Effect(Event Player, Good Aura, Yellow, Vector(0, 1, 2), 10, Visible To, Position, And Radius);
+   }
+}
+
+rule("Teleportation") {
+   Event {
+      Ongoing - Each Player;
+      All;
+      All;
+   }
+
+   Conditions {
+      Array Contains(Players Within Radius(Vector(0, 1, 2), 10, All, Surfaces), Event Player) == True;
+   }
+
+   Actions {
+      Teleport(Event Player, Vector(3, 4, 5));
    }
 }

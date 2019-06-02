@@ -1,8 +1,7 @@
 [Functions]
-- Functions create scope-contained variables
-- These are names that must resolve to parameters
+- Possibly support recursion?
 
-[Array Manipulation]
+[Array Manipulation] *this may require internalization*
 - Assign at index `myvar[0] = 1`
 - Access value at index `myvar[0]`
 - Slice operations `myvar[0:2]`
@@ -11,7 +10,8 @@
 - For / While loops
 
 [Conditionals]
-- If / Elif / Else
+- Redesign if output to a skip-first implementation
+    - Try to make else condition first, skipping if conditions are true rather than inverting conditions
 
 [Attributes]
 - Common properties should be accessed using dot notation

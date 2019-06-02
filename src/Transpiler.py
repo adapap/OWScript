@@ -2,16 +2,17 @@ import AST
 from collections import defaultdict
 from itertools import count
 from string import capwords
-class Scopes:
-    def __init__(self):
-        pass # do the scope thingy
+class Scope:
+    def __init__(self, name):
+        self.name = name
+        self.namespace = {}
 
+    def __repr__(self):
+        return f"<Scope '{self.name}'>"
 
 class Transpiler:
     """Parses an AST into a string of Workshop code."""
-    def __init__(self, tree):
-        self.tree = tree
-        self.code = ''
+    def __init__(self):
         self.indent_size = 3
         self.indent_level = 0
         self.global_vars = {}
@@ -20,6 +21,7 @@ class Transpiler:
         self.player_index = defaultdict(count)
         self.line = 0
         self.functions = {}
+        self.scopes = []
 
     @property
     def tabs(self):
@@ -79,22 +81,31 @@ class Transpiler:
             return index
 
     def visitScript(self, node):
+        self.scopes.append(Scope(name='global'))
         code = ''
-        for function in node.functions:
-            self.visit(function)
-        for ruleset in node.rulesets:
-            code += self.visit(ruleset)
+        for statement in node.statements:
+            code += self.visit(statement)
         code = code.rstrip('\n')
+        self.scopes.pop()
         return code
 
     def visitFunction(self, node):
-        self.functions[node.name] = node.body
+        self.functions[node.name] = {
+            'body': node.body,
+            'params': node.params
+        }
+        return ''
 
     def visitCall(self, node):
         code = ''
         try:
-            body = self.functions[node.func]
+            body = self.functions[node.func].get('body')
+            params = self.functions[node.func].get('params')
+            scope = Scope(name=node.func)
+            scope.namespace.update(dict(zip(params, node.args)))
+            self.scopes.append(scope)
             code = self.visit(body)
+            self.scopes.pop()
         except KeyError:
             code = f'<Unknown function {node.func}>'
         return code
@@ -253,6 +264,9 @@ class Transpiler:
         return code
 
     def visitName(self, node):
+        for i in range(-1, -len(self.scopes) - 1, -1):
+            if node.value in self.scopes[i].namespace:
+                return self.visit(self.scopes[i].namespace.get(node.value))
         if node.value in self.global_vars:
             index = self.lookup(node.value)
             return f'Value In Array(Global Variable(A), {index})'
@@ -319,10 +333,8 @@ class Transpiler:
         index = self.lookup(name=node.name)
         return f'Value In Array(Global Variable(A), {index})'
 
-    def run(self):
-        self.code = self.visit(self.tree)
-        #print(self.code)
-        return self.code
+    def run(self, tree):
+        return self.visit(tree)
 
     def visit(self, node):
         method_name = 'visit' + type(node).__name__

@@ -1,5 +1,35 @@
-%recurse
-    x = [1, 2, 3]
-Rule "test"
-    Actions
-        recurse()
+%create_portal(origin, destination, radius)
+    Rule "Create Portal"
+        Event
+            On Each Player
+            All
+            All
+        Actions
+            Create Effect
+                Visible: Event Player
+                Type: Good Aura
+                Color: Yellow
+                Position: origin
+                Radius: radius
+                Reeval: Visible To Position and Radius
+    
+    Rule "Teleportation"
+        Event
+            On Each Player
+            All
+            All
+        Conditions
+            Array Contains
+                Players In Radius
+                    Center: origin
+                    Radius: radius
+                    Team: All
+                    LOS: Surfaces
+                Event Player
+            == True
+        Actions
+            Teleport
+                Event Player
+                destination
+
+create_portal(<0, 1, 2>, <3, 4, 5>, 10)

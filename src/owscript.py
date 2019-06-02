@@ -12,7 +12,7 @@ def main(argv):
     parser = OWScriptParser(stream)
     ast = ASTBuilder().run(parser.script())
     # print(ast)
-    output = Transpiler(ast).run()
+    output = Transpiler().run(ast)
     sys.stdout.write(output)
  
 if __name__ == '__main__':

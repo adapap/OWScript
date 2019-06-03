@@ -251,11 +251,11 @@ class OWScriptListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by OWScriptParser#Unary.
+    # Enter a parse tree produced by OWScriptParser#unary.
     def enterUnary(self, ctx:OWScriptParser.UnaryContext):
         pass
 
-    # Exit a parse tree produced by OWScriptParser#Unary.
+    # Exit a parse tree produced by OWScriptParser#unary.
     def exitUnary(self, ctx:OWScriptParser.UnaryContext):
         pass
 
@@ -293,6 +293,15 @@ class OWScriptListener(ParseTreeListener):
 
     # Exit a parse tree produced by OWScriptParser#const.
     def exitConst(self, ctx:OWScriptParser.ConstContext):
+        pass
+
+
+    # Enter a parse tree produced by OWScriptParser#string.
+    def enterString(self, ctx:OWScriptParser.StringContext):
+        pass
+
+    # Exit a parse tree produced by OWScriptParser#string.
+    def exitString(self, ctx:OWScriptParser.StringContext):
         pass
 
 
@@ -356,6 +365,15 @@ class OWScriptListener(ParseTreeListener):
 
     # Exit a parse tree produced by OWScriptParser#attribute.
     def exitAttribute(self, ctx:OWScriptParser.AttributeContext):
+        pass
+
+
+    # Enter a parse tree produced by OWScriptParser#method.
+    def enterMethod(self, ctx:OWScriptParser.MethodContext):
+        pass
+
+    # Exit a parse tree produced by OWScriptParser#method.
+    def exitMethod(self, ctx:OWScriptParser.MethodContext):
         pass
 
 

@@ -109,7 +109,7 @@ line : assign
      | action
      | value
      | (action | value | const) NEWLINE? comp_op=('<'|'>'|'=='|'>='|'<='|'!=') primary
-     | name
+     | name (call | method)?
      | ANNOTATION line
      | NEWLINE;
 
@@ -121,14 +121,14 @@ expr : logic_or;
 logic_or : logic_and (OR logic_and)*;
 logic_and : logic_not (AND logic_not)*;
 logic_not : (NOT logic_not) | compare;
-compare : arith (('<'|'>'|'=='|'>='|'<='|'!='|IN|NOT IN) arith)*;
-arith : primary ('^' primary)* # Pow
-      | primary ('*' primary)* # Mul
-      | primary ('/' primary)* # Div
-      | primary ('+' primary)* # Add
-      | primary ('-' primary)* # Sub
-      | primary ('%' primary)* # Mod
-      | ('-'|'+')* primary #Unary; #fix the unary boi!
+compare : arith (('<'|'>'|'=='|'>='|'<='|'!='|IN|NOT IN) arith)*?;
+arith : unary ('^' unary)* # Pow
+      | unary ('*' unary)* # Mul
+      | unary ('/' unary)* # Div
+      | unary ('+' unary)* # Add
+      | unary ('-' unary)* # Sub
+      | unary ('%' unary)* # Mod;
+unary : ('+' | '-') unary | primary;
 
 primary : ( action
         | value
@@ -139,10 +139,13 @@ primary : ( action
         | time
         | numeral
         | array
+        | string
         | '(' expr ')') trailer*;
 action : ACTION after_line;
 value : VALUE after_line attribute*;
 const : CONST attribute*;
+string : STRING
+       | F_STRING after_line;
 after_line : '(' arg_list ')'
            | NEWLINE INDENT (primary|ANNOTATION primary|NEWLINE)+ DEDENT
            | NEWLINE;
@@ -150,10 +153,12 @@ param_list : '(' NAME (',' NAME)* ')';
 arg_list : primary (',' primary)*;
 
 trailer : item
+        | method
         | call;
 item : '[' INTEGER ']';
 call : '(' arg_list? ')';
 attribute : '.' name;
+method : attribute call;
 
 name : NAME;
 time : numeral ('MS' | 'S' | 'MIN');
@@ -164,13 +169,13 @@ variable : global_var
          | name;
 global_var : GVAR varname=NAME;
 player_var : PVAR varname=NAME ('@' primary)?;
-vector : '<' primary ',' primary ',' primary '>';
+vector : '<' unary ',' unary ',' unary '>';
 array : '[' arg_list? ']';
-
 
 /* Lexer Rules */
 ASSIGN : ('='|'+='|'-='|'*='|'/='|'^='|'%=');
 STRING : '"' ~[\\\r\n\f"]* '"';
+F_STRING : '`' ~[\\\r\n\f`]* '`';
 FLOAT : [0-9]+'.'[0-9]+;
 INTEGER : [0-9]+;
 ANNOTATION : [_a-zA-Z][_a-zA-Z0-9]* ':';
@@ -521,34 +526,41 @@ RULEBLOCK : 'EVENT'
           | 'CONDITIONS'
           | 'ACTIONS';
 ALIAS : ('ALL TRUE'
+      | 'BIG MSG'
       | 'COS'
       | 'COSR'
+      | 'MSG'
       | 'ON GLOBAL'
       | 'ON EACH PLAYER'
       | 'PLAYERS IN RADIUS'
       | 'ROUND'
       | 'SIN'
       | 'SINR'
+      | 'SMALL MSG'
       // Builtins
       | 'EVERYONE') {
 from OWScriptParser import OWScriptParser
 self.text = self.text.strip().upper()
+_ACTION = OWScriptParser.ACTION
 _VALUE = OWScriptParser.VALUE
 _CONST = OWScriptParser.CONST
-_NAME = OWScriptParser.NAME
 aliases = dict([
+('BIG MSG', ('BIG MESSAGE', _ACTION)),
+('MSG', ('SMALL MESSAGE', _ACTION)),
+('SMALL MSG', ('SMALL MESSAGE', _ACTION)),
+
 ('ABS', ('ABSOLUTE VALUE', _VALUE)),
 ('ALL TRUE', ('IS TRUE FOR ALL', _VALUE)),
 ('COS', ('COSINE FROM DEGREES', _VALUE)),
 ('COSR', ('COSINE FROM RADIANS', _VALUE)),
-('ON EACH PLAYER', ('ONGOING - EACH PLAYER', _CONST)),
-('ON GLOBAL', ('ONGOING - GLOBAL', _CONST)),
 ('PLAYERS IN RADIUS', ('PLAYERS WITHIN RADIUS', _VALUE)),
 ('ROUND', ('ROUND TO INTEGER', _VALUE)),
 ('SIN', ('SINE FROM DEGREES', _VALUE)),
 ('SINR', ('SINE FROM RADIANS', _VALUE)),
 
-('EVERYONE', ('ALL PLAYERS(TEAM(ALL))', _CONST))
+('EVERYONE', ('ALL PLAYERS(TEAM(ALL))', _CONST)),
+('ON EACH PLAYER', ('ONGOING - EACH PLAYER', _CONST)),
+('ON GLOBAL', ('ONGOING - GLOBAL', _CONST))
 ])
 if self.text.upper() in aliases:
     self.text, self.type = aliases.get(self.text.upper())
@@ -601,4 +613,5 @@ SKIP_ : (SPACES | COMMENT | ';') -> skip;
 UNKNOWN_CHAR : .;
 
 fragment SPACES : [ \t]+;
-fragment COMMENT : '/*' .*? '*/';
+fragment COMMENT : '/*' [. \n]*? '*/'
+                 | '//' ~[\n]*;

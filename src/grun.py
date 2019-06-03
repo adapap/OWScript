@@ -164,7 +164,7 @@ if __name__ == '__main__':
     #############################################################
     for file_name in file_list:
         if os.path.exists(file_name) and os.path.isfile(file_name):
-            input_stream = UppercaseStream(file_name)
+            input_stream = UppercaseStream(file_name, 'utf-8')
             process(input_stream, class_lexer, class_parser)
         else:
             print("[ERROR] file {} not exist".format(os.path.normpath(file_name)))

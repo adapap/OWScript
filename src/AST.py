@@ -92,6 +92,9 @@ class Value(Type):
 class Action(Type):
     pass
 
+class String(Type):
+    pass
+
 class Constant(AST):
     def __init__(self, value):
         self.value = value
@@ -188,20 +191,22 @@ class Call(AST):
     def __repr__(self):
         return f'{self.func}({self.args})'
 
-class Attr(AST):
-    def __init__(self, name):
-        self.name = name
-
-    def __repr__(self):
-        return f'{self.name}'
-
 class Attribute(AST):
-    def __init__(self, value, arg):
+    def __init__(self, value, child=None):
         self.value = value
-        self.arg = arg
+        self.child = child
 
     def __repr__(self):
-        return f'{self.value}({self.arg})'
+        return f'{self.value}({self.child})'
+
+class Method(AST):
+    def __init__(self, value, args, parent=None):
+        self.value = value
+        self.args = args
+        self.parent = parent
+
+    def __repr__(self):
+        return f'{self.parent}.{self.value}({self.args})'
 
 class If(AST):
     def __init__(self, cond, block, elif_conds, elif_blocks, else_block):

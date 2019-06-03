@@ -122,7 +122,7 @@ class ASTBuilder(OWScriptVisitor):
 
     def visitFuncdef(self, ctx):
         funcname = ctx.NAME().getText()
-        funcparams = self.visit(ctx.param_list())
+        funcparams = self.visit(ctx.param_list()) if ctx.param_list() else None
         funcbody = self.visit(ctx.funcbody())
         return Function(name=funcname, params=funcparams, body=funcbody)
 
@@ -171,6 +171,11 @@ class ASTBuilder(OWScriptVisitor):
         return While(cond=cond, block=block)
 
     def visitLine(self, ctx):
+        if ctx.call():
+            return Call(func=self.visit(ctx.name()).name, args=self.visit(ctx.call()))
+        if ctx.method():
+            method = self.visit(ctx.method())
+            return Method(value=method.value, args=method.args, parent=self.visit(ctx.name()).name)
         if len(ctx.children) == 2:
             return self.visit(ctx.children[-1])
         if len(ctx.children) > 2:
@@ -184,8 +189,8 @@ class ASTBuilder(OWScriptVisitor):
             if x:
                 if type(x) == Block and not x.lines:
                     continue
-                elif type(x) == Attr:
-                    value = Attribute(value=x.name.value.upper(), arg=value)
+                elif type(x) == Attribute:
+                    value = Attribute(value=x.value, child=value)
                     continue
                 value.args.append(x)
         return value
@@ -243,8 +248,19 @@ class ASTBuilder(OWScriptVisitor):
             print('attr!')
         return Name(value=ctx.CONST().getText())
 
+    def visitUnary(self, ctx):
+        if len(ctx.children) > 1:
+            return UnaryOp(op=ctx.children[0].getText(), right=self.visit(ctx.unary()))
+        return self.visit(ctx.primary())
+
     def visitNumeral(self, ctx):
         return Numeral(value=ctx.num_const.text)
+
+    def visitString(self, ctx):
+        if ctx.F_STRING():
+            args = self.visit(ctx.after_line()).lines
+            return String(value=ctx.F_STRING().getText(), args=args)
+        return String(value=ctx.STRING().getText())
 
     def visitTime(self, ctx):
         return Time(value=ctx.getText())
@@ -270,8 +286,8 @@ class ASTBuilder(OWScriptVisitor):
         return pvar
 
     def visitRCall(self, ctx):
-        func = self.visit(ctx.children[0])
-        args = self.visit(ctx.children[1])
+        func = self.visit(ctx.primary())
+        args = self.visit(ctx.call())
         return Call(func=func.name, args=args)
 
     def visitCall(self, ctx):
@@ -283,7 +299,10 @@ class ASTBuilder(OWScriptVisitor):
         return Item(index=Numeral(value=ctx.INTEGER().getText()))
 
     def visitAttribute(self, ctx):
-        return Attr(name=self.visit(ctx.name()))
+        return Attribute(value=self.visit(ctx.name()).name)
+
+    def visitMethod(self, ctx):
+        return Method(value=self.visit(ctx.attribute()).value, args=self.visit(ctx.call()))
 
     def run(self, parse_tree):
         return self.visit(parse_tree)

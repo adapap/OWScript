@@ -82,7 +82,8 @@ class Transpiler:
             body = self.functions[node.func].get('body')
             params = self.functions[node.func].get('params')
             scope = Scope(name=node.func)
-            scope.namespace.update(dict(zip(params, node.args)))
+            if params:
+                scope.namespace.update(dict(zip(params, node.args)))
             self.scopes.append(scope)
             code = self.visit(body)
             self.scopes.pop()
@@ -205,9 +206,6 @@ class Transpiler:
         code += self.assign(name=name, value=value, scope=scope, player=player)
         return code
 
-    def visitArrayModify(self, node):
-        self.array_modify(node.array, node.value, node.index)
-
     def visitCompare(self, node):
         code = ''
         if node.op == '==':
@@ -258,7 +256,9 @@ class Transpiler:
     def visitName(self, node):
         for i in range(-1, -len(self.scopes) - 1, -1):
             if node.value in self.scopes[i].namespace:
-                return self.visit(self.scopes[i].namespace.get(node.value))
+                value = self.scopes[i].namespace.get(node.value)
+                if not (type(value) == AST.Name and value.name == node.value):
+                    return self.visit(self.scopes[i].namespace.get(node.value))
         if node.value in self.global_vars:
             index = self.lookup(node.value)
             return f'Value In Array(Global Variable(A), {index})'
@@ -267,6 +267,18 @@ class Transpiler:
 
     def visitNumeral(self, node):
         return node.value
+
+    def visitString(self, node):
+        code = 'String('
+        if node.args:
+            code += f'"{node.value[1:-1]}", '
+            args = [self.visit(arg) for arg in node.args]
+            code += ', '.join(args)
+            code += (3 - len(args)) * ', Null'
+        else:
+            code += f'{node.value}, Null, Null, Null'
+        code += ')'
+        return code
 
     def visitBinaryOp(self, node):
         code = ''
@@ -283,6 +295,13 @@ class Transpiler:
         elif node.op == '%':
             code = 'Modulo('
         code += f'{self.visit(node.left)}, {self.visit(node.right)})'
+        return code
+
+    def visitUnaryOp(self, node):
+        code = ''
+        if node.op == '-':
+            code += '-'
+        code += self.visit(node.right)
         return code
 
     def visitArray(self, node):
@@ -312,6 +331,16 @@ class Transpiler:
         elif node.value == 'Z':
             code = 'Z Component Of('
         code += self.visit(node.arg) + ')'
+        return code
+
+    def visitMethod(self, node):
+        code = ''
+        if node.value == 'push':
+            array = self.arrays[node.parent]
+            array.push(*node.args)
+            self.arrays[node.parent] = array
+            # Change to append to array?
+            code += self.assign(name=node.parent, value=array)
         return code
 
     def visitTime(self, node):

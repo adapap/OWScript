@@ -12,7 +12,7 @@ class UppercaseStream(FileStream):
         self._size = len(self.data)
  
 def main(argv):
-    input_stream = UppercaseStream(argv[1])
+    input_stream = UppercaseStream(argv[1], 'utf-8')
     lexer = OWScriptLexer(input_stream)
     stream = CommonTokenStream(lexer)
     parser = OWScriptParser(stream)

@@ -144,7 +144,7 @@ class OWScriptVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by OWScriptParser#Unary.
+    # Visit a parse tree produced by OWScriptParser#unary.
     def visitUnary(self, ctx:OWScriptParser.UnaryContext):
         return self.visitChildren(ctx)
 
@@ -166,6 +166,11 @@ class OWScriptVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by OWScriptParser#const.
     def visitConst(self, ctx:OWScriptParser.ConstContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by OWScriptParser#string.
+    def visitString(self, ctx:OWScriptParser.StringContext):
         return self.visitChildren(ctx)
 
 
@@ -201,6 +206,11 @@ class OWScriptVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by OWScriptParser#attribute.
     def visitAttribute(self, ctx:OWScriptParser.AttributeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by OWScriptParser#method.
+    def visitMethod(self, ctx:OWScriptParser.MethodContext):
         return self.visitChildren(ctx)
 
 

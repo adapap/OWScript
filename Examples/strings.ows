@@ -1,0 +1,16 @@
+Rule "String Builder"
+    Event
+        On Each Player
+        All
+        All
+    Actions
+        pVar money = 100
+        MSG
+            Everyone
+            `{0}: {1}`
+                "Money"
+                `{0}!`
+                    pVar money
+
+
+

@@ -6,10 +6,35 @@
         On Each Player
         team_
         All
+%create_portal(pos, type_, color_, text_)
+    Create Effect
+        VisibleTo: Everyone
+        Type: type_
+        Color: color_
+        Position: pos
+        Radius: 1.5
+        Reevaluation: None
+%UpgradePortal(pos) // push to array/variable after
+    create_portal(pos, Good Aura, Yellow, "shop")
+
 Rule "Initialize Constants"
     Event_Global()
     Actions
         player_spawn_1 = <-40, 0, 145.5>
         player_spawn_2 = <-29, 8, 56>
         player_spawn_3 = <-77.5, 1.5, 65.5>
-        player_spawns = [player_spawn_1, player_spawn_2, player_spawn_3]
+        player_spawn_4 = <-50.5, 1.5, 117>
+        player_spawn_5 = <43.5, 3.5, 73.5>
+        player_spawn_6 = <-115, 1.5, 112.5>
+        boss1_spawn = <-31.5, 0, 148>
+        boss2_spawn = <-22.5, 7.5, 66.5>
+        boss3_spawn = <-82.5, 1.5, 61>
+        boss4_spawn = <-59, 1, 104>
+        boss5_spawn = <53.5, 3.5, 72.5>
+        boss6_spawn = <-129, 2.5, 108.5>
+        // Boss Order: Roadhog, Soldier: 76, Mei, Lúcio, Ana, Reaper
+
+Rule "Initialize Portals"
+    Event_Global()
+    Actions
+        UpgradePortal(<-50, 1, 137.350>)

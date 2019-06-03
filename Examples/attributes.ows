@@ -1,0 +1,10 @@
+Rule "Attributes"
+    Event
+        On Each Player
+        All
+        All
+
+    Conditions
+        Position Of
+            Event Player
+        .X.Y == True

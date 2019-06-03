@@ -89,9 +89,17 @@ class ASTBuilder(OWScriptVisitor):
 
 
     def visitPrimary(self, ctx):
-        if len(ctx.children) == 3:
-            return self.visit(ctx.children[1])
-        return self.visit(ctx.children[0])
+        primary = self.visit(ctx.children[0])
+        if ctx.expr():
+            primary = self.visit(ctx.expr())
+        if ctx.trailer():
+            for trailer in ctx.trailer():
+                t = self.visit(trailer)
+                if type(t) == Item:
+                    primary = ArrayItem(array=primary, item=t)
+                elif type(t) == Call:
+                    print('oof a call')
+        return primary
 
     def visitLogic_or(self, ctx):
         if len(ctx.children) == 3:
@@ -123,17 +131,18 @@ class ASTBuilder(OWScriptVisitor):
 
     def visitAssign(self, ctx):
         assign = Assign()
-        assign.left = self.visit(ctx.children[0])
+        expr = ctx.expr()
+        assign.left = self.visit(expr[0])
         assign.op = ctx.ASSIGN().getText()
-        assign.right = self.visit(ctx.expr())
+        assign.right = self.visit(expr[1])
         return assign
 
     def visitCompare(self, ctx):
-        if len(ctx.children) == 3:
+        if len(ctx.children) >= 3:
             compare = Compare()
             compare.left = self.visit(ctx.children[0])
-            compare.op = ctx.children[1].getText()
-            compare.right = self.visit(ctx.children[2])
+            compare.op = ' '.join(x.getText() for x in ctx.children[1:-1])
+            compare.right = self.visit(ctx.children[-1])
             return compare
         return self.visit(ctx.arith()[0])
 
@@ -156,12 +165,27 @@ class ASTBuilder(OWScriptVisitor):
             else_block = Ruleblock(block=self.visit(block[-1]))
         return If(cond=if_cond, block=if_block, elif_conds=elif_conds, elif_blocks=elif_blocks, else_block=else_block)
 
+    def visitWhile_stmt(self, ctx):
+        cond = self.visit(ctx.expr())
+        block = Ruleblock(block=self.visit(ctx.block()))
+        return While(cond=cond, block=block)
+
+    def visitLine(self, ctx):
+        if len(ctx.children) == 2:
+            return self.visit(ctx.children[-1])
+        if len(ctx.children) > 2:
+            return Compare(left=self.visit(ctx.children[0]), op=ctx.comp_op.text, right=self.visit(ctx.children[-1]))
+        return self.visit(ctx.children[0])
+
     def visitValue(self, ctx):
         value = Value(value=capwords(ctx.VALUE().getText()))
         for child in ctx.children:
             x = self.visit(child)
             if x:
                 if type(x) == Block and not x.lines:
+                    continue
+                elif type(x) == Attr:
+                    value = Attribute(value=x.name.value.upper(), arg=value)
                     continue
                 value.args.append(x)
         return value
@@ -177,9 +201,17 @@ class ASTBuilder(OWScriptVisitor):
         return action
 
     def visitAfter_line(self, ctx):
-        if len(ctx.children) == 3:
-            return self.visit(ctx.children[1])
-        return self.visit(ctx.children[0])
+        if ctx.arg_list():
+            return Block(lines=self.visit(ctx.arg_list()))
+        if ctx.primary():
+            block = Block()
+            for primary in ctx.primary():
+                x = self.visit(primary)
+                if x:
+                    block.lines.append(x)
+            return block
+        else:
+            print('nop')
 
     def visitArg_list(self, ctx):
         arg_list = []
@@ -198,11 +230,6 @@ class ASTBuilder(OWScriptVisitor):
             array.elements = self.visit(ctx.children[1])
         return array
 
-    def visitItem(self, ctx):
-        array = self.visit(ctx.children[0])
-        index = self.visit(ctx.children[2])
-        return Item(array=array, index=index)
-
     def visitName(self, ctx):
         text = ctx.NAME().getText()
         if text.startswith('Wait'):
@@ -212,7 +239,9 @@ class ASTBuilder(OWScriptVisitor):
         return Name(value=ctx.NAME().getText())
 
     def visitConst(self, ctx):
-        return Name(value=ctx.getText())
+        if ctx.attribute():
+            print('attr!')
+        return Name(value=ctx.CONST().getText())
 
     def visitNumeral(self, ctx):
         return Numeral(value=ctx.num_const.text)
@@ -245,15 +274,16 @@ class ASTBuilder(OWScriptVisitor):
         args = self.visit(ctx.children[1])
         return Call(func=func.name, args=args)
 
-    def visitPCall(self, ctx):
-        func = self.visit(ctx.children[0])
-        args = self.visit(ctx.children[1])
-        return Call(func=func.name, args=args)
-
     def visitCall(self, ctx):
         if ctx.arg_list():
             return self.visit(ctx.arg_list())
         return None
+
+    def visitItem(self, ctx):
+        return Item(index=Numeral(value=ctx.INTEGER().getText()))
+
+    def visitAttribute(self, ctx):
+        return Attr(name=self.visit(ctx.name()))
 
     def run(self, parse_tree):
         return self.visit(parse_tree)

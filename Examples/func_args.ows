@@ -11,8 +11,7 @@
                 Color: Yellow
                 Position: origin
                 Radius: radius
-                Reeval: Visible To Position and Radius
-    
+                Reeval: Visible To, Position, and Radius
     Rule "Teleportation"
         Event
             On Each Player
@@ -25,7 +24,7 @@
                     Radius: radius
                     Team: All
                     LOS: Surfaces
-                Event Player
+                Event Player 
             == True
         Actions
             Teleport

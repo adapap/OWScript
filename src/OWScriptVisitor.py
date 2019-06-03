@@ -79,6 +79,16 @@ class OWScriptVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by OWScriptParser#while_stmt.
+    def visitWhile_stmt(self, ctx:OWScriptParser.While_stmtContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by OWScriptParser#for_stmt.
+    def visitFor_stmt(self, ctx:OWScriptParser.For_stmtContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by OWScriptParser#expr.
     def visitExpr(self, ctx:OWScriptParser.ExprContext):
         return self.visitChildren(ctx)
@@ -134,23 +144,8 @@ class OWScriptVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by OWScriptParser#ArithPrimary.
-    def visitArithPrimary(self, ctx:OWScriptParser.ArithPrimaryContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by OWScriptParser#PItem.
-    def visitPItem(self, ctx:OWScriptParser.PItemContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by OWScriptParser#PCall.
-    def visitPCall(self, ctx:OWScriptParser.PCallContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by OWScriptParser#PrimaryNone.
-    def visitPrimaryNone(self, ctx:OWScriptParser.PrimaryNoneContext):
+    # Visit a parse tree produced by OWScriptParser#Unary.
+    def visitUnary(self, ctx:OWScriptParser.UnaryContext):
         return self.visitChildren(ctx)
 
 
@@ -189,6 +184,11 @@ class OWScriptVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by OWScriptParser#trailer.
+    def visitTrailer(self, ctx:OWScriptParser.TrailerContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by OWScriptParser#item.
     def visitItem(self, ctx:OWScriptParser.ItemContext):
         return self.visitChildren(ctx)
@@ -196,6 +196,11 @@ class OWScriptVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by OWScriptParser#call.
     def visitCall(self, ctx:OWScriptParser.CallContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by OWScriptParser#attribute.
+    def visitAttribute(self, ctx:OWScriptParser.AttributeContext):
         return self.visitChildren(ctx)
 
 

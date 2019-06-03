@@ -7,6 +7,12 @@ import importlib
 from antlr4 import *
 from OWScriptParser import OWScriptParser
 
+class UppercaseStream(FileStream):
+    def _loadString(self):
+        self._index = 0
+        self.data = [ord(c.upper()) for c in self.strdata]
+        self._size = len(self.data)
+
 # this is a python version of TestRig
 def beautify_lisp_string(in_string):
     indent_size = 2
@@ -158,7 +164,7 @@ if __name__ == '__main__':
     #############################################################
     for file_name in file_list:
         if os.path.exists(file_name) and os.path.isfile(file_name):
-            input_stream = FileStream(file_name)
+            input_stream = UppercaseStream(file_name)
             process(input_stream, class_lexer, class_parser)
         else:
             print("[ERROR] file {} not exist".format(os.path.normpath(file_name)))

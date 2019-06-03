@@ -128,6 +128,22 @@ class Array(AST):
     def __init__(self, elements=None):
         self.elements = elements or []
 
+    @property
+    def length(self):
+        return len(self.elements)
+
+    def push(self, elem):
+        self.elements.append(elem)
+
+    def pop(self):
+        return self.elements.pop()
+
+    def __setitem__(self, index, value):
+        if index > self.length - 1:
+            while index > self.length - 1:
+                self.push(Numeral(value=0))
+        self.elements[index] = value
+
     def __repr__(self):
         return f'{self.elements}'
 
@@ -139,19 +155,21 @@ class Contains(AST):
     def __repr__(self):
         return f'{self.value} in {self.array}'
 
-class ArrayModify(AST):
-    def __init__(self, array, value, index):
+class ArrayItem(AST):
+    def __init__(self, array, item):
         self.array = array
-        self.value = value
-        self.index = index
+        self.name = array.name
+        self.item = item
+
+    def __repr__(self):
+        return f'{self.name}{self.item}'
 
 class Item(AST):
-    def __init__(self, array, index):
-        self.array = array
+    def __init__(self, index):
         self.index = index
 
     def __repr__(self):
-        return f'{self.array}[{self.index}]'
+        return f'[{self.index}]'
 
 class Function(AST):
     def __init__(self, name, params=None, body=None):
@@ -168,7 +186,22 @@ class Call(AST):
         self.args = args
 
     def __repr__(self):
-        return f'%{self.func}({self.args})'
+        return f'{self.func}({self.args})'
+
+class Attr(AST):
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return f'{self.name}'
+
+class Attribute(AST):
+    def __init__(self, value, arg):
+        self.value = value
+        self.arg = arg
+
+    def __repr__(self):
+        return f'{self.value}({self.arg})'
 
 class If(AST):
     def __init__(self, cond, block, elif_conds, elif_blocks, else_block):
@@ -180,3 +213,11 @@ class If(AST):
 
     def __repr__(self):
         return f'if ... elif ... * {len(self.elif_conds)} else ...'
+
+class While(AST):
+    def __init__(self, cond, block):
+        self.cond = cond
+        self.block = block
+
+    def __repr__(self):
+        return f'while {self.expr}: ...'

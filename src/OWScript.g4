@@ -1,373 +1,10 @@
 grammar OWScript;
 
 /* Parser Rules */
-tokens { INDENT, DEDENT, ACTION, COMPARE, VALUE, CONST, GLOBAL_VAR, PLAYER_VAR }
+tokens { INDENT, DEDENT }
 
 @lexer::members {
-    # Workshop Ruleset
-    self.workshop_rules = dict([
-        ('ABORT', 'ACTION'),
-        ('ABORT IF', 'ACTION'),
-        ('ABORT IF CONDITION IS FALSE', 'ACTION'),
-        ('ABORT IF CONDITION IS TRUE', 'ACTION'),
-        ('ALLOW BUTTON', 'ACTION'),
-        ('APPLY IMPULSE', 'ACTION'),
-        ('BIG MESSAGE', 'ACTION'),
-        ('CHASE GLOBAL VARIABLE AT RATE', 'ACTION'),
-        ('CHASE GLOBAL VARIABLE OVER TIME', 'ACTION'),
-        ('CHASE PLAYER VARIABLE AT RATE', 'ACTION'),
-        ('CHASE PLAYER VARIABLE OVER TIME', 'ACTION'),
-        ('CLEAR STATUS', 'ACTION'),
-        ('COMMUNICATE', 'ACTION'),
-        ('CREATE EFFECT', 'ACTION'),
-        ('CREATE HUD TEXT', 'ACTION'),
-        ('CREATE ICON', 'ACTION'),
-        ('CREATE IN-WORLD TEXT', 'ACTION'),
-        ('DAMAGE', 'ACTION'),
-        ('DECLARE MATCH DRAW', 'ACTION'),
-        ('DECLARE PLAYER VICTORY', 'ACTION'),
-        ('DECLARE ROUND VICTORY', 'ACTION'),
-        ('DECLARE TEAM VICTORY', 'ACTION'),
-        ('DESTROY ALL EFFECTS', 'ACTION'),
-        ('DESTROY ALL HUD TEXT', 'ACTION'),
-        ('DESTROY ALL ICONS', 'ACTION'),
-        ('DESTROY ALL IN-WORLD TEXT', 'ACTION'),
-        ('DESTROY EFFECT', 'ACTION'),
-        ('DESTROY HUD TEXT', 'ACTION'),
-        ('DESTROY ICON', 'ACTION'),
-        ('DESTROY IN-WORLD TEXT', 'ACTION'),
-        ('DISABLE BUILT-IN GAME MODE ANNOUNCER', 'ACTION'),
-        ('DISABLE BUILT-IN GAME MODE COMPLETION', 'ACTION'),
-        ('DISABLE BUILT-IN GAME MODE MUSIC', 'ACTION'),
-        ('DISABLE BUILT-IN GAME MODE RESPAWNING', 'ACTION'),
-        ('DISABLE BUILT-IN GAME MODE SCORING', 'ACTION'),
-        ('DISABLE DEATH SPECTATE ALL PLAYERS', 'ACTION'),
-        ('DISABLE DEATH SPECTATE TARGET HUD', 'ACTION'),
-        ('DISALLOW BUTTON', 'ACTION'),
-        ('ENABLE BUILT-IN GAME MODE ANNOUNCER', 'ACTION'),
-        ('ENABLE BUILT-IN GAME MODE COMPLETION', 'ACTION'),
-        ('ENABLE BUILT-IN GAME MODE MUSIC', 'ACTION'),
-        ('ENABLE BUILT-IN GAME MODE RESPAWNING', 'ACTION'),
-        ('ENABLE BUILT-IN GAME MODE SCORING', 'ACTION'),
-        ('ENABLE DEATH SPECTATE ALL PLAYERS', 'ACTION'),
-        ('ENABLE DEATH SPECTATE TARGET HUD', 'ACTION'),
-        ('GO TO ASSEMBLE HEROES', 'ACTION'),
-        ('HEAL', 'ACTION'),
-        ('KILL', 'ACTION'),
-        ('LOOP', 'ACTION'),
-        ('LOOP IF', 'ACTION'),
-        ('LOOP IF CONDITION IS FALSE', 'ACTION'),
-        ('LOOP IF CONDITION IS TRUE', 'ACTION'),
-        ('MODIFY GLOBAL VARIABLE', 'ACTION'),
-        ('MODIFY PLAYER SCORE', 'ACTION'),
-        ('MODIFY PLAYER VARIABLE', 'ACTION'),
-        ('MODIFY TEAM SCORE', 'ACTION'),
-        ('PAUSE MATCH TIME', 'ACTION'),
-        ('PLAY EFFECT', 'ACTION'),
-        ('PRELOAD HERO', 'ACTION'),
-        ('PRESS BUTTON', 'ACTION'),
-        ('RESET PLAYER HERO AVAILABILITY', 'ACTION'),
-        ('RESPAWN', 'ACTION'),
-        ('RESURRECT', 'ACTION'),
-        ('SET ABILITY 1 ENABLED', 'ACTION'),
-        ('SET ABILITY 2 ENABLED', 'ACTION'),
-        ('SET AIM SPEED', 'ACTION'),
-        ('SET DAMAGE DEALT', 'ACTION'),
-        ('SET DAMAGE RECEIVED', 'ACTION'),
-        ('SET FACING', 'ACTION'),
-        ('SET GLOBAL VARIABLE', 'ACTION'),
-        ('SET GLOBAL VARIABLE AT INDEX', 'ACTION'),
-        ('SET GRAVITY', 'ACTION'),
-        ('SET HEALING DEALT', 'ACTION'),
-        ('SET HEALING RECEIVED', 'ACTION'),
-        ('SET INVISIBLE', 'ACTION'),
-        ('SET MATCH TIME', 'ACTION'),
-        ('SET MAX HEALTH', 'ACTION'),
-        ('SET MOVE SPEED', 'ACTION'),
-        ('SET OBJECTIVE DESCRIPTION', 'ACTION'),
-        ('SET PLAYER ALLOWED HEROES', 'ACTION'),
-        ('SET PLAYER SCORE', 'ACTION'),
-        ('SET PLAYER VARIABLE', 'ACTION'),
-        ('SET PLAYER VARIABLE AT INDEX', 'ACTION'),
-        ('SET PRIMARY FIRE ENABLED', 'ACTION'),
-        ('SET PROJECTILE GRAVITY', 'ACTION'),
-        ('SET PROJECTILE SPEED', 'ACTION'),
-        ('SET RESPAWN MAX TIME', 'ACTION'),
-        ('SET SECONDARY FIRE ENABLED', 'ACTION'),
-        ('SET SLOW MOTION', 'ACTION'),
-        ('SET STATUS', 'ACTION'),
-        ('SET TEAM SCORE', 'ACTION'),
-        ('SET ULTIMATE ABILITY ENABLED', 'ACTION'),
-        ('SET ULTIMATE CHARGE', 'ACTION'),
-        ('SKIP', 'ACTION'),
-        ('SKIP IF', 'ACTION'),
-        ('SMALL MESSAGE', 'ACTION'),
-        ('START ACCELERATING', 'ACTION'),
-        ('START CAMERA', 'ACTION'),
-        ('START DAMAGE MODIFICATION', 'ACTION'),
-        ('START DAMAGE OVER TIME', 'ACTION'),
-        ('START FACING', 'ACTION'),
-        ('START FORCING PLAYER TO BE HERO', 'ACTION'),
-        ('START FORCING SPAWN ROOM', 'ACTION'),
-        ('START FORCING THROTTLE', 'ACTION'),
-        ('START HEAL OVER TIME', 'ACTION'),
-        ('START HOLDING BUTTON', 'ACTION'),
-        ('STOP ACCELERATING', 'ACTION'),
-        ('STOP ALL DAMAGE MODIFICATIONS', 'ACTION'),
-        ('STOP ALL DAMAGE OVER TIME', 'ACTION'),
-        ('STOP ALL HEAL OVER TIME', 'ACTION'),
-        ('STOP CAMERA', 'ACTION'),
-        ('STOP CHASING GLOBAL VARIABLE', 'ACTION'),
-        ('STOP CHASING PLAYER VARIABLE', 'ACTION'),
-        ('STOP DAMAGE MODIFICATION', 'ACTION'),
-        ('STOP DAMAGE OVER TIME', 'ACTION'),
-        ('STOP FACING', 'ACTION'),
-        ('STOP FORCING PLAYER TO BE HERO', 'ACTION'),
-        ('STOP FORCING SPAWN ROOM', 'ACTION'),
-        ('STOP FORCING THROTTLE', 'ACTION'),
-        ('STOP HEAL OVER TIME', 'ACTION'),
-        ('STOP HOLDING BUTTON', 'ACTION'),
-        ('TELEPORT', 'ACTION'),
-        ('UNPAUSE MATCH TIME', 'ACTION'),
-        ('WAIT', 'ACTION'),
-        ('ALL HEROES', 'CONST'),
-        ('ATTACKER', 'CONST'),
-        ('BACKWARD', 'CONST'),
-        ('BAD AURA', 'CONST'),
-        ('BAD AURA SOUND', 'CONST'),
-        ('BEACON SOUND', 'CONST'),
-        ('BLUE', 'CONST'),
-        ('CLOUD', 'CONST'),
-        ('CONTROL MODE SCORING TEAM', 'CONST'),
-        ('CURRENT ARRAY ELEMENT', 'CONST'),
-        ('DECAL SOUND', 'CONST'),
-        ('DOWN', 'CONST'),
-        ('EMPTY ARRAY', 'CONST'),
-        ('ENERGY SOUND', 'CONST'),
-        ('EVENT PLAYER', 'CONST'),
-        ('EVENT WAS CRITICAL HIT', 'CONST'),
-        ('FALSE', 'CONST'),
-        ('FORWARD', 'CONST'),
-        ('GOOD AURA', 'CONST'),
-        ('GOOD AURA SOUND', 'CONST'),
-        ('GREEN', 'CONST'),
-        ('IS ASSEMBLING HEROES', 'CONST'),
-        ('IS BETWEEN ROUNDS', 'CONST'),
-        ('IS CONTROL MODE POINT LOCKED', 'CONST'),
-        ('IS CTF MODE IN SUDDEN DEATH', 'CONST'),
-        ('IS GAME IN PROGRESS', 'CONST'),
-        ('IS IN SETUP', 'CONST'),
-        ('IS MATCH COMPLETE', 'CONST'),
-        ('IS WAITING FOR PLAYERS', 'CONST'),
-        ('LAST CREATED ENTITY', 'CONST'),
-        ('LEFT', 'CONST'),
-        ('LIGHT SHAFT', 'CONST'),
-        ('NONE', 'CONST'),
-        ('NULL', 'CONST'),
-        ('OFF', 'CONST'),
-        ('ORB', 'CONST'),
-        ('PAYLOAD POSITION', 'CONST'),
-        ('PICK-UP SOUND', 'CONST'),
-        ('POSITION AND RADIUS', 'CONST'),
-        ('PURPLE', 'CONST'),
-        ('RED', 'CONST'),
-        ('RIGHT', 'CONST'),
-        ('RING', 'CONST'),
-        ('SMOKE SOUND', 'CONST'),
-        ('SPARKLES', 'CONST'),
-        ('SPARKLES SOUND', 'CONST'),
-        ('SPHERE', 'CONST'),
-        ('SURFACES', 'CONST'),
-        ('SURFACES AND ALL BARRIERS', 'CONST'),
-        ('SURFACES AND ENEMY BARRIERS', 'CONST'),
-        ('TEAM 1', 'CONST'),
-        ('TEAM 2', 'CONST'),
-        ('TRUE', 'CONST'),
-        ('UP', 'CONST'),
-        ('VICTIM', 'CONST'),
-        ('VISIBLE TO', 'CONST'),
-        ('VISIBLE TO, POSITION, AND RADIUS', 'CONST'),
-        ('WHITE', 'CONST'),
-        ('YELLOW', 'CONST'),
-        ('ONGOING - EACH PLAYER', 'NAME'),
-        ('ONGOING - GLOBAL', 'NAME'),
-        ('PLAYER DEALT DAMAGE', 'NAME'),
-        ('PLAYER DEALT FINAL BLOW', 'NAME'),
-        ('PLAYER DIED', 'NAME'),
-        ('PLAYER EARNED ELIMINATION', 'NAME'),
-        ('PLAYER TOOK DAMAGE', 'NAME'),
-        ('ABSOLUTE VALUE', 'VALUE'),
-        ('ADD', 'VALUE'),
-        ('ALL DEAD PLAYERS', 'VALUE'),
-        ('ALL LIVING PLAYERS', 'VALUE'),
-        ('ALL PLAYERS', 'VALUE'),
-        ('ALL PLAYERS NOT ON OBJECTIVE', 'VALUE'),
-        ('ALL PLAYERS ON OBJECTIVE', 'VALUE'),
-        ('ALLOWED HEROES', 'VALUE'),
-        ('ALTITUDE OF', 'VALUE'),
-        ('AND', 'VALUE'),
-        ('ANGLE DIFFERENCE', 'VALUE'),
-        ('APPEND TO ARRAY', 'VALUE'),
-        ('ARRAY CONTAINS', 'VALUE'),
-        ('ARRAY SLICE', 'VALUE'),
-        ('CLOSEST PLAYER TO', 'VALUE'),
-        ('COMPARE', 'VALUE'),
-        ('CONTROL MODE SCORING PERCENTAGE', 'VALUE'),
-        ('COSINE FROM DEGREES', 'VALUE'),
-        ('COSINE FROM RADIANS', 'VALUE'),
-        ('COUNT OF', 'VALUE'),
-        ('CROSS PRODUCT', 'VALUE'),
-        ('DIRECTION FROM ANGLES', 'VALUE'),
-        ('DIRECTION TOWARDS', 'VALUE'),
-        ('DISTANCE BETWEEN', 'VALUE'),
-        ('DIVIDE', 'VALUE'),
-        ('DOT PRODUCT', 'VALUE'),
-        ('ENTITY EXISTS', 'VALUE'),
-        ('EVENT DAMAGE', 'VALUE'),
-        ('EYE POSITION', 'VALUE'),
-        ('FACING DIRECTION OF', 'VALUE'),
-        ('FARTHEST PLAYER FROM', 'VALUE'),
-        ('FILTERED ARRAY', 'VALUE'),
-        ('FIRST OF', 'VALUE'),
-        ('FLAG POSITION', 'VALUE'),
-        ('GLOBAL VARIABLE', 'VALUE'),
-        ('HAS SPAWNED', 'VALUE'),
-        ('HAS STATUS', 'VALUE'),
-        ('HEALTH', 'VALUE'),
-        ('HEALTH PERCENT', 'VALUE'),
-        ('HERO', 'VALUE'),
-        ('HERO ICON STRING', 'VALUE'),
-        ('HERO OF', 'VALUE'),
-        ('HORIZONTAL ANGLE FROM DIRECTION', 'VALUE'),
-        ('HORIZONTAL ANGLE TOWARDS', 'VALUE'),
-        ('HORIZONTAL FACING ANGLE OF', 'VALUE'),
-        ('HORIZONTAL SPEED OF', 'VALUE'),
-        ('INDEX OF ARRAY VALUE', 'VALUE'),
-        ('IS ALIVE', 'VALUE'),
-        ('IS BUTTON HELD', 'VALUE'),
-        ('IS COMMUNICATING', 'VALUE'),
-        ('IS COMMUNICATING ANY', 'VALUE'),
-        ('IS COMMUNICATING ANY EMOTE', 'VALUE'),
-        ('IS COMMUNICATING ANY VOICE LINE', 'VALUE'),
-        ('IS CROUCHING', 'VALUE'),
-        ('IS DEAD', 'VALUE'),
-        ('IS FIRING PRIMARY', 'VALUE'),
-        ('IS FIRING SECONDARY', 'VALUE'),
-        ('IS FLAG AT BASE', 'VALUE'),
-        ('IS FLAG BEING CARRIED', 'VALUE'),
-        ('IS HERO BEING PLAYED', 'VALUE'),
-        ('IS IN AIR', 'VALUE'),
-        ('IS IN LINE OF SIGHT', 'VALUE'),
-        ('IS IN SPAWN ROOM', 'VALUE'),
-        ('IS IN VIEW ANGLE', 'VALUE'),
-        ('IS MOVING', 'VALUE'),
-        ('IS OBJECTIVE COMPLETE', 'VALUE'),
-        ('IS ON GROUND', 'VALUE'),
-        ('IS ON OBJECTIVE', 'VALUE'),
-        ('IS ON WALL', 'VALUE'),
-        ('IS PORTRAIT ON FIRE', 'VALUE'),
-        ('IS STANDING', 'VALUE'),
-        ('IS TEAM ON DEFENSE', 'VALUE'),
-        ('IS TEAM ON OFFENSE', 'VALUE'),
-        ('IS TRUE FOR ALL', 'VALUE'),
-        ('IS TRUE FOR ANY', 'VALUE'),
-        ('IS USING ABILITY 1', 'VALUE'),
-        ('IS USING ABILITY 2', 'VALUE'),
-        ('IS USING ULTIMATE', 'VALUE'),
-        ('LAST DAMAGE MODIFICATION ID', 'VALUE'),
-        ('LAST DAMAGE OVER TIME ID', 'VALUE'),
-        ('LAST HEAL OVER TIME ID', 'VALUE'),
-        ('LAST OF', 'VALUE'),
-        ('LAST TEXT ID', 'VALUE'),
-        ('LOCAL VECTOR OF', 'VALUE'),
-        ('MATCH ROUND', 'VALUE'),
-        ('MATCH TIME', 'VALUE'),
-        ('MAX', 'VALUE'),
-        ('MAX HEALTH', 'VALUE'),
-        ('MIN', 'VALUE'),
-        ('MODULO', 'VALUE'),
-        ('MULTIPLY', 'VALUE'),
-        ('NEAREST WALKABLE POSITION', 'VALUE'),
-        ('NORMALIZE', 'VALUE'),
-        ('NOT', 'VALUE'),
-        ('NUMBER', 'VALUE'),
-        ('NUMBER OF DEAD PLAYERS', 'VALUE'),
-        ('NUMBER OF DEATHS', 'VALUE'),
-        ('NUMBER OF ELIMINATIONS', 'VALUE'),
-        ('NUMBER OF FINAL BLOWS', 'VALUE'),
-        ('NUMBER OF HEROES', 'VALUE'),
-        ('NUMBER OF LIVING PLAYERS', 'VALUE'),
-        ('NUMBER OF PLAYERS', 'VALUE'),
-        ('NUMBER OF PLAYERS ON OBJECTIVE', 'VALUE'),
-        ('OBJECTIVE INDEX', 'VALUE'),
-        ('OBJECTIVE POSITION', 'VALUE'),
-        ('OPPOSITE TEAM OF', 'VALUE'),
-        ('OR', 'VALUE'),
-        ('PAYLOAD PROGRESS PERCENTAGE', 'VALUE'),
-        ('PLAYER CARRYING FLAG', 'VALUE'),
-        ('PLAYER CLOSEST TO RETICLE', 'VALUE'),
-        ('PLAYER VARIABLE', 'VALUE'),
-        ('PLAYERS IN SLOT', 'VALUE'),
-        ('PLAYERS IN VIEW ANGLE', 'VALUE'),
-        ('PLAYERS ON HERO', 'VALUE'),
-        ('PLAYERS WITHIN RADIUS', 'VALUE'),
-        ('POINT CAPTURE PERCENTAGE', 'VALUE'),
-        ('POSITION OF', 'VALUE'),
-        ('RAISE TO POWER', 'VALUE'),
-        ('RANDOM INTEGER', 'VALUE'),
-        ('RANDOM REAL', 'VALUE'),
-        ('RANDOM VALUE IN ARRAY', 'VALUE'),
-        ('RANDOMIZED ARRAY', 'VALUE'),
-        ('RAY CAST HIT NORMAL', 'VALUE'),
-        ('RAY CAST HIT PLAYER', 'VALUE'),
-        ('RAY CAST HIT POSITION', 'VALUE'),
-        ('REMOVE FROM ARRAY', 'VALUE'),
-        ('ROUND TO INTEGER', 'VALUE'),
-        ('SCORE OF', 'VALUE'),
-        ('SINE FROM DEGREES', 'VALUE'),
-        ('SINE FROM RADIANS', 'VALUE'),
-        ('SLOT OF', 'VALUE'),
-        ('SORTED ARRAY', 'VALUE'),
-        ('SPEED OF', 'VALUE'),
-        ('SPEED OF IN DIRECTION', 'VALUE'),
-        ('SQUARE ROOT', 'VALUE'),
-        ('STRING', 'VALUE'),
-        ('SUBTRACT', 'VALUE'),
-        ('TEAM', 'VALUE'),
-        ('TEAM OF', 'VALUE'),
-        ('TEAM SCORE', 'VALUE'),
-        ('THROTTLE OF', 'VALUE'),
-        ('TOTAL TIME ELAPSED', 'VALUE'),
-        ('ULTIMATE CHARGE PERCENT', 'VALUE'),
-        ('VALUE IN ARRAY', 'VALUE'),
-        ('VECTOR', 'VALUE'),
-        ('VECTOR TOWARDS', 'VALUE'),
-        ('VELOCITY OF', 'VALUE'),
-        ('VERTICAL ANGLE FROM DIRECTION', 'VALUE'),
-        ('VERTICAL ANGLE TOWARDS', 'VALUE'),
-        ('VERTICAL FACING ANGLE OF', 'VALUE'),
-        ('VERTICAL SPEED OF', 'VALUE'),
-        ('WORLD VECTOR OF', 'VALUE'),
-        ('X COMPONENT OF', 'VALUE'),
-        ('Y COMPONENT OF', 'VALUE'),
-        ('Z COMPONENT OF', 'VALUE')
-    ])
-    self.aliases = dict([
-        ('ALL TRUE', 'IS TRUE FOR ALL'),
-        ('COS', 'COSINE FROM DEGREES'),
-        ('COSR', 'COSINE FROM RADIANS'),
-        ('ON EACH PLAYER', 'ONGOING - EACH PLAYER'),
-        ('ON GLOBAL', 'ONGOING - GLOBAL'),
-        ('PLAYERS IN RADIUS', 'PLAYERS WITHIN RADIUS'),
-        ('ROUND', 'ROUND TO INTEGER'),
-        ('SIN', 'SINE FROM DEGREES'),
-        ('SINR', 'SINE FROM RADIANS'),
-        ('VISIBLE TO POSITION AND RADIUS', 'VISIBLE TO, POSITION, AND RADIUS'),
-
-        ('EVERYONE', 'ALL PLAYERS(TEAM(ALL))')
-    ])
-    self.comma_tokens = ['VISIBLE TO, POSITION, AND RADIUS']
-    self.keywords = ['if', 'elif', 'else', 'pVar', 'gVar']
+    self.keywords = ['if', 'in', 'not', 'and', 'or', 'elif', 'else', 'while', 'pVar', 'gVar']
 
     # A queue where extra tokens are pushed on (see the NEWLINE lexer rule).
     self.tokens = []
@@ -464,61 +101,69 @@ rulebody : RULEBLOCK ruleblock #RulebodyBlock
 ruleblock : block;
 block : NEWLINE INDENT line+ DEDENT
       | line;
-line : expr
-     | assign
+line : assign
      | if_stmt
+     | while_stmt
+     | for_stmt
+     | const
+     | action
+     | value
+     | (action | value | const) NEWLINE? comp_op=('<'|'>'|'=='|'>='|'<='|'!=') primary
+     | name
      | ANNOTATION line
      | NEWLINE;
 
-assign : (variable item?) ASSIGN expr;
-if_stmt : 'if' expr ':' block ('elif' expr ':' block)* ('else:' else_block=block)?;
+assign : expr ASSIGN expr;
+if_stmt : IF expr ':' block (ELIF expr ':' block)* (ELSE ':' else_block=block)?;
+while_stmt : WHILE expr ':' block;
+for_stmt : FOR NAME IN expr ':' block;
 expr : logic_or;
-logic_or : logic_and ('or' logic_and)*;
-logic_and : logic_not ('and' logic_not)*;
-logic_not : ('not' logic_not) | compare;
-compare : arith (('<'|'>'|'=='|'>='|'<='|'!='|COMPARE) arith)*;
-arith : primary_expr ('^' arith)* # Pow
-      | primary_expr ('*' arith)* # Mul
-      | primary_expr ('/' arith)* # Div
-      | primary_expr ('+' arith)* # Add
-      | primary_expr ('-' arith)* # Sub
-      | primary_expr ('%' arith)* # Mod
-      | primary_expr #ArithPrimary;
+logic_or : logic_and (OR logic_and)*;
+logic_and : logic_not (AND logic_not)*;
+logic_not : (NOT logic_not) | compare;
+compare : arith (('<'|'>'|'=='|'>='|'<='|'!='|IN|NOT IN) arith)*;
+arith : primary ('^' primary)* # Pow
+      | primary ('*' primary)* # Mul
+      | primary ('/' primary)* # Div
+      | primary ('+' primary)* # Add
+      | primary ('-' primary)* # Sub
+      | primary ('%' primary)* # Mod
+      | ('-'|'+')* primary #Unary; #fix the unary boi!
 
-primary_expr : primary_expr item #PItem
-             | primary_expr call #PCall
-             | primary #PrimaryNone;
-primary : action
+primary : ( action
         | value
         | const
+        | name
         | variable
         | vector
-        | array
         | time
         | numeral
-        | name
-        | '(' expr ')';
+        | array
+        | '(' expr ')') trailer*;
 action : ACTION after_line;
-value : VALUE after_line;
-const : CONST;
+value : VALUE after_line attribute*;
+const : CONST attribute*;
 after_line : '(' arg_list ')'
-           | block
+           | NEWLINE INDENT (primary|ANNOTATION primary|NEWLINE)+ DEDENT
            | NEWLINE;
 param_list : '(' NAME (',' NAME)* ')';
 arg_list : primary (',' primary)*;
 
-item : '[' expr ']';
+trailer : item
+        | call;
+item : '[' INTEGER ']';
 call : '(' arg_list? ')';
+attribute : '.' name;
 
 name : NAME;
-time : numeral ('ms' | 's' | 'min');
+time : numeral ('MS' | 'S' | 'MIN');
 numeral : num_const=FLOAT
         | num_const=INTEGER;
 variable : global_var
          | player_var
          | name;
-global_var : 'gVar' varname=NAME;
-player_var : 'pVar' varname=NAME ('@' primary)?;
+global_var : GVAR varname=NAME;
+player_var : PVAR varname=NAME ('@' primary)?;
 vector : '<' primary ',' primary ',' primary '>';
 array : '[' arg_list? ']';
 
@@ -529,25 +174,398 @@ STRING : '"' ~[\\\r\n\f"]* '"';
 FLOAT : [0-9]+'.'[0-9]+;
 INTEGER : [0-9]+;
 ANNOTATION : [_a-zA-Z][_a-zA-Z0-9]* ':';
-RULE : [a-zA-Z]+ {self.text.upper() == 'RULE'}?;
-RULEBLOCK : [a-zA-Z]+ {self.text.upper() in ['EVENT', 'ACTIONS', 'CONDITIONS']}?;
-NAME : [_a-zA-Z\- ]*[a-zA-Z0-9] {self.text.split()[0] not in self.keywords}?
-{from OWScriptParser import OWScriptParser
-self.text = self.text.strip()
-if self.text.upper() in self.aliases or self.text.upper() in self.workshop_rules:
-    text = self.aliases.get(self.text.upper(), self.text.upper())
-    attr = self.workshop_rules.get(text, 'NAME')
-    self.type = getattr(OWScriptParser, attr)
-    self.text = text
-elif self.text in ['in', 'not in']:
-    self.type = OWScriptParser.COMPARE
-elif self.text.isnumeric():
-    if '.' in self.text:
-        self.type = OWScriptParser.FLOAT
-    else:
-        self.type = OWScriptParser.INTEGER
-}
-    | [_a-zA-Z0-9][_a-zA-Z0-9]*;
+CONST : 'ALL'
+      | 'ALL HEROES'
+      | 'ATTACKER'
+      | 'BACKWARD'
+      | 'BAD AURA'
+      | 'BAD AURA SOUND'
+      | 'BEACON SOUND'
+      | 'BLUE'
+      | 'CLOUD'
+      | 'CONTROL MODE SCORING TEAM'
+      | 'CURRENT ARRAY ELEMENT'
+      | 'DECAL SOUND'
+      | 'DOWN'
+      | 'EMPTY ARRAY'
+      | 'ENERGY SOUND'
+      | 'EVENT PLAYER'
+      | 'EVENT WAS CRITICAL HIT'
+      | 'FALSE'
+      | 'FORWARD'
+      | 'GOOD AURA'
+      | 'GOOD AURA SOUND'
+      | 'GREEN'
+      | 'IS ASSEMBLING HEROES'
+      | 'IS BETWEEN ROUNDS'
+      | 'IS CONTROL MODE POINT LOCKED'
+      | 'IS CTF MODE IN SUDDEN DEATH'
+      | 'IS GAME IN PROGRESS'
+      | 'IS IN SETUP'
+      | 'IS MATCH COMPLETE'
+      | 'IS WAITING FOR PLAYERS'
+      | 'LAST CREATED ENTITY'
+      | 'LEFT'
+      | 'LIGHT SHAFT'
+      | 'NONE'
+      | 'NULL'
+      | 'OFF'
+      | 'ONGOING - EACH PLAYER'
+      | 'ONGOING - GLOBAL'
+      | 'ORB'
+      | 'PAYLOAD POSITION'
+      | 'PICK-UP SOUND'
+      | 'PLAYER DEALT DAMAGE'
+      | 'PLAYER DEALT FINAL BLOW'
+      | 'PLAYER DIED'
+      | 'PLAYER EARNED ELIMINATION'
+      | 'PLAYER TOOK DAMAGE'
+      | 'POSITION AND RADIUS'
+      | 'PURPLE'
+      | 'RED'
+      | 'RIGHT'
+      | 'RING'
+      | 'SMOKE SOUND'
+      | 'SPARKLES'
+      | 'SPARKLES SOUND'
+      | 'SPHERE'
+      | 'SURFACES'
+      | 'SURFACES AND ALL BARRIERS'
+      | 'SURFACES AND ENEMY BARRIERS'
+      | 'TEAM 1'
+      | 'TEAM 2'
+      | 'TRUE'
+      | 'UP'
+      | 'VICTIM'
+      | 'VISIBLE TO'
+      | 'VISIBLE TO, POSITION, AND RADIUS'
+      | 'WHITE'
+      | 'YELLOW';
+ACTION : 'ABORT'
+       | 'ABORT IF'
+       | 'ABORT IF CONDITION IS FALSE'
+       | 'ABORT IF CONDITION IS TRUE'
+       | 'ALLOW BUTTON'
+       | 'APPLY IMPULSE'
+       | 'BIG MESSAGE'
+       | 'CHASE GLOBAL VARIABLE AT RATE'
+       | 'CHASE GLOBAL VARIABLE OVER TIME'
+       | 'CHASE PLAYER VARIABLE AT RATE'
+       | 'CHASE PLAYER VARIABLE OVER TIME'
+       | 'CLEAR STATUS'
+       | 'COMMUNICATE'
+       | 'CREATE EFFECT'
+       | 'CREATE HUD TEXT'
+       | 'CREATE ICON'
+       | 'CREATE IN-WORLD TEXT'
+       | 'DAMAGE'
+       | 'DECLARE MATCH DRAW'
+       | 'DECLARE PLAYER VICTORY'
+       | 'DECLARE ROUND VICTORY'
+       | 'DECLARE TEAM VICTORY'
+       | 'DESTROY ALL EFFECTS'
+       | 'DESTROY ALL HUD TEXT'
+       | 'DESTROY ALL ICONS'
+       | 'DESTROY ALL IN-WORLD TEXT'
+       | 'DESTROY EFFECT'
+       | 'DESTROY HUD TEXT'
+       | 'DESTROY ICON'
+       | 'DESTROY IN-WORLD TEXT'
+       | 'DISABLE BUILT-IN GAME MODE ANNOUNCER'
+       | 'DISABLE BUILT-IN GAME MODE COMPLETION'
+       | 'DISABLE BUILT-IN GAME MODE MUSIC'
+       | 'DISABLE BUILT-IN GAME MODE RESPAWNING'
+       | 'DISABLE BUILT-IN GAME MODE SCORING'
+       | 'DISABLE DEATH SPECTATE ALL PLAYERS'
+       | 'DISABLE DEATH SPECTATE TARGET HUD'
+       | 'DISALLOW BUTTON'
+       | 'ENABLE BUILT-IN GAME MODE ANNOUNCER'
+       | 'ENABLE BUILT-IN GAME MODE COMPLETION'
+       | 'ENABLE BUILT-IN GAME MODE MUSIC'
+       | 'ENABLE BUILT-IN GAME MODE RESPAWNING'
+       | 'ENABLE BUILT-IN GAME MODE SCORING'
+       | 'ENABLE DEATH SPECTATE ALL PLAYERS'
+       | 'ENABLE DEATH SPECTATE TARGET HUD'
+       | 'GO TO ASSEMBLE HEROES'
+       | 'HEAL'
+       | 'KILL'
+       | 'LOOP'
+       | 'LOOP IF'
+       | 'LOOP IF CONDITION IS FALSE'
+       | 'LOOP IF CONDITION IS TRUE'
+       | 'MODIFY GLOBAL VARIABLE'
+       | 'MODIFY PLAYER SCORE'
+       | 'MODIFY PLAYER VARIABLE'
+       | 'MODIFY TEAM SCORE'
+       | 'PAUSE MATCH TIME'
+       | 'PLAY EFFECT'
+       | 'PRELOAD HERO'
+       | 'PRESS BUTTON'
+       | 'RESET PLAYER HERO AVAILABILITY'
+       | 'RESPAWN'
+       | 'RESURRECT'
+       | 'SET ABILITY 1 ENABLED'
+       | 'SET ABILITY 2 ENABLED'
+       | 'SET AIM SPEED'
+       | 'SET DAMAGE DEALT'
+       | 'SET DAMAGE RECEIVED'
+       | 'SET FACING'
+       | 'SET GLOBAL VARIABLE'
+       | 'SET GLOBAL VARIABLE AT INDEX'
+       | 'SET GRAVITY'
+       | 'SET HEALING DEALT'
+       | 'SET HEALING RECEIVED'
+       | 'SET INVISIBLE'
+       | 'SET MATCH TIME'
+       | 'SET MAX HEALTH'
+       | 'SET MOVE SPEED'
+       | 'SET OBJECTIVE DESCRIPTION'
+       | 'SET PLAYER ALLOWED HEROES'
+       | 'SET PLAYER SCORE'
+       | 'SET PLAYER VARIABLE'
+       | 'SET PLAYER VARIABLE AT INDEX'
+       | 'SET PRIMARY FIRE ENABLED'
+       | 'SET PROJECTILE GRAVITY'
+       | 'SET PROJECTILE SPEED'
+       | 'SET RESPAWN MAX TIME'
+       | 'SET SECONDARY FIRE ENABLED'
+       | 'SET SLOW MOTION'
+       | 'SET STATUS'
+       | 'SET TEAM SCORE'
+       | 'SET ULTIMATE ABILITY ENABLED'
+       | 'SET ULTIMATE CHARGE'
+       | 'SKIP'
+       | 'SKIP IF'
+       | 'SMALL MESSAGE'
+       | 'START ACCELERATING'
+       | 'START CAMERA'
+       | 'START DAMAGE MODIFICATION'
+       | 'START DAMAGE OVER TIME'
+       | 'START FACING'
+       | 'START FORCING PLAYER TO BE HERO'
+       | 'START FORCING SPAWN ROOM'
+       | 'START FORCING THROTTLE'
+       | 'START HEAL OVER TIME'
+       | 'START HOLDING BUTTON'
+       | 'STOP ACCELERATING'
+       | 'STOP ALL DAMAGE MODIFICATIONS'
+       | 'STOP ALL DAMAGE OVER TIME'
+       | 'STOP ALL HEAL OVER TIME'
+       | 'STOP CAMERA'
+       | 'STOP CHASING GLOBAL VARIABLE'
+       | 'STOP CHASING PLAYER VARIABLE'
+       | 'STOP DAMAGE MODIFICATION'
+       | 'STOP DAMAGE OVER TIME'
+       | 'STOP FACING'
+       | 'STOP FORCING PLAYER TO BE HERO'
+       | 'STOP FORCING SPAWN ROOM'
+       | 'STOP FORCING THROTTLE'
+       | 'STOP HEAL OVER TIME'
+       | 'STOP HOLDING BUTTON'
+       | 'TELEPORT'
+       | 'UNPAUSE MATCH TIME'
+       | 'WAIT';
+VALUE : 'ABSOLUTE VALUE'
+      | 'ADD'
+      | 'ALL DEAD PLAYERS'
+      | 'ALL LIVING PLAYERS'
+      | 'ALL PLAYERS'
+      | 'ALL PLAYERS NOT ON OBJECTIVE'
+      | 'ALL PLAYERS ON OBJECTIVE'
+      | 'ALLOWED HEROES'
+      | 'ALTITUDE OF'
+      | 'ANGLE DIFFERENCE'
+      | 'APPEND TO ARRAY'
+      | 'ARRAY CONTAINS'
+      | 'ARRAY SLICE'
+      | 'CLOSEST PLAYER TO'
+      | 'COMPARE'
+      | 'CONTROL MODE SCORING PERCENTAGE'
+      | 'COSINE FROM DEGREES'
+      | 'COSINE FROM RADIANS'
+      | 'COUNT OF'
+      | 'CROSS PRODUCT'
+      | 'DIRECTION FROM ANGLES'
+      | 'DIRECTION TOWARDS'
+      | 'DISTANCE BETWEEN'
+      | 'DIVIDE'
+      | 'DOT PRODUCT'
+      | 'ENTITY EXISTS'
+      | 'EVENT DAMAGE'
+      | 'EYE POSITION'
+      | 'FACING DIRECTION OF'
+      | 'FARTHEST PLAYER FROM'
+      | 'FILTERED ARRAY'
+      | 'FIRST OF'
+      | 'FLAG POSITION'
+      | 'GLOBAL VARIABLE'
+      | 'HAS SPAWNED'
+      | 'HAS STATUS'
+      | 'HEALTH'
+      | 'HEALTH PERCENT'
+      | 'HERO'
+      | 'HERO ICON STRING'
+      | 'HERO OF'
+      | 'HORIZONTAL ANGLE FROM DIRECTION'
+      | 'HORIZONTAL ANGLE TOWARDS'
+      | 'HORIZONTAL FACING ANGLE OF'
+      | 'HORIZONTAL SPEED OF'
+      | 'INDEX OF ARRAY VALUE'
+      | 'IS ALIVE'
+      | 'IS BUTTON HELD'
+      | 'IS COMMUNICATING'
+      | 'IS COMMUNICATING ANY'
+      | 'IS COMMUNICATING ANY EMOTE'
+      | 'IS COMMUNICATING ANY VOICE LINE'
+      | 'IS CROUCHING'
+      | 'IS DEAD'
+      | 'IS FIRING PRIMARY'
+      | 'IS FIRING SECONDARY'
+      | 'IS FLAG AT BASE'
+      | 'IS FLAG BEING CARRIED'
+      | 'IS HERO BEING PLAYED'
+      | 'IS IN AIR'
+      | 'IS IN LINE OF SIGHT'
+      | 'IS IN SPAWN ROOM'
+      | 'IS IN VIEW ANGLE'
+      | 'IS MOVING'
+      | 'IS OBJECTIVE COMPLETE'
+      | 'IS ON GROUND'
+      | 'IS ON OBJECTIVE'
+      | 'IS ON WALL'
+      | 'IS PORTRAIT ON FIRE'
+      | 'IS STANDING'
+      | 'IS TEAM ON DEFENSE'
+      | 'IS TEAM ON OFFENSE'
+      | 'IS TRUE FOR ALL'
+      | 'IS TRUE FOR ANY'
+      | 'IS USING ABILITY 1'
+      | 'IS USING ABILITY 2'
+      | 'IS USING ULTIMATE'
+      | 'LAST DAMAGE MODIFICATION ID'
+      | 'LAST DAMAGE OVER TIME ID'
+      | 'LAST HEAL OVER TIME ID'
+      | 'LAST OF'
+      | 'LAST TEXT ID'
+      | 'LOCAL VECTOR OF'
+      | 'MATCH ROUND'
+      | 'MATCH TIME'
+      | 'MAX'
+      | 'MAX HEALTH'
+      | 'MIN'
+      | 'MODULO'
+      | 'MULTIPLY'
+      | 'NEAREST WALKABLE POSITION'
+      | 'NORMALIZE'
+      | 'NUMBER'
+      | 'NUMBER OF DEAD PLAYERS'
+      | 'NUMBER OF DEATHS'
+      | 'NUMBER OF ELIMINATIONS'
+      | 'NUMBER OF FINAL BLOWS'
+      | 'NUMBER OF HEROES'
+      | 'NUMBER OF LIVING PLAYERS'
+      | 'NUMBER OF PLAYERS'
+      | 'NUMBER OF PLAYERS ON OBJECTIVE'
+      | 'OBJECTIVE INDEX'
+      | 'OBJECTIVE POSITION'
+      | 'OPPOSITE TEAM OF'
+      | 'PAYLOAD PROGRESS PERCENTAGE'
+      | 'PLAYER CARRYING FLAG'
+      | 'PLAYER CLOSEST TO RETICLE'
+      | 'PLAYER VARIABLE'
+      | 'PLAYERS IN SLOT'
+      | 'PLAYERS IN VIEW ANGLE'
+      | 'PLAYERS ON HERO'
+      | 'PLAYERS WITHIN RADIUS'
+      | 'POINT CAPTURE PERCENTAGE'
+      | 'POSITION OF'
+      | 'RAISE TO POWER'
+      | 'RANDOM INTEGER'
+      | 'RANDOM REAL'
+      | 'RANDOM VALUE IN ARRAY'
+      | 'RANDOMIZED ARRAY'
+      | 'RAY CAST HIT NORMAL'
+      | 'RAY CAST HIT PLAYER'
+      | 'RAY CAST HIT POSITION'
+      | 'REMOVE FROM ARRAY'
+      | 'ROUND TO INTEGER'
+      | 'SCORE OF'
+      | 'SINE FROM DEGREES'
+      | 'SINE FROM RADIANS'
+      | 'SLOT OF'
+      | 'SORTED ARRAY'
+      | 'SPEED OF'
+      | 'SPEED OF IN DIRECTION'
+      | 'SQUARE ROOT'
+      | 'STRING'
+      | 'SUBTRACT'
+      | 'TEAM'
+      | 'TEAM OF'
+      | 'TEAM SCORE'
+      | 'THROTTLE OF'
+      | 'TOTAL TIME ELAPSED'
+      | 'ULTIMATE CHARGE PERCENT'
+      | 'VALUE IN ARRAY'
+      | 'VECTOR'
+      | 'VECTOR TOWARDS'
+      | 'VELOCITY OF'
+      | 'VERTICAL ANGLE FROM DIRECTION'
+      | 'VERTICAL ANGLE TOWARDS'
+      | 'VERTICAL FACING ANGLE OF'
+      | 'VERTICAL SPEED OF'
+      | 'WORLD VECTOR OF'
+      | 'X COMPONENT OF'
+      | 'Y COMPONENT OF'
+      | 'Z COMPONENT OF';
+RULEBLOCK : 'EVENT'
+          | 'CONDITIONS'
+          | 'ACTIONS';
+ALIAS : ('ALL TRUE'
+      | 'COS'
+      | 'COSR'
+      | 'ON GLOBAL'
+      | 'ON EACH PLAYER'
+      | 'PLAYERS IN RADIUS'
+      | 'ROUND'
+      | 'SIN'
+      | 'SINR'
+      // Builtins
+      | 'EVERYONE') {
+from OWScriptParser import OWScriptParser
+self.text = self.text.strip().upper()
+_VALUE = OWScriptParser.VALUE
+_CONST = OWScriptParser.CONST
+_NAME = OWScriptParser.NAME
+aliases = dict([
+('ABS', ('ABSOLUTE VALUE', _VALUE)),
+('ALL TRUE', ('IS TRUE FOR ALL', _VALUE)),
+('COS', ('COSINE FROM DEGREES', _VALUE)),
+('COSR', ('COSINE FROM RADIANS', _VALUE)),
+('ON EACH PLAYER', ('ONGOING - EACH PLAYER', _CONST)),
+('ON GLOBAL', ('ONGOING - GLOBAL', _CONST)),
+('PLAYERS IN RADIUS', ('PLAYERS WITHIN RADIUS', _VALUE)),
+('ROUND', ('ROUND TO INTEGER', _VALUE)),
+('SIN', ('SINE FROM DEGREES', _VALUE)),
+('SINR', ('SINE FROM RADIANS', _VALUE)),
+
+('EVERYONE', ('ALL PLAYERS(TEAM(ALL))', _CONST))
+])
+if self.text.upper() in aliases:
+    self.text, self.type = aliases.get(self.text.upper())
+};
+RULE : 'RULE';
+IF : 'IF';
+ELIF : 'ELIF';
+ELSE : 'ELSE';
+WHILE : 'WHILE';
+FOR : 'FOR';
+IN : 'IN';
+NOT : 'NOT';
+AND : 'AND';
+OR : 'OR';
+PVAR : 'PVAR';
+GVAR : 'GVAR';
+NAME : [_a-zA-Z][_\-a-zA-Z0-9]*;
 NEWLINE : ( {self.atStartOfInput()}? SPACES
         | ( '\r'? '\n' | '\r' | '\f' ) SPACES?
         )

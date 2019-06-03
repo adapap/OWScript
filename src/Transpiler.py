@@ -21,35 +21,15 @@ class Transpiler:
         self.player_index = defaultdict(count)
         self.line = 0
         self.functions = {}
+        self.arrays = {}
         self.scopes = []
 
     @property
     def tabs(self):
         return ' ' * self.indent_size * self.indent_level
 
-    def array_modify(self, array, elem, index):
-        code += f'Append To Array(Append To Array(Array Slice('
-        if type(array) == str:
-            code += array
-        else:
-            code += self.visit(array)
-        code += f', 0, ' + self.visit(index) + '), '
-        if type(elem) == AST.ArrayModify:
-            code += 'Append To Array(Empty Array, '
-        code += self.visit(elem)
-        if type(elem) == AST.ArrayModify:
-            code += ')'
-        code += '), Array Slice('
-        if type(array) == str:
-            code += array
-        else:
-            visit(array)
-        code += f', Add(' + self.visit(index) + ', 1), Count Of('
-        if type(array) == str:
-            code += array
-        else:
-            visit(array)
-        code += ')))'
+    def clean(self, str_):
+        return '('.join(capwords(s) for s in str_.split('('))
 
     def assign(self, name, value='0', scope='global', player='Event Player'):
         code = ''
@@ -185,9 +165,22 @@ class Transpiler:
             code += f'{else_block}'
         return code.rstrip('\n').rstrip(';')
 
+    def visitWhile(self, node):
+        start_line = self.line
+        block = self.visit(node.block)
+        line = self.line - start_line + 2
+        code = f'Skip If(Not({self.visit(node.cond)}), {line});\n'
+        code += block
+        code += f'{self.tabs}Wait(0.001);\n'
+        code += f'{self.tabs}Loop If({self.visit(node.cond)})'
+        return code
+
     def visitAssign(self, node):
         code = ''
+        name = node.left.name
         value = node.right
+        if type(node.right) == AST.Array:
+            self.arrays[name] = value
         if node.op == '+=':
             value = AST.BinaryOp(left=node.left, op='+', right=value)
         if node.op == '-=':
@@ -200,21 +193,16 @@ class Transpiler:
             value = AST.BinaryOp(left=node.left, op='^', right=value)
         if node.op == '%=':
             value = AST.BinaryOp(left=node.left, op='%', right=value)
-        if type(node.left) == AST.Item:
+        if type(node.left) == AST.ArrayItem:
             item = node.left
-            index = self.lookup(item.array.name)
-            if type(item.array) in (AST.Name, AST.GlobalVar):
-                code += f'Set Global Variable(A, '
-            elif type(item.array) == AST.PlayerVar:
-                code += f'Set Player Variable({item.array.player}, A, '
-            inner = AST.ArrayModify(array=item.array, value=value, index=item.index)
-            self.array_modify('Global Variable(A)', inner, AST.Numeral(value=str(index)))
-            code += ')'
-        else:
-            name = node.left.name
-            scope = 'player' if type(node.left) == AST.PlayerVar else 'global'
-            player = node.left.player if type(node.left) == AST.PlayerVar else 'Event Player'
-            code += self.assign(name=name, value=value, scope=scope, player=player)
+            item_index = int(self.visit(item.item))
+            array = self.arrays[item.name]
+            array[item_index] = value
+            value = array
+            self.arrays[item.name] = value
+        scope = 'player' if type(node.left) == AST.PlayerVar else 'global'
+        player = node.left.player if type(node.left) == AST.PlayerVar else 'Event Player'
+        code += self.assign(name=name, value=value, scope=scope, player=player)
         return code
 
     def visitArrayModify(self, node):
@@ -225,9 +213,9 @@ class Transpiler:
         if node.op == '==':
             code += f'{self.visit(node.left)} {node.op} {self.visit(node.right)}'
         elif node.op == 'in':
-            code += f'Array Contains({self.visit(node.left)}, {self.visit(node.right)})'
+            code += f'Array Contains({self.visit(node.right)}, {self.visit(node.left)})'
         elif node.op == 'not in':
-            code += f'Not(Array Contains({self.visit(node.left)}, {self.visit(node.right)}))'
+            code += f'Not(Array Contains({self.visit(node.right)}, {self.visit(node.left)}))'
         else:
             code += f'Compare({self.visit(node.left)}, {node.op}, {self.visit(node.right)})'
         return code
@@ -275,7 +263,7 @@ class Transpiler:
             index = self.lookup(node.value)
             return f'Value In Array(Global Variable(A), {index})'
         else:
-            return capwords(node.value)
+            return self.clean(node.value)
 
     def visitNumeral(self, node):
         return node.value
@@ -310,8 +298,21 @@ class Transpiler:
             code = code.rstrip(', ')
         return code
 
+    def visitArrayItem(self, node):
+        return f'Value In Array({self.visit(node.array)}, {self.visit(node.item)})'
+
     def visitItem(self, node):
-        return f'Value In Array({self.visit(node.array)}, {self.visit(node.index)})'
+        return self.visit(node.index)
+
+    def visitAttribute(self, node):
+        if node.value == 'X':
+            code = 'X Component Of('
+        elif node.value == 'Y':
+            code = 'Y Component Of('
+        elif node.value == 'Z':
+            code = 'Z Component Of('
+        code += self.visit(node.arg) + ')'
+        return code
 
     def visitTime(self, node):
         time = node.value

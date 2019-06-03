@@ -134,6 +134,24 @@ class OWScriptListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by OWScriptParser#while_stmt.
+    def enterWhile_stmt(self, ctx:OWScriptParser.While_stmtContext):
+        pass
+
+    # Exit a parse tree produced by OWScriptParser#while_stmt.
+    def exitWhile_stmt(self, ctx:OWScriptParser.While_stmtContext):
+        pass
+
+
+    # Enter a parse tree produced by OWScriptParser#for_stmt.
+    def enterFor_stmt(self, ctx:OWScriptParser.For_stmtContext):
+        pass
+
+    # Exit a parse tree produced by OWScriptParser#for_stmt.
+    def exitFor_stmt(self, ctx:OWScriptParser.For_stmtContext):
+        pass
+
+
     # Enter a parse tree produced by OWScriptParser#expr.
     def enterExpr(self, ctx:OWScriptParser.ExprContext):
         pass
@@ -233,39 +251,12 @@ class OWScriptListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by OWScriptParser#ArithPrimary.
-    def enterArithPrimary(self, ctx:OWScriptParser.ArithPrimaryContext):
+    # Enter a parse tree produced by OWScriptParser#Unary.
+    def enterUnary(self, ctx:OWScriptParser.UnaryContext):
         pass
 
-    # Exit a parse tree produced by OWScriptParser#ArithPrimary.
-    def exitArithPrimary(self, ctx:OWScriptParser.ArithPrimaryContext):
-        pass
-
-
-    # Enter a parse tree produced by OWScriptParser#PItem.
-    def enterPItem(self, ctx:OWScriptParser.PItemContext):
-        pass
-
-    # Exit a parse tree produced by OWScriptParser#PItem.
-    def exitPItem(self, ctx:OWScriptParser.PItemContext):
-        pass
-
-
-    # Enter a parse tree produced by OWScriptParser#PCall.
-    def enterPCall(self, ctx:OWScriptParser.PCallContext):
-        pass
-
-    # Exit a parse tree produced by OWScriptParser#PCall.
-    def exitPCall(self, ctx:OWScriptParser.PCallContext):
-        pass
-
-
-    # Enter a parse tree produced by OWScriptParser#PrimaryNone.
-    def enterPrimaryNone(self, ctx:OWScriptParser.PrimaryNoneContext):
-        pass
-
-    # Exit a parse tree produced by OWScriptParser#PrimaryNone.
-    def exitPrimaryNone(self, ctx:OWScriptParser.PrimaryNoneContext):
+    # Exit a parse tree produced by OWScriptParser#Unary.
+    def exitUnary(self, ctx:OWScriptParser.UnaryContext):
         pass
 
 
@@ -332,6 +323,15 @@ class OWScriptListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by OWScriptParser#trailer.
+    def enterTrailer(self, ctx:OWScriptParser.TrailerContext):
+        pass
+
+    # Exit a parse tree produced by OWScriptParser#trailer.
+    def exitTrailer(self, ctx:OWScriptParser.TrailerContext):
+        pass
+
+
     # Enter a parse tree produced by OWScriptParser#item.
     def enterItem(self, ctx:OWScriptParser.ItemContext):
         pass
@@ -347,6 +347,15 @@ class OWScriptListener(ParseTreeListener):
 
     # Exit a parse tree produced by OWScriptParser#call.
     def exitCall(self, ctx:OWScriptParser.CallContext):
+        pass
+
+
+    # Enter a parse tree produced by OWScriptParser#attribute.
+    def enterAttribute(self, ctx:OWScriptParser.AttributeContext):
+        pass
+
+    # Exit a parse tree produced by OWScriptParser#attribute.
+    def exitAttribute(self, ctx:OWScriptParser.AttributeContext):
         pass
 
 

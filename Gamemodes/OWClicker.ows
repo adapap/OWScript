@@ -1,0 +1,15 @@
+%Event_Global
+    Event
+        On Global
+%Event_Team(team_)
+    Event
+        On Each Player
+        team_
+        All
+Rule "Initialize Constants"
+    Event_Global()
+    Actions
+        player_spawn_1 = <-40, 0, 145.5>
+        player_spawn_2 = <-29, 8, 56>
+        player_spawn_3 = <-77.5, 1.5, 65.5>
+        player_spawns = [player_spawn_1, player_spawn_2, player_spawn_3]

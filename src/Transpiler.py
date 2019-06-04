@@ -98,7 +98,14 @@ class Transpiler:
         return code
 
     def visitRule(self, node):
-        code = f'rule({node.rulename}) ' + '{\n'
+        rulename = '"'
+        for x in node.rulename:
+            if type(x) == str:
+                rulename += x[1:-1]
+            elif type(x) == AST.Name:
+                rulename += self.scopes[-1].namespace.get(x.value).value[1:-1]
+        rulename += '"'
+        code = f'rule({rulename}) ' + '{\n'
         self.indent_level += 1
         for ruleblock in node.rulebody:
             code += self.visit(ruleblock) + '\n'
@@ -324,12 +331,14 @@ class Transpiler:
         return self.visit(node.index)
 
     def visitAttribute(self, node):
-        if node.value == 'X':
-            code = 'X Component Of('
-        elif node.value == 'Y':
-            code = 'Y Component Of('
-        elif node.value == 'Z':
-            code = 'Z Component Of('
+        code = {
+            'x': 'X Component Of',
+            'y': 'Y Component Of',
+            'z': 'Z Component Of',
+            'pos': 'Position Of',
+            'eyepos': 'Eye Position',
+            'facing': 'Facing Direction Of'
+        }.get(node.value.lower()) + '('
         code += self.visit(node.arg) + ')'
         return code
 

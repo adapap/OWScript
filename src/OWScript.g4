@@ -94,7 +94,7 @@ funcbody : (NEWLINE INDENT (ruleset | ruledef | rulebody) DEDENT) | block;
 
 ruleset : (ruledef NEWLINE?)+;
 ruledef : RULE rulename (NEWLINE INDENT rulebody* DEDENT)+;
-rulename : STRING;
+rulename : (STRING | name)+;
 rulebody : RULEBLOCK ruleblock #RulebodyBlock
          | primary call NEWLINE #RCall;
 
@@ -147,7 +147,7 @@ const : CONST attribute*;
 string : STRING
        | F_STRING after_line;
 after_line : '(' arg_list ')'
-           | NEWLINE INDENT (primary|ANNOTATION primary|NEWLINE)+ DEDENT
+           | NEWLINE INDENT (compare|ANNOTATION compare|NEWLINE)+ DEDENT
            | NEWLINE;
 param_list : '(' NAME (',' NAME)* ')';
 arg_list : primary (',' primary)*;
@@ -525,10 +525,12 @@ VALUE : 'ABSOLUTE VALUE'
 RULEBLOCK : 'EVENT'
           | 'CONDITIONS'
           | 'ACTIONS';
-ALIAS : ('ALL TRUE'
+ALIAS : ( 'ANY TRUE'
+      | 'ALL TRUE'
       | 'BIG MSG'
       | 'COS'
       | 'COSR'
+      | 'CUR ELEM'
       | 'MSG'
       | 'ON GLOBAL'
       | 'ON EACH PLAYER'
@@ -550,6 +552,7 @@ aliases = dict([
 ('SMALL MSG', ('SMALL MESSAGE', _ACTION)),
 
 ('ABS', ('ABSOLUTE VALUE', _VALUE)),
+('ANY TRUE', ('IS TRUE FOR ANY', _VALUE)),
 ('ALL TRUE', ('IS TRUE FOR ALL', _VALUE)),
 ('COS', ('COSINE FROM DEGREES', _VALUE)),
 ('COSR', ('COSINE FROM RADIANS', _VALUE)),
@@ -558,6 +561,7 @@ aliases = dict([
 ('SIN', ('SINE FROM DEGREES', _VALUE)),
 ('SINR', ('SINE FROM RADIANS', _VALUE)),
 
+('CUR ELEM', ('CURRENT ARRAY ELEMENT', _CONST)),
 ('EVERYONE', ('ALL PLAYERS(TEAM(ALL))', _CONST)),
 ('ON EACH PLAYER', ('ONGOING - EACH PLAYER', _CONST)),
 ('ON GLOBAL', ('ONGOING - GLOBAL', _CONST))
@@ -613,5 +617,5 @@ SKIP_ : (SPACES | COMMENT | ';') -> skip;
 UNKNOWN_CHAR : .;
 
 fragment SPACES : [ \t]+;
-fragment COMMENT : '/*' [. \n]*? '*/'
+fragment COMMENT : '/*' .*? '*/'
                  | '//' ~[\n]*;

@@ -28,7 +28,11 @@ class ASTBuilder(OWScriptVisitor):
         return rule
 
     def visitRulename(self, ctx):
-        return ctx.STRING()
+        rulename = []
+        for child in ctx.children:
+            x = self.visit(child)
+            rulename.append(x if x else child.getText())
+        return rulename
 
     def visitRulebodyBlock(self, ctx):
         if ctx.RULEBLOCK():
@@ -299,7 +303,7 @@ class ASTBuilder(OWScriptVisitor):
         return Item(index=Numeral(value=ctx.INTEGER().getText()))
 
     def visitAttribute(self, ctx):
-        return Attribute(value=self.visit(ctx.name()).name)
+        return Attribute(value=self.visit(ctx.name()).name.lower())
 
     def visitMethod(self, ctx):
         return Method(value=self.visit(ctx.attribute()).value, args=self.visit(ctx.call()))

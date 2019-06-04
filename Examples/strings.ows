@@ -5,6 +5,7 @@ Rule "String Builder"
         All
     Actions
         pVar money = 100
+        test = "Hello"
         MSG
             Everyone
             `{0}: {1}`
@@ -12,5 +13,9 @@ Rule "String Builder"
                 `{0}!`
                     pVar money
 
+%RuleFactory(name_)
+    Rule "My Custom " name_
+        Event
+            On Global
 
-
+RuleFactory("Portal")

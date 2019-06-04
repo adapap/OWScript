@@ -6,7 +6,7 @@
         On Each Player
         team_
         All
-%create_portal(pos, type_, color_, text_)
+%create_portal(pos, type_, color_, name_)
     Create Effect
         VisibleTo: Everyone
         Type: type_
@@ -14,27 +14,61 @@
         Position: pos
         Radius: 1.5
         Reevaluation: None
-%UpgradePortal(pos) // push to array/variable after
-    create_portal(pos, Good Aura, Yellow, "shop")
+%UpgradePortal(pos)
+    create_portal(pos, Good Aura, Yellow, "Upgrades")
+    portals.push(pos)
 
 Rule "Initialize Constants"
     Event_Global()
     Actions
-        player_spawn_1 = <-40, 0, 145.5>
-        player_spawn_2 = <-29, 8, 56>
-        player_spawn_3 = <-77.5, 1.5, 65.5>
-        player_spawn_4 = <-50.5, 1.5, 117>
-        player_spawn_5 = <43.5, 3.5, 73.5>
-        player_spawn_6 = <-115, 1.5, 112.5>
-        boss1_spawn = <-31.5, 0, 148>
-        boss2_spawn = <-22.5, 7.5, 66.5>
-        boss3_spawn = <-82.5, 1.5, 61>
-        boss4_spawn = <-59, 1, 104>
-        boss5_spawn = <53.5, 3.5, 72.5>
-        boss6_spawn = <-129, 2.5, 108.5>
+        /* Global Variables */
+        shop_pos = <2.500, 3.500, 75>
+        player_spawns = [<-40, 0, 145.5>, <-29, 8, 56>, <-77.5, 1.5, 65.5>, <-50.5, 1.5, 117>, <43.5, 3.5, 73.5>, <-115, 1.5, 112.5>]
+        boss_spawns = [<-31.5, 0, 148>, <-22.5, 7.5, 66.5>, <-82.5, 1.5, 61>, <-59, 1, 104>, <53.5, 3.5, 72.5>, <-129, 2.5, 108.5>]
         // Boss Order: Roadhog, Soldier: 76, Mei, Lúcio, Ana, Reaper
+        
+        /* Player Variables */
+        pvar location = 0
+        pvar cur_boss = 0
+        pvar bosses_killed = 0
+        pvar money = 0
 
 Rule "Initialize Portals"
     Event_Global()
     Actions
+        portals = []
+        // Bosses 1-6 -> Shop
         UpgradePortal(<-50, 1, 137.350>)
+        UpgradePortal(<-37, 6.5, 48>)
+        UpgradePortal(<-70, 1.5, 63.5>)
+        UpgradePortal(<-58, 2, 122>)
+        UpgradePortal(<41, 3.5, 78.5>)
+        UpgradePortal(<-118.5, 1.5, 99.5>)
+        // shop -> last Modify Global Variable(E, Append To Array, Vector(-7.000, 3, 75));
+        // 1 -> 2 Modify Global Variable(E, Append To Array, Vector(-55.000, 1.500, 141.500));
+        // 2 -> 3 Modify Global Variable(E, Append To Array, Vector(-25.500, 7.500, 50.500));
+        // 3 -> 4 Modify Global Variable(E, Append To Array, Vector(-80.000, 1.500, 71));
+        // 4 -> 5 Modify Global Variable(E, Append To Array, Vector(-63.000, 2.500, 115.500));
+        // 5 -> 6 Modify Global Variable(E, Append To Array, Vector(41, 3.500, 67.500));
+
+Rule "Teleport to Shop"
+    Event_Team(All)
+    Conditions
+        Any True
+            Array: portals
+            Condition: Distance Between
+                Event Player
+                Cur Elem
+            <= 1.5
+        == True
+    Actions
+        Teleport(Event Player, shop_pos)
+        pvar location = -1
+
+Rule "Teleport from Shop"
+    Event_Team(All)
+    Conditions
+        Is Communicating Any Voice Line(Event Player) == True
+    Actions
+        Big Msg
+            "Hello"

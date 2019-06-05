@@ -147,15 +147,15 @@ const : CONST attribute*;
 string : STRING
        | F_STRING after_line;
 after_line : '(' arg_list ')'
-           | NEWLINE INDENT (compare|ANNOTATION compare|NEWLINE)+ DEDENT
+           | NEWLINE INDENT (expr|ANNOTATION expr|NEWLINE)+ DEDENT
            | NEWLINE;
 param_list : '(' NAME (',' NAME)* ')';
-arg_list : primary (',' primary)*;
+arg_list : expr (',' expr)*;
 
 trailer : item
         | method
         | call;
-item : '[' INTEGER ']';
+item : '[' primary ']';
 call : '(' arg_list? ')';
 attribute : '.' name;
 method : attribute call;

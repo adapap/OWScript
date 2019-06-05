@@ -21,3 +21,6 @@
 [Tests]
 - Make more tests, document them
 - Create gamemodes using the language to prove its effectiveness
+
+[Bugs]
+- Arithmetic broken for multiple operators

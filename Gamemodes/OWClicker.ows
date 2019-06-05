@@ -13,10 +13,13 @@
         Color: color_
         Position: pos
         Radius: 1.5
-        Reevaluation: None
+        Reevaluation: Visible To
 %UpgradePortal(pos)
     create_portal(pos, Good Aura, Yellow, "Upgrades")
     portals.push(pos)
+%ShopPortal(pos)
+    create_portal(pos, Good Aura, Purple, `{0} {1}`("Previous", "Boss"))
+    shop_portal = pos
 
 Rule "Initialize Constants"
     Event_Global()
@@ -26,7 +29,14 @@ Rule "Initialize Constants"
         player_spawns = [<-40, 0, 145.5>, <-29, 8, 56>, <-77.5, 1.5, 65.5>, <-50.5, 1.5, 117>, <43.5, 3.5, 73.5>, <-115, 1.5, 112.5>]
         boss_spawns = [<-31.5, 0, 148>, <-22.5, 7.5, 66.5>, <-82.5, 1.5, 61>, <-59, 1, 104>, <53.5, 3.5, 72.5>, <-129, 2.5, 108.5>]
         // Boss Order: Roadhog, Soldier: 76, Mei, Lúcio, Ana, Reaper
-        
+        boss2_boundary = <-29, -2, 56>
+        boss4_boundary = <-54, 1, 109>
+        Pause Match Time
+        Set Match Time(123)
+
+Rule "Initialize Player Stats"
+    Event_Team(All)
+    Actions
         /* Player Variables */
         pvar location = 0
         pvar cur_boss = 0
@@ -44,7 +54,7 @@ Rule "Initialize Portals"
         UpgradePortal(<-58, 2, 122>)
         UpgradePortal(<41, 3.5, 78.5>)
         UpgradePortal(<-118.5, 1.5, 99.5>)
-        // shop -> last Modify Global Variable(E, Append To Array, Vector(-7.000, 3, 75));
+        ShopPortal(<-7.000, 3, 75>)
         // 1 -> 2 Modify Global Variable(E, Append To Array, Vector(-55.000, 1.500, 141.500));
         // 2 -> 3 Modify Global Variable(E, Append To Array, Vector(-25.500, 7.500, 50.500));
         // 3 -> 4 Modify Global Variable(E, Append To Array, Vector(-80.000, 1.500, 71));
@@ -64,11 +74,16 @@ Rule "Teleport to Shop"
     Actions
         Teleport(Event Player, shop_pos)
         pvar location = -1
+        // Add sound effect
 
 Rule "Teleport from Shop"
     Event_Team(All)
     Conditions
-        Is Communicating Any Voice Line(Event Player) == True
+        Distance Between
+            Event Player
+            shop_pos
+        <= 1.5
     Actions
-        Big Msg
-            "Hello"
+        pvar location = pvar cur_boss
+        Teleport(Event Player, player_spawns[pvar location])
+        // Add sound effect

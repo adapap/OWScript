@@ -53,7 +53,7 @@ class Assign(BinaryOp):
     pass
 
 class Compare(BinaryOp):
-    pass
+    raw = False
 
 class Or(BinaryOp):
     pass

@@ -24,6 +24,8 @@ class Transpiler:
         self.arrays = {}
         self.scopes = []
 
+        self.effect_count = 0
+
     @property
     def tabs(self):
         return ' ' * self.indent_size * self.indent_level
@@ -116,7 +118,10 @@ class Transpiler:
 
     def visitRuleblock(self, node):
         code = ''
-        if node.type is not None:
+        if node.type == 'Function':
+            lines = node.block.lines
+            code += ';\n'.join([self.tabs + self.visit(line) for line in lines]).lstrip(' ')
+        elif node.type is not None:
             code += self.tabs + node.type + ' {\n'
             self.indent_level += 1
             for line in node.block.lines:
@@ -215,7 +220,7 @@ class Transpiler:
 
     def visitCompare(self, node):
         code = ''
-        if node.op == '==':
+        if node.raw:
             code += f'{self.visit(node.left)} {node.op} {self.visit(node.right)}'
         elif node.op == 'in':
             code += f'Array Contains({self.visit(node.right)}, {self.visit(node.left)})'
@@ -249,6 +254,8 @@ class Transpiler:
 
     def visitAction(self, node):
         code = node.value
+        if node.value == 'Create Effect':
+            self.effect_count += 1
         if node.args:
             code += '('
             for arg in node.args:
@@ -320,7 +327,10 @@ class Transpiler:
             code += 'Append To Array(' * num_elems
             code += 'Empty Array, '
             for elem in node.elements:
-                code += self.visit(elem) + '), '
+                if type(elem) == str:
+                    code += elem + '), '
+                else:
+                    code += self.visit(elem) + '), '
             code = code.rstrip(', ')
         return code
 
@@ -346,7 +356,8 @@ class Transpiler:
         code = ''
         if node.value == 'push':
             array = self.arrays[node.parent]
-            array.push(*node.args)
+            args = [self.visit(arg) for arg in node.args]
+            array.push(*args)
             self.arrays[node.parent] = array
             # Change to append to array?
             code += self.assign(name=node.parent, value=array)

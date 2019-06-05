@@ -193,8 +193,8 @@ def serializedATN():
         buf.write("\2\u0177\u0174\3\2\2\2\u0177\u0175\3\2\2\2\u0178\67\3")
         buf.write("\2\2\2\u0179\u017a\7\20\2\2\u017a\u017b\5<\37\2\u017b")
         buf.write("\u017c\7\21\2\2\u017c\u018a\3\2\2\2\u017d\u017e\7\62\2")
-        buf.write("\2\u017e\u0183\7\65\2\2\u017f\u0184\5(\25\2\u0180\u0181")
-        buf.write("\7\37\2\2\u0181\u0184\5(\25\2\u0182\u0184\7\62\2\2\u0183")
+        buf.write("\2\u017e\u0183\7\65\2\2\u017f\u0184\5 \21\2\u0180\u0181")
+        buf.write("\7\37\2\2\u0181\u0184\5 \21\2\u0182\u0184\7\62\2\2\u0183")
         buf.write("\u017f\3\2\2\2\u0183\u0180\3\2\2\2\u0183\u0182\3\2\2\2")
         buf.write("\u0184\u0185\3\2\2\2\u0185\u0183\3\2\2\2\u0185\u0186\3")
         buf.write("\2\2\2\u0186\u0187\3\2\2\2\u0187\u018a\7\66\2\2\u0188")
@@ -204,38 +204,37 @@ def serializedATN():
         buf.write("\7\61\2\2\u018f\u018d\3\2\2\2\u0190\u0193\3\2\2\2\u0191")
         buf.write("\u018f\3\2\2\2\u0191\u0192\3\2\2\2\u0192\u0194\3\2\2\2")
         buf.write("\u0193\u0191\3\2\2\2\u0194\u0195\7\21\2\2\u0195;\3\2\2")
-        buf.write("\2\u0196\u019b\5.\30\2\u0197\u0198\7\22\2\2\u0198\u019a")
-        buf.write("\5.\30\2\u0199\u0197\3\2\2\2\u019a\u019d\3\2\2\2\u019b")
+        buf.write("\2\u0196\u019b\5 \21\2\u0197\u0198\7\22\2\2\u0198\u019a")
+        buf.write("\5 \21\2\u0199\u0197\3\2\2\2\u019a\u019d\3\2\2\2\u019b")
         buf.write("\u0199\3\2\2\2\u019b\u019c\3\2\2\2\u019c=\3\2\2\2\u019d")
         buf.write("\u019b\3\2\2\2\u019e\u01a2\5@!\2\u019f\u01a2\5F$\2\u01a0")
         buf.write("\u01a2\5B\"\2\u01a1\u019e\3\2\2\2\u01a1\u019f\3\2\2\2")
         buf.write("\u01a1\u01a0\3\2\2\2\u01a2?\3\2\2\2\u01a3\u01a4\7\23\2")
-        buf.write("\2\u01a4\u01a5\7\36\2\2\u01a5\u01a6\7\24\2\2\u01a6A\3")
-        buf.write("\2\2\2\u01a7\u01a9\7\20\2\2\u01a8\u01aa\5<\37\2\u01a9")
-        buf.write("\u01a8\3\2\2\2\u01a9\u01aa\3\2\2\2\u01aa\u01ab\3\2\2\2")
-        buf.write("\u01ab\u01ac\7\21\2\2\u01acC\3\2\2\2\u01ad\u01ae\7\25")
-        buf.write("\2\2\u01ae\u01af\5H%\2\u01afE\3\2\2\2\u01b0\u01b1\5D#")
-        buf.write("\2\u01b1\u01b2\5B\"\2\u01b2G\3\2\2\2\u01b3\u01b4\7\61")
-        buf.write("\2\2\u01b4I\3\2\2\2\u01b5\u01b6\5L\'\2\u01b6\u01b7\t\4")
-        buf.write("\2\2\u01b7K\3\2\2\2\u01b8\u01bb\7\35\2\2\u01b9\u01bb\7")
-        buf.write("\36\2\2\u01ba\u01b8\3\2\2\2\u01ba\u01b9\3\2\2\2\u01bb")
-        buf.write("M\3\2\2\2\u01bc\u01c0\5P)\2\u01bd\u01c0\5R*\2\u01be\u01c0")
-        buf.write("\5H%\2\u01bf\u01bc\3\2\2\2\u01bf\u01bd\3\2\2\2\u01bf\u01be")
-        buf.write("\3\2\2\2\u01c0O\3\2\2\2\u01c1\u01c2\7\60\2\2\u01c2\u01c3")
-        buf.write("\7\61\2\2\u01c3Q\3\2\2\2\u01c4\u01c5\7/\2\2\u01c5\u01c8")
-        buf.write("\7\61\2\2\u01c6\u01c7\7\31\2\2\u01c7\u01c9\5.\30\2\u01c8")
-        buf.write("\u01c6\3\2\2\2\u01c8\u01c9\3\2\2\2\u01c9S\3\2\2\2\u01ca")
-        buf.write("\u01cb\7\4\2\2\u01cb\u01cc\5,\27\2\u01cc\u01cd\7\22\2")
-        buf.write("\2\u01cd\u01ce\5,\27\2\u01ce\u01cf\7\22\2\2\u01cf\u01d0")
-        buf.write("\5,\27\2\u01d0\u01d1\7\5\2\2\u01d1U\3\2\2\2\u01d2\u01d4")
-        buf.write("\7\23\2\2\u01d3\u01d5\5<\37\2\u01d4\u01d3\3\2\2\2\u01d4")
-        buf.write("\u01d5\3\2\2\2\u01d5\u01d6\3\2\2\2\u01d6\u01d7\7\24\2")
-        buf.write("\2\u01d7W\3\2\2\2\64Z\\ejsx|\u0080\u0089\u008f\u0093\u0095")
-        buf.write("\u009d\u00a6\u00ab\u00b7\u00ba\u00c2\u00c7\u00d8\u00de")
-        buf.write("\u00f3\u00fb\u0101\u010d\u0112\u011a\u0122\u012a\u0132")
-        buf.write("\u013a\u0142\u0145\u014a\u015a\u015f\u016a\u0171\u0177")
-        buf.write("\u0183\u0185\u0189\u0191\u019b\u01a1\u01a9\u01ba\u01bf")
-        buf.write("\u01c8\u01d4")
+        buf.write("\2\u01a4\u01a5\5.\30\2\u01a5\u01a6\7\24\2\2\u01a6A\3\2")
+        buf.write("\2\2\u01a7\u01a9\7\20\2\2\u01a8\u01aa\5<\37\2\u01a9\u01a8")
+        buf.write("\3\2\2\2\u01a9\u01aa\3\2\2\2\u01aa\u01ab\3\2\2\2\u01ab")
+        buf.write("\u01ac\7\21\2\2\u01acC\3\2\2\2\u01ad\u01ae\7\25\2\2\u01ae")
+        buf.write("\u01af\5H%\2\u01afE\3\2\2\2\u01b0\u01b1\5D#\2\u01b1\u01b2")
+        buf.write("\5B\"\2\u01b2G\3\2\2\2\u01b3\u01b4\7\61\2\2\u01b4I\3\2")
+        buf.write("\2\2\u01b5\u01b6\5L\'\2\u01b6\u01b7\t\4\2\2\u01b7K\3\2")
+        buf.write("\2\2\u01b8\u01bb\7\35\2\2\u01b9\u01bb\7\36\2\2\u01ba\u01b8")
+        buf.write("\3\2\2\2\u01ba\u01b9\3\2\2\2\u01bbM\3\2\2\2\u01bc\u01c0")
+        buf.write("\5P)\2\u01bd\u01c0\5R*\2\u01be\u01c0\5H%\2\u01bf\u01bc")
+        buf.write("\3\2\2\2\u01bf\u01bd\3\2\2\2\u01bf\u01be\3\2\2\2\u01c0")
+        buf.write("O\3\2\2\2\u01c1\u01c2\7\60\2\2\u01c2\u01c3\7\61\2\2\u01c3")
+        buf.write("Q\3\2\2\2\u01c4\u01c5\7/\2\2\u01c5\u01c8\7\61\2\2\u01c6")
+        buf.write("\u01c7\7\31\2\2\u01c7\u01c9\5.\30\2\u01c8\u01c6\3\2\2")
+        buf.write("\2\u01c8\u01c9\3\2\2\2\u01c9S\3\2\2\2\u01ca\u01cb\7\4")
+        buf.write("\2\2\u01cb\u01cc\5,\27\2\u01cc\u01cd\7\22\2\2\u01cd\u01ce")
+        buf.write("\5,\27\2\u01ce\u01cf\7\22\2\2\u01cf\u01d0\5,\27\2\u01d0")
+        buf.write("\u01d1\7\5\2\2\u01d1U\3\2\2\2\u01d2\u01d4\7\23\2\2\u01d3")
+        buf.write("\u01d5\5<\37\2\u01d4\u01d3\3\2\2\2\u01d4\u01d5\3\2\2\2")
+        buf.write("\u01d5\u01d6\3\2\2\2\u01d6\u01d7\7\24\2\2\u01d7W\3\2\2")
+        buf.write("\2\64Z\\ejsx|\u0080\u0089\u008f\u0093\u0095\u009d\u00a6")
+        buf.write("\u00ab\u00b7\u00ba\u00c2\u00c7\u00d8\u00de\u00f3\u00fb")
+        buf.write("\u0101\u010d\u0112\u011a\u0122\u012a\u0132\u013a\u0142")
+        buf.write("\u0145\u014a\u015a\u015f\u016a\u0171\u0177\u0183\u0185")
+        buf.write("\u0189\u0191\u019b\u01a1\u01a9\u01ba\u01bf\u01c8\u01d4")
         return buf.getvalue()
 
 
@@ -2903,11 +2902,11 @@ class OWScriptParser ( Parser ):
         def DEDENT(self):
             return self.getToken(OWScriptParser.DEDENT, 0)
 
-        def compare(self, i:int=None):
+        def expr(self, i:int=None):
             if i is None:
-                return self.getTypedRuleContexts(OWScriptParser.CompareContext)
+                return self.getTypedRuleContexts(OWScriptParser.ExprContext)
             else:
-                return self.getTypedRuleContext(OWScriptParser.CompareContext,i)
+                return self.getTypedRuleContext(OWScriptParser.ExprContext,i)
 
 
         def ANNOTATION(self, i:int=None):
@@ -2968,15 +2967,15 @@ class OWScriptParser ( Parser ):
                     self.state = 385
                     self._errHandler.sync(self)
                     token = self._input.LA(1)
-                    if token in [OWScriptParser.T__1, OWScriptParser.T__11, OWScriptParser.T__12, OWScriptParser.T__13, OWScriptParser.T__16, OWScriptParser.STRING, OWScriptParser.F_STRING, OWScriptParser.FLOAT, OWScriptParser.INTEGER, OWScriptParser.CONST, OWScriptParser.ACTION, OWScriptParser.VALUE, OWScriptParser.PVAR, OWScriptParser.GVAR, OWScriptParser.NAME]:
+                    if token in [OWScriptParser.T__1, OWScriptParser.T__11, OWScriptParser.T__12, OWScriptParser.T__13, OWScriptParser.T__16, OWScriptParser.STRING, OWScriptParser.F_STRING, OWScriptParser.FLOAT, OWScriptParser.INTEGER, OWScriptParser.CONST, OWScriptParser.ACTION, OWScriptParser.VALUE, OWScriptParser.NOT, OWScriptParser.PVAR, OWScriptParser.GVAR, OWScriptParser.NAME]:
                         self.state = 381
-                        self.compare()
+                        self.expr()
                         pass
                     elif token in [OWScriptParser.ANNOTATION]:
                         self.state = 382
                         self.match(OWScriptParser.ANNOTATION)
                         self.state = 383
-                        self.compare()
+                        self.expr()
                         pass
                     elif token in [OWScriptParser.NEWLINE]:
                         self.state = 384
@@ -2988,7 +2987,7 @@ class OWScriptParser ( Parser ):
                     self.state = 387 
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
-                    if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << OWScriptParser.T__1) | (1 << OWScriptParser.T__11) | (1 << OWScriptParser.T__12) | (1 << OWScriptParser.T__13) | (1 << OWScriptParser.T__16) | (1 << OWScriptParser.STRING) | (1 << OWScriptParser.F_STRING) | (1 << OWScriptParser.FLOAT) | (1 << OWScriptParser.INTEGER) | (1 << OWScriptParser.ANNOTATION) | (1 << OWScriptParser.CONST) | (1 << OWScriptParser.ACTION) | (1 << OWScriptParser.VALUE) | (1 << OWScriptParser.PVAR) | (1 << OWScriptParser.GVAR) | (1 << OWScriptParser.NAME) | (1 << OWScriptParser.NEWLINE))) != 0)):
+                    if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << OWScriptParser.T__1) | (1 << OWScriptParser.T__11) | (1 << OWScriptParser.T__12) | (1 << OWScriptParser.T__13) | (1 << OWScriptParser.T__16) | (1 << OWScriptParser.STRING) | (1 << OWScriptParser.F_STRING) | (1 << OWScriptParser.FLOAT) | (1 << OWScriptParser.INTEGER) | (1 << OWScriptParser.ANNOTATION) | (1 << OWScriptParser.CONST) | (1 << OWScriptParser.ACTION) | (1 << OWScriptParser.VALUE) | (1 << OWScriptParser.NOT) | (1 << OWScriptParser.PVAR) | (1 << OWScriptParser.GVAR) | (1 << OWScriptParser.NAME) | (1 << OWScriptParser.NEWLINE))) != 0)):
                         break
 
                 self.state = 389
@@ -3081,11 +3080,11 @@ class OWScriptParser ( Parser ):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def primary(self, i:int=None):
+        def expr(self, i:int=None):
             if i is None:
-                return self.getTypedRuleContexts(OWScriptParser.PrimaryContext)
+                return self.getTypedRuleContexts(OWScriptParser.ExprContext)
             else:
-                return self.getTypedRuleContext(OWScriptParser.PrimaryContext,i)
+                return self.getTypedRuleContext(OWScriptParser.ExprContext,i)
 
 
         def getRuleIndex(self):
@@ -3116,7 +3115,7 @@ class OWScriptParser ( Parser ):
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 404
-            self.primary()
+            self.expr()
             self.state = 409
             self._errHandler.sync(self)
             _la = self._input.LA(1)
@@ -3124,7 +3123,7 @@ class OWScriptParser ( Parser ):
                 self.state = 405
                 self.match(OWScriptParser.T__15)
                 self.state = 406
-                self.primary()
+                self.expr()
                 self.state = 411
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
@@ -3215,8 +3214,9 @@ class OWScriptParser ( Parser ):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def INTEGER(self):
-            return self.getToken(OWScriptParser.INTEGER, 0)
+        def primary(self):
+            return self.getTypedRuleContext(OWScriptParser.PrimaryContext,0)
+
 
         def getRuleIndex(self):
             return OWScriptParser.RULE_item
@@ -3247,7 +3247,7 @@ class OWScriptParser ( Parser ):
             self.state = 417
             self.match(OWScriptParser.T__16)
             self.state = 418
-            self.match(OWScriptParser.INTEGER)
+            self.primary()
             self.state = 419
             self.match(OWScriptParser.T__17)
         except RecognitionException as re:
@@ -3300,7 +3300,7 @@ class OWScriptParser ( Parser ):
             self.state = 423
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << OWScriptParser.T__1) | (1 << OWScriptParser.T__13) | (1 << OWScriptParser.T__16) | (1 << OWScriptParser.STRING) | (1 << OWScriptParser.F_STRING) | (1 << OWScriptParser.FLOAT) | (1 << OWScriptParser.INTEGER) | (1 << OWScriptParser.CONST) | (1 << OWScriptParser.ACTION) | (1 << OWScriptParser.VALUE) | (1 << OWScriptParser.PVAR) | (1 << OWScriptParser.GVAR) | (1 << OWScriptParser.NAME))) != 0):
+            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << OWScriptParser.T__1) | (1 << OWScriptParser.T__11) | (1 << OWScriptParser.T__12) | (1 << OWScriptParser.T__13) | (1 << OWScriptParser.T__16) | (1 << OWScriptParser.STRING) | (1 << OWScriptParser.F_STRING) | (1 << OWScriptParser.FLOAT) | (1 << OWScriptParser.INTEGER) | (1 << OWScriptParser.CONST) | (1 << OWScriptParser.ACTION) | (1 << OWScriptParser.VALUE) | (1 << OWScriptParser.NOT) | (1 << OWScriptParser.PVAR) | (1 << OWScriptParser.GVAR) | (1 << OWScriptParser.NAME))) != 0):
                 self.state = 422
                 self.arg_list()
 
@@ -3868,7 +3868,7 @@ class OWScriptParser ( Parser ):
             self.state = 466
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << OWScriptParser.T__1) | (1 << OWScriptParser.T__13) | (1 << OWScriptParser.T__16) | (1 << OWScriptParser.STRING) | (1 << OWScriptParser.F_STRING) | (1 << OWScriptParser.FLOAT) | (1 << OWScriptParser.INTEGER) | (1 << OWScriptParser.CONST) | (1 << OWScriptParser.ACTION) | (1 << OWScriptParser.VALUE) | (1 << OWScriptParser.PVAR) | (1 << OWScriptParser.GVAR) | (1 << OWScriptParser.NAME))) != 0):
+            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << OWScriptParser.T__1) | (1 << OWScriptParser.T__11) | (1 << OWScriptParser.T__12) | (1 << OWScriptParser.T__13) | (1 << OWScriptParser.T__16) | (1 << OWScriptParser.STRING) | (1 << OWScriptParser.F_STRING) | (1 << OWScriptParser.FLOAT) | (1 << OWScriptParser.INTEGER) | (1 << OWScriptParser.CONST) | (1 << OWScriptParser.ACTION) | (1 << OWScriptParser.VALUE) | (1 << OWScriptParser.NOT) | (1 << OWScriptParser.PVAR) | (1 << OWScriptParser.GVAR) | (1 << OWScriptParser.NAME))) != 0):
                 self.state = 465
                 self.arg_list()
 

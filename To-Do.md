@@ -24,3 +24,6 @@
 
 [Bugs]
 - Arithmetic broken for multiple operators
+- Event Player on msg
+- Ignore condition on wait
+- Non-empty advertisement

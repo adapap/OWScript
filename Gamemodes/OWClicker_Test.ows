@@ -28,18 +28,6 @@
         Position: pos
         Radius: 1.5
         Reevaluation: Visible To
-%SmallHud(loc, text, color_)
-    Hud
-        Visible_To: Event Player
-        Header: Null
-        Subheader: Null
-        Text: text
-        Location: loc
-        Sort_Order: 0
-        Header_Color: White
-        Subheader_Color: White
-        Text_Color: color_
-        Reevaluation: Visible To And String
 
 Rule "Initialize Constants"
     Event_Global()
@@ -76,76 +64,22 @@ Rule "Initialize Player Stats"
         pvar ability2 = False
         pvar credits = 0
 
-Rule "Initialize Portals"
-    Event_Global()
-    Actions
-        portals = []
-        // Bosses 1-6 -> Shop
-        UpgradePortal(<-50, 1, 137.350>)
-        UpgradePortal(<-37, 6.5, 48>)
-        UpgradePortal(<-70, 1.5, 63.5>)
-        UpgradePortal(<-58, 2, 122>)
-        UpgradePortal(<41, 3.5, 78.5>)
-        UpgradePortal(<-118.5, 1.5, 99.5>)
-        ShopPortal(<-7.000, 3, 75>)
-        // 1 -> 2 Modify Global Variable(E, Append To Array, Vector(-55.000, 1.500, 141.500));
-        // 2 -> 3 Modify Global Variable(E, Append To Array, Vector(-25.500, 7.500, 50.500));
-        // 3 -> 4 Modify Global Variable(E, Append To Array, Vector(-80.000, 1.500, 71));
-        // 4 -> 5 Modify Global Variable(E, Append To Array, Vector(-63.000, 2.500, 115.500));
-        // 5 -> 6 Modify Global Variable(E, Append To Array, Vector(41, 3.500, 67.500));
-        // prestige: <-172, 3, 96>
-
-Rule "Initialize Player HUD Stats"
-    Event_Team(Team 1)
-    Actions
-        SmallHud(Left, "Hello", Green)
-        SmallHud(Right, "Money", Yellow)
-
 Rule "Validate Bosses"
     Event_Global()
     Conditions
         All True
             boss_heroes
-            Is Hero Being Played
+            Array Contains
+                All Players
+                    Team 2
                 Cur Elem
-                Team 2
         == False
     Actions
         Msg
-            Everyone
             `{0}: {1}`
                 "Warning"
                 `{0} {1}`
                     "Bad"
                     "Bosses"
-        Wait(1.5s, Ignore Condition)
+        Wait(1.5s)
         Loop If Condition Is True
-
-Rule "Teleport to Shop"
-    Event_Team(All)
-    Conditions
-        Any True
-            Array: portals
-            Condition: Distance Between
-                Event Player
-                Cur Elem
-            <= 1.5
-        == True
-    Actions
-        Teleport(Event Player, shop_pos)
-        pvar location = -1
-        // Add sound effect
-
-Rule "Teleport from Shop"
-    Event_Team(All)
-    Conditions
-        Distance Between
-            Event Player
-            shop_portal
-        <= 1.5
-        pvar location == -1
-    Actions
-        Msg(Event Player, "Bosses")
-        pvar location = pvar cur_boss
-        Teleport(Event Player, player_spawns[pvar location])
-        // Add sound effect

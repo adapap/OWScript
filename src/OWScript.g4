@@ -108,7 +108,7 @@ line : assign
      | const
      | action
      | value
-     | (action | value | const) NEWLINE? comp_op=('<'|'>'|'=='|'>='|'<='|'!=') primary
+     | expr comp_op=('<'|'>'|'=='|'>='|'<='|'!=') expr
      | name (call | method)?
      | ANNOTATION line
      | NEWLINE;
@@ -122,12 +122,12 @@ logic_or : logic_and (OR logic_and)*;
 logic_and : logic_not (AND logic_not)*;
 logic_not : (NOT logic_not) | compare;
 compare : arith (('<'|'>'|'=='|'>='|'<='|'!='|IN|NOT IN) arith)*?;
-arith : unary ('^' unary)* # Pow
-      | unary ('*' unary)* # Mul
-      | unary ('/' unary)* # Div
-      | unary ('+' unary)* # Add
-      | unary ('-' unary)* # Sub
-      | unary ('%' unary)* # Mod;
+arith : unary ('^' arith)* # Pow
+      | unary ('*' arith)* # Mul
+      | unary ('/' arith)* # Div
+      | unary ('+' arith)* # Add
+      | unary ('-' arith)* # Sub
+      | unary ('%' arith)* # Mod;
 unary : ('+' | '-') unary | primary;
 
 primary : ( action
@@ -179,18 +179,28 @@ F_STRING : '`' ~[\\\r\n\f`]* '`';
 FLOAT : [0-9]+'.'[0-9]+;
 INTEGER : [0-9]+;
 ANNOTATION : [_a-zA-Z][_a-zA-Z0-9]* ':';
-CONST : 'ALL'
+CONST : 'ABORT WHEN FALSE'
+      | 'ALL'
       | 'ALL HEROES'
+      | 'ANA'
+      | 'ASHE'
       | 'ATTACKER'
       | 'BACKWARD'
       | 'BAD AURA'
       | 'BAD AURA SOUND'
+      | 'BAPTISTE'
+      | 'BASTION'
       | 'BEACON SOUND'
       | 'BLUE'
+      | 'BRIGITTE'
       | 'CLOUD'
       | 'CONTROL MODE SCORING TEAM'
       | 'CURRENT ARRAY ELEMENT'
+      | 'D.VA'
       | 'DECAL SOUND'
+      | 'DESTINATION AND DURATION'
+      | 'DESTINATION AND RATE'
+      | 'DOOMFIST'
       | 'DOWN'
       | 'EMPTY ARRAY'
       | 'ENERGY SOUND'
@@ -198,9 +208,12 @@ CONST : 'ALL'
       | 'EVENT WAS CRITICAL HIT'
       | 'FALSE'
       | 'FORWARD'
+      | 'GENJI'
       | 'GOOD AURA'
       | 'GOOD AURA SOUND'
       | 'GREEN'
+      | 'HANZO'
+      | 'IGNORE CONDITION'
       | 'IS ASSEMBLING HEROES'
       | 'IS BETWEEN ROUNDS'
       | 'IS CONTROL MODE POINT LOCKED'
@@ -209,16 +222,24 @@ CONST : 'ALL'
       | 'IS IN SETUP'
       | 'IS MATCH COMPLETE'
       | 'IS WAITING FOR PLAYERS'
+      | 'JUNKRAT'
       | 'LAST CREATED ENTITY'
       | 'LEFT'
       | 'LIGHT SHAFT'
+      | 'LÚCIO'
+      | 'MCCREE'
+      | 'MEI'
+      | 'MERCY'
+      | 'MOIRA'
       | 'NONE'
       | 'NULL'
       | 'OFF'
       | 'ONGOING - EACH PLAYER'
       | 'ONGOING - GLOBAL'
       | 'ORB'
+      | 'ORISA'
       | 'PAYLOAD POSITION'
+      | 'PHARAH'
       | 'PICK-UP SOUND'
       | 'PLAYER DEALT DAMAGE'
       | 'PLAYER DEALT FINAL BLOW'
@@ -227,25 +248,43 @@ CONST : 'ALL'
       | 'PLAYER TOOK DAMAGE'
       | 'POSITION AND RADIUS'
       | 'PURPLE'
+      | 'REAPER'
+      | 'RECEIVERS AND DAMAGERS'
+      | 'RECEIVERS, DAMAGERS, AND DAMAGE PERCENT'
       | 'RED'
+      | 'REINHARDT'
+      | 'RESTART WHEN TRUE'
       | 'RIGHT'
       | 'RING'
+      | 'ROADHOG'
       | 'SMOKE SOUND'
+      | 'SOLDIER: 76'
+      | 'SOMBRA'
       | 'SPARKLES'
       | 'SPARKLES SOUND'
       | 'SPHERE'
       | 'SURFACES'
       | 'SURFACES AND ALL BARRIERS'
       | 'SURFACES AND ENEMY BARRIERS'
+      | 'SYMMETRA'
       | 'TEAM 1'
       | 'TEAM 2'
+      | 'TORBJÖRN'
+      | 'TRACER'
       | 'TRUE'
       | 'UP'
       | 'VICTIM'
       | 'VISIBLE TO'
+      | 'VISIBLE TO AND STRING'
       | 'VISIBLE TO, POSITION, AND RADIUS'
+      | 'VISIBLE TO, POSITION, AND STRING'
       | 'WHITE'
-      | 'YELLOW';
+      | 'WIDOWMAKER'
+      | 'WINSTON'
+      | 'WRECKING BALL'
+      | 'YELLOW'
+      | 'ZARYA'
+      | 'ZENYATTA';
 ACTION : 'ABORT'
        | 'ABORT IF'
        | 'ABORT IF CONDITION IS FALSE'
@@ -525,12 +564,15 @@ VALUE : 'ABSOLUTE VALUE'
 RULEBLOCK : 'EVENT'
           | 'CONDITIONS'
           | 'ACTIONS';
-ALIAS : ( 'ANY TRUE'
+ALIAS : ( 'ABS'
+      | 'ANY TRUE'
       | 'ALL TRUE'
       | 'BIG MSG'
       | 'COS'
       | 'COSR'
       | 'CUR ELEM'
+      | 'HUD'
+      | 'LUCIO'
       | 'MSG'
       | 'ON GLOBAL'
       | 'ON EACH PLAYER'
@@ -548,6 +590,7 @@ _VALUE = OWScriptParser.VALUE
 _CONST = OWScriptParser.CONST
 aliases = dict([
 ('BIG MSG', ('BIG MESSAGE', _ACTION)),
+('HUD', ('CREATE HUD TEXT', _ACTION)),
 ('MSG', ('SMALL MESSAGE', _ACTION)),
 ('SMALL MSG', ('SMALL MESSAGE', _ACTION)),
 
@@ -563,6 +606,7 @@ aliases = dict([
 
 ('CUR ELEM', ('CURRENT ARRAY ELEMENT', _CONST)),
 ('EVERYONE', ('ALL PLAYERS(TEAM(ALL))', _CONST)),
+('LUCIO', ('LÚCIO', _CONST)),
 ('ON EACH PLAYER', ('ONGOING - EACH PLAYER', _CONST)),
 ('ON GLOBAL', ('ONGOING - GLOBAL', _CONST))
 ])

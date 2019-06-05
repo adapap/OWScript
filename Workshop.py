@@ -24,13 +24,17 @@ if __name__ == '__main__':
     reserved_list = []
     reserved_list.extend([(x, 'ACTION') for x in actions])
     reserved_list.extend([(x, 'VALUE') if values.get(x).get('args') else (x, 'CONST') for x in values])
-    reserved_list.extend([(x, 'CONST') for x in types.get('EVENT').get('values')])
     reserved_list.extend([(x, 'VALUE') for x in types.get('NUMBER').get('values')])
-    reserved_list.extend([(x, 'CONST') for x in types.get('EFFECT REEVALUATION').get('values')])
-    reserved_list.extend([(x, 'CONST') for x in types.get('LOS CHECK').get('values')])
-    reserved_list.extend([(x, 'CONST') for x in types.get('COLOR').get('values')])
-    reserved_list.extend([(x, 'CONST') for x in types.get('CREATE EFFECT').get('values')])
+    const_types = ['EVENT', 'EFFECT REEVALUATION', 'HUD TEXT REEVALUATION', 'WORLD TEXT REEVALUATION',
+    'CHASE RATE REEVALUATION', 'CHASE TIME REEVALUATION', 'OBJECTIVE DESCRIPTION REEVALUATION', 'DAMAGE MODIFICATION REEVALUATION',
+    'WAIT BEHAVIOR', 'LOS CHECK', 'COLOR', 'HERO CONSTANT', 'CREATE EFFECT']
+    for const_type in const_types:
+        reserved_list.extend([(x, 'CONST') for x in types.get(const_type).get('values')])
     reserved = dict(reserved_list)
+    reserved['ALL'] = 'CONST'
+    del reserved['AND']
+    del reserved['OR']
+    del reserved['NOT']
     aliases = {
         'ALL TRUE': 'IS TRUE FOR ALL',
         'ON GLOBAL': 'ONGOING - GLOBAL',
@@ -45,5 +49,4 @@ if __name__ == '__main__':
 
     # for k, v in sorted(reserved.items(), key=lambda x: (x[1], x[0])):
     #     print(f"('{k}', '{v}'),")
-    for x in sorted([k for k, v in reserved.items() if v == 'ACTION'], key=lambda x: x):
-        print(f"| '{x}',")
+    print(": '" + "'\n| '".join(sorted([k for k, v in reserved.items() if v == 'CONST'], key=lambda x: x)) + "';")

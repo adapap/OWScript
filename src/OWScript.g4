@@ -572,6 +572,7 @@ ALIAS : ( 'ABS'
       | 'COSR'
       | 'CUR ELEM'
       | 'HUD'
+      | 'INDEX'
       | 'LUCIO'
       | 'MSG'
       | 'ON GLOBAL'
@@ -581,6 +582,7 @@ ALIAS : ( 'ABS'
       | 'SIN'
       | 'SINR'
       | 'SMALL MSG'
+      | 'TORBJORN'
       // Builtins
       | 'EVERYONE') {
 from OWScriptParser import OWScriptParser
@@ -599,6 +601,7 @@ aliases = dict([
 ('ALL TRUE', ('IS TRUE FOR ALL', _VALUE)),
 ('COS', ('COSINE FROM DEGREES', _VALUE)),
 ('COSR', ('COSINE FROM RADIANS', _VALUE)),
+('INDEX', ('INDEX OF ARRAY VALUE', _VALUE)),
 ('PLAYERS IN RADIUS', ('PLAYERS WITHIN RADIUS', _VALUE)),
 ('ROUND', ('ROUND TO INTEGER', _VALUE)),
 ('SIN', ('SINE FROM DEGREES', _VALUE)),
@@ -608,7 +611,8 @@ aliases = dict([
 ('EVERYONE', ('ALL PLAYERS(TEAM(ALL))', _CONST)),
 ('LUCIO', ('LÚCIO', _CONST)),
 ('ON EACH PLAYER', ('ONGOING - EACH PLAYER', _CONST)),
-('ON GLOBAL', ('ONGOING - GLOBAL', _CONST))
+('ON GLOBAL', ('ONGOING - GLOBAL', _CONST)),
+('TORBJORN', ('TORBJÖRN', _CONST))
 ])
 if self.text.upper() in aliases:
     self.text, self.type = aliases.get(self.text.upper())

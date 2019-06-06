@@ -40,6 +40,10 @@
         Subheader_Color: White
         Text_Color: color_
         Reevaluation: Visible To And String
+%SpawnBoss(boss)
+    Teleport
+        Players On Hero(boss, Team 2)
+        boss_spawns[Index(Hero(boss))]
 
 Rule "Initialize Constants"
     Event_Global()
@@ -98,8 +102,24 @@ Rule "Initialize Portals"
 Rule "Initialize Player HUD Stats"
     Event_Team(Team 1)
     Actions
-        SmallHud(Left, "Hello", Green)
-        SmallHud(Right, "Money", Yellow)
+        Hud
+            Visible_To: Event Player
+            Header: `{0}: {1}`("Money", pvar money)
+            Subheader: Null
+            Text: Null
+            Location: Top
+            Sort_Order: 0
+            Header_Color: White
+            Subheader_Color: White
+            Text_Color: White
+            Reevaluation: Visible To And String
+        SmallHud(Top, `{0} / {1}`(`{0}: {1}`("Damage", `{0}%`(pvar damage_scale)), `{0}: {1}`("Defend", `{0}%`(pvar defense))), Red)
+        SmallHud(Top, `{0} sec`(pvar reload_speed), Yellow)
+        SmallHud(Top, `{0} {1}`(`{0}%`(pvar money_multiplier * 100), "Money"), Green)
+        //Create In-World Text(All Players(Team 1), String("{0} - {1} - {2}", String("{0}: {1}", String("Damage", Null, Null, Null), String(
+//            "{0}%", Player Variable(Event Player, B), Null, Null), Null), String("{0} sec", Player Variable(Event Player, E), Null, Null),
+//            String("{0} {1}", String("{0}%", Multiply(Player Variable(Event Player, J), 100), Null, Null), String("Money", Null, Null,
+//            Null), Null)), Event Player, 0.750, Clip Against Surfaces, Visible To Position and String);
 
 Rule "Validate Bosses"
     Event_Global()
@@ -118,8 +138,21 @@ Rule "Validate Bosses"
                 `{0} {1}`
                     "Bad"
                     "Bosses"
-        Wait(1.5s, Ignore Condition)
+        Wait(2min + 1.5s)
         Loop If Condition Is True
+
+Rule "Initialize Bosses"
+    Event_Global()
+    Conditions
+        Is Game In Progress;
+    Actions
+        Msg(Everyone, "Go")
+        SpawnBoss(Roadhog)
+        SpawnBoss(Soldier: 76)
+        SpawnBoss(Mei)
+        SpawnBoss(Lucio)
+        SpawnBoss(Ana)
+        SpawnBoss(Reaper)
 
 Rule "Teleport to Shop"
     Event_Team(All)
@@ -146,6 +179,7 @@ Rule "Teleport from Shop"
         pvar location == -1
     Actions
         Msg(Event Player, "Bosses")
+        Big Msg("Hello")
         pvar location = pvar cur_boss
         Teleport(Event Player, player_spawns[pvar location])
         // Add sound effect

@@ -24,8 +24,6 @@ class Transpiler:
         self.arrays = {}
         self.scopes = []
 
-        self.effect_count = 0
-
     @property
     def tabs(self):
         return ' ' * self.indent_size * self.indent_level
@@ -64,7 +62,7 @@ class Transpiler:
 
     def visitScript(self, node):
         self.scopes.append(Scope(name='global'))
-        code = r'rule("Generated using https://github.com/adapap/OWScript") {\n\tEvent {\n\t\tOngoing - Global;}\n\t}\n'
+        code = 'rule("Generated using https://github.com/adapap/OWScript") \{ Event \{ Ongoing - Global; \}\}\n'
         for statement in node.statements:
             code += self.visit(statement)
         code = code.rstrip('\n')
@@ -184,7 +182,7 @@ class Transpiler:
         line = self.line - start_line + 2
         code = f'Skip If(Not({self.visit(node.cond)}), {line});\n'
         code += block
-        code += f'{self.tabs}Wait(0.001);\n'
+        code += f'{self.tabs}Wait(0.001, Ignore Condition);\n'
         code += f'{self.tabs}Loop If({self.visit(node.cond)})'
         return code
 
@@ -254,8 +252,9 @@ class Transpiler:
 
     def visitAction(self, node):
         code = node.value
-        if node.value == 'Create Effect':
-            self.effect_count += 1
+        if node.value == 'Wait':
+            if len(node.args) == 1: # Default: 'Ignore Condition'
+                node.args.append(AST.Name(value='Ignore Condition'))
         if node.args:
             code += '('
             for arg in node.args:

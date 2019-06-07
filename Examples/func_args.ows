@@ -1,3 +1,4 @@
+// Functions can be used as rule factories
 %create_portal(origin, destination, radius)
     Rule "Create Portal"
         Event

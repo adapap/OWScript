@@ -1,0 +1,20 @@
+rule("Generated using https://github.com/adapap/OWScript") \{ Event \{ Ongoing - Global; \}\}
+rule("Function Demo") {
+   Event {
+      Ongoing - Each Player;
+      All;
+      All;
+   }
+}
+
+rule("Add Two") {
+   Event {
+      Ongoing - Each Player;
+      All;
+      All;
+   }
+
+   Actions {
+      Set Global Variable At Index(A, 0, Add(1, 5));
+   }
+}

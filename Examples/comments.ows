@@ -1,0 +1,11 @@
+Rule "Ton commentaire n'est pas necessaire"
+    Event
+        On Global
+    Actions
+        /* We should ignore
+        all dis text */
+        // x = 1
+        Msg(Event Player, /* even inline comments
+        should work */ "Hello")
+        x = 1 // Yes, it is indeed
+        /* Comments are the best! */

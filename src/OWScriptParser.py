@@ -18,8 +18,8 @@ def serializedATN():
         buf.write("\2\f\2\16\2^\13\2\3\2\3\2\3\3\3\3\3\3\3\3\5\3f\n\3\3\4")
         buf.write("\3\4\3\4\5\4k\n\4\3\4\3\4\3\5\3\5\3\5\3\5\3\5\5\5t\n\5")
         buf.write("\3\5\3\5\3\5\5\5y\n\5\3\6\3\6\5\6}\n\6\6\6\177\n\6\r\6")
-        buf.write("\16\6\u0080\3\7\3\7\3\7\3\7\3\7\7\7\u0088\n\7\f\7\16\7")
-        buf.write("\u008b\13\7\3\7\6\7\u008e\n\7\r\7\16\7\u008f\3\b\3\b\6")
+        buf.write("\16\6\u0080\3\7\3\7\3\7\3\7\3\7\6\7\u0088\n\7\r\7\16\7")
+        buf.write("\u0089\3\7\3\7\6\7\u008e\n\7\r\7\16\7\u008f\3\b\3\b\6")
         buf.write("\b\u0094\n\b\r\b\16\b\u0095\3\t\3\t\3\t\3\t\3\t\3\t\5")
         buf.write("\t\u009e\n\t\3\n\3\n\3\13\3\13\3\13\6\13\u00a5\n\13\r")
         buf.write("\13\16\13\u00a6\3\13\3\13\3\13\5\13\u00ac\n\13\3\f\3\f")
@@ -79,10 +79,10 @@ def serializedATN():
         buf.write("\2\2z|\5\f\7\2{}\7\62\2\2|{\3\2\2\2|}\3\2\2\2}\177\3\2")
         buf.write("\2\2~z\3\2\2\2\177\u0080\3\2\2\2\u0080~\3\2\2\2\u0080")
         buf.write("\u0081\3\2\2\2\u0081\13\3\2\2\2\u0082\u0083\7%\2\2\u0083")
-        buf.write("\u008d\5\16\b\2\u0084\u0085\7\62\2\2\u0085\u0089\7\65")
-        buf.write("\2\2\u0086\u0088\5\20\t\2\u0087\u0086\3\2\2\2\u0088\u008b")
+        buf.write("\u008d\5\16\b\2\u0084\u0085\7\62\2\2\u0085\u0087\7\65")
+        buf.write("\2\2\u0086\u0088\5\20\t\2\u0087\u0086\3\2\2\2\u0088\u0089")
         buf.write("\3\2\2\2\u0089\u0087\3\2\2\2\u0089\u008a\3\2\2\2\u008a")
-        buf.write("\u008c\3\2\2\2\u008b\u0089\3\2\2\2\u008c\u008e\7\66\2")
+        buf.write("\u008b\3\2\2\2\u008b\u008c\7\66\2\2\u008c\u008e\3\2\2")
         buf.write("\2\u008d\u0084\3\2\2\2\u008e\u008f\3\2\2\2\u008f\u008d")
         buf.write("\3\2\2\2\u008f\u0090\3\2\2\2\u0090\r\3\2\2\2\u0091\u0094")
         buf.write("\7\33\2\2\u0092\u0094\5H%\2\u0093\u0091\3\2\2\2\u0093")
@@ -857,17 +857,19 @@ class OWScriptParser ( Parser ):
                     self.match(OWScriptParser.NEWLINE)
                     self.state = 131
                     self.match(OWScriptParser.INDENT)
-                    self.state = 135
+                    self.state = 133 
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
-                    while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << OWScriptParser.T__1) | (1 << OWScriptParser.T__13) | (1 << OWScriptParser.T__16) | (1 << OWScriptParser.STRING) | (1 << OWScriptParser.F_STRING) | (1 << OWScriptParser.FLOAT) | (1 << OWScriptParser.INTEGER) | (1 << OWScriptParser.CONST) | (1 << OWScriptParser.ACTION) | (1 << OWScriptParser.VALUE) | (1 << OWScriptParser.RULEBLOCK) | (1 << OWScriptParser.PVAR) | (1 << OWScriptParser.GVAR) | (1 << OWScriptParser.NAME))) != 0):
+                    while True:
                         self.state = 132
                         self.rulebody()
-                        self.state = 137
+                        self.state = 135 
                         self._errHandler.sync(self)
                         _la = self._input.LA(1)
+                        if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << OWScriptParser.T__1) | (1 << OWScriptParser.T__13) | (1 << OWScriptParser.T__16) | (1 << OWScriptParser.STRING) | (1 << OWScriptParser.F_STRING) | (1 << OWScriptParser.FLOAT) | (1 << OWScriptParser.INTEGER) | (1 << OWScriptParser.CONST) | (1 << OWScriptParser.ACTION) | (1 << OWScriptParser.VALUE) | (1 << OWScriptParser.RULEBLOCK) | (1 << OWScriptParser.PVAR) | (1 << OWScriptParser.GVAR) | (1 << OWScriptParser.NAME))) != 0)):
+                            break
 
-                    self.state = 138
+                    self.state = 137
                     self.match(OWScriptParser.DEDENT)
 
                 else:

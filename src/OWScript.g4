@@ -93,7 +93,7 @@ funcdef : '%' NAME param_list? funcbody;
 funcbody : (NEWLINE INDENT (ruleset | ruledef | rulebody) DEDENT) | block;
 
 ruleset : (ruledef NEWLINE?)+;
-ruledef : RULE rulename (NEWLINE INDENT rulebody* DEDENT)+;
+ruledef : RULE rulename (NEWLINE INDENT rulebody+ DEDENT)+;
 rulename : (STRING | name)+;
 rulebody : RULEBLOCK ruleblock #RulebodyBlock
          | primary call NEWLINE #RCall;
@@ -665,5 +665,5 @@ SKIP_ : (SPACES | COMMENT | ';') -> skip;
 UNKNOWN_CHAR : .;
 
 fragment SPACES : [ \t]+;
-fragment COMMENT : '/*' .*? '*/'
+fragment COMMENT : '/*' (.|[\n])*? '*/'
                  | '//' ~[\n]*;

@@ -1,28 +1,13 @@
-%player_event
+%event_func
     Event
         On Each Player
         All
         All
-%get_targets
-    targets = Players In Radius
-        Center: <1, 2, 3>
-        Radius: 5
-        Team: Team 2
-        LOS: Off
-
-Rule "Death is Inevitable"
-    player_event()
-    Conditions
-        Is In Air(Event Player)
-
-    Actions
-        get_targets()
-        not_a_func()
-
-Rule "Death is Unavoidable"
-    player_event()
-    Conditions
-        Is Crouching(Event Player)
-
-    Actions
-        Kill(targets)
+%add_rule(a, b, name_)
+    Rule name_
+        event_func()
+        Actions
+            x = a + b
+Rule "Function Demo"
+    event_func()
+add_rule(1, 5, "Add Two")

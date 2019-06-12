@@ -80,7 +80,7 @@ Rule "Initialize Player Stats"
         pvar ability2 = False
         pvar credits = 0
 
-Rule "Initialize Portals"
+Rule "Initialize Effects (Portals / Upgrades / Boundaries)"
     Event_Global()
     Actions
         portals = []
@@ -98,6 +98,7 @@ Rule "Initialize Portals"
         // 4 -> 5 Modify Global Variable(E, Append To Array, Vector(-63.000, 2.500, 115.500));
         // 5 -> 6 Modify Global Variable(E, Append To Array, Vector(41, 3.500, 67.500));
         // prestige: <-172, 3, 96>
+        // create boundary function
 
 Rule "Initialize Player HUD Stats"
     Event_Team(Team 1)

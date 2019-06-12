@@ -6,7 +6,7 @@ Installation
 ====================
 1. Install Python with `pip` if you have not done so already.
 2. Install the requirements using `pip install -r requirements.txt` on your machine.
-~3. Run the command `python owscript.py <filename>` to convert a file into workshop rules.~ 
+3. ~Run the command `python owscript.py <filename>` to convert a file into workshop rules.~ 
 
 ## Documentation
 *See example code in the `Examples/` folder. `.ows` files are input, `.ow` files are output.*

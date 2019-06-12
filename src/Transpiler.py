@@ -62,7 +62,7 @@ class Transpiler:
 
     def visitScript(self, node):
         self.scopes.append(Scope(name='global'))
-        code = 'rule("Generated using https://github.com/adapap/OWScript") \{ Event \{ Ongoing - Global; \}\}\n'
+        code = 'rule("Generated using https://github.com/adapap/OWScript") {\n   Event {\n      Ongoing - Global;\n   }\n}\n'
         for statement in node.statements:
             code += self.visit(statement)
         code = code.rstrip('\n')

@@ -1,6 +1,0 @@
-Rule "For Loop"
-    Event
-        On Global
-
-    Actions
-        FOR // what

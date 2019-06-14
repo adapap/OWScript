@@ -1,0 +1,154 @@
+%YAML 1.2
+---
+name: OWScript
+scope: source.OWScript
+file_extensions: [ owpy ]
+
+contexts:
+  main:
+    - match: '(\%([_a-zA-Z][_a-zA-Z0-9]*))(?=\()'
+      push: param_list
+      captures:
+        0: entity.name.function.OWScript
+    - match: '(\%([_a-zA-Z][_a-zA-Z0-9]*)\b)'
+      captures:
+        0: entity.name.function.OWScript
+    - match: '(\s+)'
+      captures:
+        0: empty.OWScript
+      push: 
+        - match: '(?=\S)'
+          pop: true
+          captures:
+            0: empty.OWScript
+        - match: '(.)'
+          captures:
+            0: empty.OWScript
+    - match: '(//.*)'
+      captures:
+        0: comment.OWScript
+    - match: '(;)'
+      captures:
+        0: punctuation.OWScript
+    - match: '(\b(Purple|Top|Red|Green|True|False|Null|Soldier: 76|Lucio|Ana|Reaper|Roadhog|Mei|Event Player|Good Aura|Yellow|Light Orb|Event Player|On Global|On Each Player|All|Everyone|Cur Elem|Team 1|Team 2|Visible To And String|Visible To|Null|White)\b)'
+      captures:
+        0: constant.language.OWScript
+    - match: '(\s*\b(Event|Conditions|Actions)\b)'
+      captures:
+        0: keyword.OWScript
+    - include: multiline_comment
+    - include: rule
+  param_list:
+    - match: '(\))'
+      pop: true
+      captures:
+        0: punctuation.OWScript
+    - match: '(\()'
+      captures:
+        0: punctuation.OWScript
+    - match: '(,)'
+      captures:
+        0: punctuation.OWScript
+    - match: '([_a-zA-Z][_a-zA-Z0-9]*)'
+      captures:
+        0: variable.parameter.OWScript
+  rule:
+    - match: '(Rule)'
+      captures:
+        0: storage.type.rule.OWScript
+    - include: expr
+  expr:
+    - match: '(\s+)'
+      captures:
+        0: empty.OWScript
+      push: 
+        - match: '(?=\S)'
+          pop: true
+          captures:
+            0: empty.OWScript
+        - match: '(.)'
+          captures:
+            0: empty.OWScript
+    - match: '([_a-zA-Z][_a-zA-Z0-9]*)(?=\()'
+      push: arg_list
+      captures:
+        0: variable.function.OWScript
+    - match: '(\b(Is Game In Progress|Distance Between|Any True|Is Hero Being Played|Players On Hero|Index|All True)\b)'
+      captures:
+        0: variable.function.value.OWScript
+    - match: '(\b(Set Match Time|Pause Match Time|Hud|Create Effect|Teleport|Msg|Loop If Condition Is True|Big Msg)\b)'
+      captures:
+        0: variable.function.action.OWScript
+    - match: '(\b(Purple|Top|Red|Green|True|False|Null|Soldier: 76|Lucio|Ana|Reaper|Roadhog|Mei|Event Player|Good Aura|Yellow|Light Orb|Event Player|On Global|On Each Player|All|Everyone|Cur Elem|Team 1|Team 2|Visible To And String|Visible To|Null|White)\b)'
+      captures:
+        0: constant.language.OWScript
+    - match: '(\b([_a-zA-Z][_a-zA-Z0-9]*)\:)'
+      captures:
+        0: comment.annotation.OWScript
+    - match: '(pvar|gvar)'
+      captures:
+        0: variable.language.OWScript
+    - match: '(\s*([_a-zA-Z][_a-zA-Z0-9]*))'
+      captures:
+        0: constant.name.OWScript
+    - match: '("[^\x{0022}]*")'
+      captures:
+        0: string.OWScript
+    - match: '(`)'
+      push: fstring
+      captures:
+        0: string.OWScript
+    - match: '\b([_a-zA-Z][\x{0020}\-_a-zA-Z0-9]*)\b'
+      captures:
+        0: constant.name.OWScript
+    - match: '\b(\d+(\.\d+)?(ms|s|min)?)\b'
+      captures:
+        0: constant.numeric.OWScript
+    - include: operators
+  operators:
+    - match: '(==|<=|<|>=|>|!=|=|\+|\-|\*|\/|^|%)'
+      captures:
+        0: keyword.operator.OWScript
+  arg_list:
+    - match: '(\))'
+      pop: true
+      captures:
+        0: punctuation.OWScript
+    - match: '(\()'
+      captures:
+        0: punctuation.OWScript
+    - match: '(,)'
+      captures:
+        0: punctuation.OWScript
+    - include: expr
+  fstring:
+    - match: '(`)'
+      pop: true
+      captures:
+        0: string.OWScript
+    - match: '(\{)'
+      captures:
+        0: string.format.OWScript
+      push: 
+        - match: '(\})'
+          pop: true
+          captures:
+            0: string.format.OWScript
+        - match: '(.)'
+          captures:
+            0: string.format.OWScript
+    - match: '([^\x{007b}\x{007d}\x{0060}]*)'
+      captures:
+        0: string.OWScript
+  multiline_comment:
+    - match: '(\s*/\*)'
+      captures:
+        0: comment.OWScript
+      push: 
+        - match: '(\*/)'
+          pop: true
+          captures:
+            0: comment.OWScript
+        - match: '(.)'
+          captures:
+            0: comment.OWScript

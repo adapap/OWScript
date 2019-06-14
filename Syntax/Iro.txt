@@ -1,0 +1,354 @@
+#################################################################
+## Iro (https://eeyo.io/iro/)
+################################################################ 
+##
+## * Press Ctrl + '+'/'-' To Zoom in
+## * Press Ctrl + S to save and recalculate... 
+## * Documents are saved to web storage.
+## * Only one save slot supported.
+## * Matches cannot span lines.
+## * Unicode chars must be defined in \u0000 to \uffff format.
+## * All matches must be contained by a single group ( ... )
+## * Look behinds not permitted, (?<= or (?<!
+## * Look forwards are permitted (?= or (?!
+## * Constants are defined as __my_const = (......)
+## * The \= format allows unescaped regular expressions
+## * Constants referenced by match \= $${__my_const}
+## * Constants can reference other constants
+## * You are free to delete all the default scopes.
+## * Twitter : ainslec , Web: http://eeyo.io/iro
+##
+################################################################
+
+name                   = OWScript
+file_extensions []     = owpy;
+
+# Token Expressions
+
+__KEYWORD \= (Event|Conditions|Actions)
+__CONST \= (Purple|Top|Red|Green|True|False|Null|Soldier: 76|Lucio|Ana|Reaper|Roadhog|Mei|Event Player|Good Aura|Yellow|Light Orb|Event Player|On Global|On Each Player|All|Everyone|Cur Elem|Team 1|Team 2|Visible To And String|Visible To|Null|White)
+__ACTION \= (Set Match Time|Pause Match Time|Hud|Create Effect|Teleport|Msg|Loop If Condition Is True|Big Msg)
+__VALUE \= (Is Game In Progress|Distance Between|Any True|Is Hero Being Played|Players On Hero|Index|All True)
+__NAME \= ([_a-zA-Z][_a-zA-Z0-9]*)
+
+# Styles
+
+styles [] {
+
+.comment : style {
+   color = #75715E
+   textmate_scope = comment
+}
+
+.annotation : style {
+   color = #75715E
+   textmate_scope = comment.annotation
+}
+
+.keyword : style {
+   color = #F92672
+   textmate_scope = keyword
+}
+
+.operator : style {
+   color = #F92672
+   textmate_scope = keyword.operator
+}
+
+.rule : style {
+   color = #66D9EF
+   italic = true
+   textmate_scope = storage.type.rule
+}
+
+.numeric : style {
+   color = #AE81FF
+   textmate_scope = constant.numeric
+}
+
+.const : style {
+   color = #AE81FF
+   textmate_scope = constant.language
+}
+
+.value : style {
+   color = #66D9EF
+   textmate_scope = variable.function.value
+}
+
+.action : style {
+   color = #66D9EF
+   textmate_scope = variable.function.action
+}
+
+.name : style {
+   color = white
+   textmate_scope = constant.name
+}
+
+.punctuation : style {
+   textmate_scope = punctuation
+}
+
+.string : style {
+   color = #E6DB74
+   textmate_scope = string
+}
+
+.format : style {
+   color = #AE81FF
+   textmate_scope = string.format
+}
+
+.illegal : style {
+   color = white
+   background_color = red
+   textmate_scope = invalid
+}
+
+.function : style {
+   color = #A6E22E
+   textmate_scope = entity.name.function
+}
+
+.param : style {
+   color = #FD971F
+   italic = true
+   textmate_scope = variable.parameter
+}
+
+.call : style {
+   color = #66D9EF
+   textmate_scope = variable.function
+}
+
+.pvar : style {
+   color = #FD971F
+   textmate_scope = variable.language
+}
+
+.empty : style {
+   textmate_scope = empty
+}
+
+}
+
+# Contexts
+
+contexts [] {
+
+main : context {
+   // Function with params
+   : push {
+      regex \= (\%$${__NAME})(?=\()
+      styles [] = .function;
+      context [] = param_list;
+   }
+   // Function
+   : pattern {
+      regex \= (\%$${__NAME}\b)
+      styles [] = .function;
+   }
+   // Whitespace
+   : inline_push {
+      regex \= (\s+)
+      styles [] = .empty;
+      default_style = .empty
+      
+      : pop {
+         regex \= (?=\S)
+         styles [] = .empty;
+      }
+   }
+   // Inline comments
+   : pattern {
+      regex \= (//.*)
+      styles [] = .comment;
+   }
+   // Semicolons
+   : pattern {
+      regex \= (;)
+      styles [] = .punctuation;
+   }
+   // Constants
+   : pattern {
+      regex \= (\b$${__CONST}\b)
+      styles [] = .const;
+   }
+   // Keywords
+   : pattern {
+      regex \= (\s*\b$${__KEYWORD}\b)
+      styles [] = .keyword;
+   }
+   
+   : include "multiline_comment";
+   : include "rule";
+}
+
+param_list : context {
+   : pop {
+      regex \= (\))
+      styles [] = .punctuation;
+   }
+   
+   : pattern {
+      regex \= (\()
+      styles [] = .punctuation;
+   }
+   
+   : pattern {
+      regex \= (,)
+      styles [] = .punctuation;
+   }
+   // Parameters   
+   : pattern {
+      regex \= ([_a-zA-Z][_a-zA-Z0-9]*)
+      styles [] = .param;
+   }
+}
+
+rule : context {
+   : pattern {
+      regex \= (Rule)
+      styles [] = .rule;
+   }
+   : include "expr";
+}
+
+expr : context {
+   : inline_push {
+      regex \= (\s+)
+      styles [] = .empty;
+      default_style = .empty
+      
+      : pop {
+         regex \= (?=\S)
+         styles [] = .empty;
+      }
+   }
+   : push {
+      regex \= $${__NAME}(?=\()
+      styles [] = .call;
+      context [] = arg_list;
+   }
+   
+   : pattern {
+      regex \= (\b$${__VALUE}\b)
+      styles [] = .value;
+   }
+   
+   : pattern {
+      regex \= (\b$${__ACTION}\b)
+      styles [] = .action;
+   }
+   
+   : pattern {
+      regex \= (\b$${__CONST}\b)
+      styles [] = .const;
+   }
+   
+   : pattern {
+      regex \= (\b$${__NAME}\:)
+      styles [] = .annotation;
+   }
+   
+   : pattern {
+      regex \= (pvar|gvar)
+      styles[] = .pvar;
+   }
+   
+   : pattern {
+      regex \= (\s*$${__NAME})
+      styles = .name
+   }
+   
+   : pattern {
+      regex \= ("[^"]*")
+      styles [] = .string;
+   }
+   
+   // Format String
+   : push {
+      regex \= (`)
+      styles [] = .string;
+      context [] = fstring;
+   }
+   
+   : pattern {
+      regex \= \b([_a-zA-Z][ \-_a-zA-Z0-9]*)\b
+      styles [] = .name;
+   }
+   
+   : pattern {
+      regex \= \b(\d+(\.\d+)?(ms|s|min)?)\b
+      styles [] = .numeric;
+   }
+   
+   : include "operators";
+}
+
+operators : context {
+   : pattern {
+      regex \= (==|<=|<|>=|>|!=|=|\+|\-|\*|\/|^|%)
+      styles [] = .operator;
+   }
+}
+
+arg_list : context {
+   : pop {
+      regex \= (\))
+      styles [] = .punctuation;
+   }
+   
+   : pattern {
+      regex \= (\()
+      styles [] = .punctuation;
+   }
+   
+   : pattern {
+      regex \= (,)
+      styles [] = .punctuation;
+   }
+   
+   : include "expr";
+}
+
+fstring : context {
+   : pop {
+      regex \= (`)
+      styles [] = .string;
+   }
+   
+   : inline_push {
+      regex \= (\{)
+      styles [] = .format;
+      default_style = .format
+      
+      : pop {
+         regex \= (\})
+         styles [] = .format;
+      }
+   }
+   
+   : pattern {
+      regex \= ([^{}`]*)
+      styles [] = .string;
+   }
+}
+
+# Comments
+
+multiline_comment : context {
+   description        = multiline
+   : inline_push {
+      regex          \= (\s*/\*)
+      styles []       = .comment;
+      default_style   = .comment
+      : pop {
+         regex       \= (\*/)
+         styles []    = .comment;
+      }
+   }
+}
+
+}

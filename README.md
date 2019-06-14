@@ -3,28 +3,40 @@ Python-like scripting language which transpiles into Overwatch Workshop script r
 
 ## Setup
 Installation
-====================
+============
 1. Install Python with `pip` if you have not done so already.
 2. Install the requirements using `pip install -r requirements.txt` on your machine.
-3. ~Run the command `python owscript.py <filename>` to convert a file into workshop rules.~ 
+3. Run the command `python OWScript.py` with the following arguments:
+- `input` Path to input file, blank for stdin
+- `-m | --min` Optional: minifies the output by stripping whitespace
+- `-s | --save [FILE]` Optional: saves to the target output file instead of stdout
+
+## Syntax Highlighting
+In the `Syntax/` folder, you can find the raw Iro code which I used to generate a Sublime Text file with modifications. You can directly import the `OWScript.sublime-syntax` file by putting it in your ST3 `User` folder.
 
 ## Documentation
-*See example code in the `Examples/` folder. `.ows` files are input, `.ow` files are output.*
+*See example code in the `Examples/` folder.*
+Input File: `*.owpy`
+Output File: `*.ows` (standard as agreed upon voting results)
+
+**Semantic**
 * [Values / Actions](#values--actions)
 * [Annotations / Comments](#annotations--comments)
 * [Assignment / Arithmetic](#assignment--arithmetic)
 * [Logic](#logic)
-* Data Types & Structures
-  * [Variables](#variables)
-  * [Strings](#strings)
-  * [Vectors](#vectors)
-  * [Time](#time)
-  * [Arrays](#arrays)
 * [Functions](#functions)
 * [Loops](#loops)
 
+**Data Types & Structures**
+* [Variables](#variables)
+* [Strings](#strings)
+* [Vectors](#vectors)
+* [Time](#time)
+* [Arrays](#arrays)
+
 ## Notes
 - Be sure not to conflict variable/function names with built-in functions such as `Add`, `Wait`, or `Damage`.
+- Many commonly used values have been aliased in order to reduce verbosity. See the table at the bottom for the list of built-in aliases.
 
 Values / Actions
 ================
@@ -65,7 +77,8 @@ x = x ^ (x + x) % 3
 
 Logic
 =====
-Boolean logic is implemented exactly as in Python. The operators `and`, `or`, and `not` function as C-style `&&`, `||`, and `!`. Comparison operators include the traditional `<`, `>`, `<=`, `>=`, `!=`, `==` as well as containment operators `in` and `not in`.
+Boolean logic is implemented exactly as in Python. The operators `and`, `or`, and `not` function as C-style `&&`, `|
+|`, and `!`. Comparison operators include the traditional `<`, `>`, `<=`, `>=`, `!=`, `==` as well as containment operators `in` and `not in`.
 ```
 x = True and not True
 Count Of
@@ -208,3 +221,23 @@ The while loop is syntactic sugar for using the `Loop` action in the Workshop. A
 while pvar life > 10:
     Damage(Event Player, Null, 10)
 ```
+
+## Alias Table
+|Alias|Output|
+|-----|------|
+|Abs|Absolute Value|
+|Any True|Is True For Any|
+|All True|Is True For All|
+|Cos|Cosine From Degrees|
+|Cosr|Cosine From Radians|
+|Cur Elem|Current Array Element|
+|Everyone|All Players(Team(All))|
+|Index|Index Of Array Value|
+|Lucio|Lúcio|
+|On Each Player|Ongoing - Each Player|
+|On Global|Ongoing - Global|
+|Players In Radius|Players Within Radius|
+|Round|Round To Integer|
+|Sin|Sine From Degrees|
+|Sinr|Sine From Radians|
+|Torbjorn|Torbjörn|

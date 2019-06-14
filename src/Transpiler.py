@@ -1,4 +1,4 @@
-import AST
+import src.AST as AST
 from collections import defaultdict
 from itertools import count
 from string import capwords

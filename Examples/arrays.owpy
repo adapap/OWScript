@@ -6,5 +6,5 @@ Rule "Advanced Arrays"
         y = [1, 2, 3]
         x[0] = 2
         x[1] = y[1] + y[2]
-        x.push(<5, 5, 5>)
-        x.push(<6, 6, 6>)
+        x.append(<5, 5, 5>)
+        x.append(<6, 6, 6>)

@@ -1,7 +1,7 @@
 Rule "Variables & Vectors"
     Actions
         first_Vector = Vector(1, 2, 3)
-        gVar vec2 = Vector
+        gvar vec2 = Vector
             X: 1
             2
             this_is_a_comment_lol_gottem: 3

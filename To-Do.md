@@ -14,3 +14,5 @@
 [Features]
 - Error handler / type validation
 - Autofill values for Messages, Wait, etc
+- Add aliases to syntax highlighting
+- New parser

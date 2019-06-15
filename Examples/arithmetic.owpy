@@ -5,7 +5,7 @@ Rule "Arithmetic Operations"
         x *= 3 / 3
         x = 2 ^ 2
         x = (3 + 1) % 4
-        pVar formula = <sin(pVar num_heroes * 360 / count of
-            allowed heroes
-                event player /* Call me crazy for supporting inline blocks! */
-        ), cos(pVar num_heroes * 360 / count of(allowed heroes(event player))), 0>
+        pvar formula = <sin(pvar num_heroes * 360 / Count Of
+            Allowed Heroes
+                Event Player /* Call me crazy for supporting inline blocks! */
+        ), cos(pvar num_heroes * 360 / Count Of(Allowed Heroes(Event Player))), 0>

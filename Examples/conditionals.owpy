@@ -5,5 +5,10 @@ Rule "If and Else"
         x = 1
         if x == 1:
             x = 3
+            y = 4
         elif x > 1:
             x = 2
+            y = 3
+            y = 4
+        elif x < 1:
+            z = 1

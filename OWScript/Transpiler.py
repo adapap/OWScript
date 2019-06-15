@@ -1,7 +1,8 @@
-import src.AST as AST
 from collections import defaultdict
 from itertools import count
 from string import capwords
+
+from . import AST
 class Scope:
     def __init__(self, name):
         self.name = name

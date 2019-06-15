@@ -4,14 +4,14 @@ Rule "String Builder"
         All
         All
     Actions
-        pVar money = 100
+        pvar money = 100
         test = "Hello"
         MSG
             Everyone
             `{0}: {1}`
                 "Money"
                 `{0}!`
-                    pVar money
+                    pvar money
 
 %RuleFactory(name_)
     Rule "My Custom " name_

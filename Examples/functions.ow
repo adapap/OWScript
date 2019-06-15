@@ -1,7 +1,0 @@
-rule(Rule "Test") {
-	event {
-		Ongoing - Global;
-	}
-
-
-}

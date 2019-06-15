@@ -46,5 +46,5 @@ if __name__ == '__main__':
         'COS': 'COSINE FROM DEGREES',
         'COSR': 'COSINE FROM RADIANS'
     }
-    items = sorted(sorted([k for k, v in reserved.items() if v == 'ACTION']), key=len, reverse=True)
-    print("|".join(items))
+    items = sorted(sorted(["'{}'".format(k) for k, v in reserved.items() if v == 'CONST']))
+    print(", ".join(items))

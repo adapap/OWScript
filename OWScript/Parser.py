@@ -9,96 +9,10 @@ except ImportError:
     from AST import *
 
 class Parser:
-    """OWScript Grammar
-script : (NEWLINE | stmt)* EOF
-stmt : (funcdef | ruleset | NAME call)
-
-funcdef : '%' NAME param_list? funcbody
-funcbody : (NEWLINE INDENT (ruleset | ruledef | rulebody) DEDENT) | block
-
-ruleset : (ruledef NEWLINE?)+;
-ruledef : RULE rulename (NEWLINE INDENT rulebody+ DEDENT)+
-rulename : (STRING | name)+;
-rulebody : RULEBLOCK ruleblock #RulebodyBlock
-         | primary call NEWLINE #RCall
-
-ruleblock : block;
-block : NEWLINE INDENT line+ DEDENT
-      | line;
-line : assign
-     | if_stmt
-     | while_stmt
-     | for_stmt
-     | const
-     | action
-     | value
-     | expr comp_op=('<'|'>'|'=='|'>='|'<='|'!=') expr
-     | name (call | method)?
-     | ANNOTATION line
-     | NEWLINE;
-
-assign : expr ASSIGN expr
-if_stmt : IF expr ':' block (ELIF expr ':' block)* (ELSE ':' else_block=block)?
-while_stmt : WHILE expr ':' block
-for_stmt : FOR NAME IN expr ':' block
-expr : logic_or;
-logic_or : logic_and (OR logic_and)*
-logic_and : logic_not (AND logic_not)*
-logic_not : (NOT logic_not) | compare
-compare : arith (('<'|'>'|'=='|'>='|'<='|'!='|IN|NOT IN) arith)*?
-arith : unary ('^' arith)* # Pow
-      | unary ('*' arith)* # Mul
-      | unary ('/' arith)* # Div
-      | unary ('+' arith)* # Add
-      | unary ('-' arith)* # Sub
-      | unary ('%' arith)* # Mod
-unary : ('+' | '-') unary | primary
-
-primary : ( action
-        | value
-        | const
-        | name
-        | variable
-        | vector
-        | time
-        | numeral
-        | array
-        | string
-        | '(' expr ')') trailer*
-action : ACTION after_line
-value : VALUE after_line attribute*
-const : CONST attribute*
-string : STRING
-       | F_STRING after_line;
-after_line : '(' arg_list ')'
-           | NEWLINE INDENT (expr|ANNOTATION expr|NEWLINE)+ DEDENT
-           | NEWLINE
-param_list : '(' NAME (',' NAME)* ')'
-arg_list : expr (',' expr)*
-
-trailer : item
-        | method
-        | call
-item : '[' primary ']'
-call : '(' arg_list? ')'
-attribute : '.' name
-method : attribute call
-
-name : NAME;
-time : numeral ('MS' | 'S' | 'MIN')
-numeral : num_const=FLOAT
-        | num_const=INTEGER
-variable : global_var
-         | player_var
-         | name
-global_var : GVAR varname=NAME
-player_var : PVAR varname=NAME ('@' primary)?
-vector : '<' unary ',' unary ',' unary '>'
-array : '[' arg_list? ']'
-"""
     def __init__(self, tokens):
         self.tokens = tokens
         self.pos = 0
+        self.last_pos = (tokens[0].line, tokens[0].column)
         self.call_stack = deque(maxlen=5)
 
     @property
@@ -112,6 +26,12 @@ array : '[' arg_list? ']'
         return self.curtoken.type
 
     @property
+    def curpos(self):
+        """Returns the tuple (line, column) of the current token position."""
+        return self.curtoken.line, self.curtoken.column
+    
+
+    @property
     def curvalue(self):
         """Returns the value of the current token."""
         return self.curtoken.value
@@ -121,7 +41,7 @@ array : '[' arg_list? ']'
         try:
             return self.tokens[self.pos + n]
         except IndexError:
-            print('Cannot peek further than token length.')
+            print('Cannot peek further than token length')
     
     def eat(self, *tokens):
         """Consumes a token and moves on to the next one."""
@@ -131,10 +51,11 @@ array : '[' arg_list? ']'
             return
         # print(self.curtoken)
         token_type = tokens[0]
+        self.last_pos = self.curpos
         if self.curtype == token_type:
             self.pos += 1
         else:
-            raise Errors.ParseError('Expected token of type {}, but received {} on line {}:{}'.format(token_type, self.curtype, self.curtoken.line, self.curtoken.column))
+            raise Errors.ParseError('Expected token of type {}, but received {} on line {}:{}'.format(token_type, self.curtype, *self.last_pos))
 
     def script(self):
         """script : (NEWLINE | stmt)* EOF"""
@@ -149,29 +70,71 @@ array : '[' arg_list? ']'
     def stmt(self):
         """stmt : (funcdef | ruledef | call)"""
         if self.curvalue == '%':
-            print('funcdef!')
+            return self.funcdef()
         elif self.curtype == 'RULE':
             return self.ruledef()
         else:
-            print('call!', self.curtype)
+            return self.primary()
+
+    def funcdef(self):
+        """funcdef : % NAME params? funcbody"""
+        self.eat('MOD')
+        name = self.curvalue
+        self.eat('NAME')
+        params = []
+        if self.curtype == 'LPAREN':
+            params = self.params()
+        body = self.funcbody()
+        node = Function(name=name, params=params)
+        node.children.extend(body)
+        return node
+
+    def params(self):
+        """params : (expr ( , expr)*)"""
+        self.eat('LPAREN')
+        params = [self.expr()]
+        while self.curtype == 'COMMA':
+            self.eat('COMMA')
+            params.append(self.expr())
+        self.eat('RPAREN')
+        return params
+
+    def funcbody(self):
+        """funcbody : NEWLINE INDENT (ruledef | ruleblock | block | primary)+ DEDENT"""
+        self.eat('NEWLINE', 'INDENT')
+        body = []
+        while self.curtype != 'DEDENT':
+            if self.curtype == 'RULE':
+                body.append(self.ruledef())
+            elif self.curtype == 'RULEBLOCK':
+                body.append(self.ruleblock())
+            else:
+                body.append(self.block())
+        self.eat('DEDENT')
+        return body
 
     def ruledef(self):
-        """ruledef : RULE STRING block"""
+        """ruledef : RULE STRING NEWLINE INDENT (ruleblock | call)+ DEDENT"""
         self.eat('RULE')
         node = Rule(name=self.string())
-        node.children.append(self.ruleblock())
+        self.eat('NEWLINE', 'INDENT')
+        while self.curtype != 'DEDENT':
+            if self.curtype == 'RULEBLOCK':
+                node.children.append(self.ruleblock())
+            else:
+                node.children.append(self.primary())
+                self.eat('NEWLINE')
+        self.eat('DEDENT')
         return node
 
     def ruleblock(self):
-        """ruleblock : NEWLINE INDENT RULEBLOCK block DEDENT"""
+        """ruleblock : (RULEBLOCK block)+"""
         node = Block()
-        self.eat('NEWLINE', 'INDENT')
         while self.curtype == 'RULEBLOCK':
             ruleblock = Ruleblock(name=self.curvalue)
             self.eat('RULEBLOCK')
             ruleblock.children.append(self.block())
             node.children.append(ruleblock)
-        self.eat('DEDENT')
         return node
 
     def block(self):
@@ -193,6 +156,8 @@ array : '[' arg_list? ']'
     def line(self):
         """line : 
                 ( if_stmt
+                | while_stmt
+                | for_stmt
                 | expr ASSIGN expr
                 | expr COMPARE expr
                 | expr
@@ -201,6 +166,10 @@ array : '[' arg_list? ']'
             return self.eat('NEWLINE')
         if self.curtype == 'IF':
             return self.if_stmt()
+        if self.curtype == 'WHILE':
+            return self.while_stmt()
+        if self.curtype == 'FOR':
+            return self.for_stmt()
         node = self.expr()
         if self.curtype == 'ASSIGN':
             op = self.curvalue
@@ -222,7 +191,7 @@ array : '[' arg_list? ']'
         try:
             true_block = self.block()
         except Errors.ParseError:
-            raise Errors.SyntaxError('Invalid block after if statement')
+            raise Errors.SyntaxError('Invalid block after if statement on line {}:{}'.format(*self.last_pos))
         false_block = self.elif_else()
         node = If(cond=cond, true_block=true_block, false_block=false_block)
         return node
@@ -237,7 +206,7 @@ array : '[' arg_list? ']'
             try:
                 return self.block()
             except Errors.ParseError:
-                raise Errors.SyntaxError('Invalid block after else statement')
+                raise Errors.SyntaxError('Invalid block after else statement on line {}:{}'.format(*self.last_pos))
         else:
             return None
         cond = self.expr()
@@ -245,9 +214,29 @@ array : '[' arg_list? ']'
         try:
             true_block = self.block()
         except Errors.ParseError:
-            raise Errors.SyntaxError('Invalid block after elif statement')
+            raise Errors.SyntaxError('Invalid block after elif statement on line {}:{}'.format(*self.last_pos))
         false_block = self.elif_else()
         return If(cond=cond, true_block=true_block, false_block=false_block)
+
+    def while_stmt(self):
+        """while_stmt : WHILE expr : block"""
+        self.eat('WHILE')
+        cond = self.expr()
+        self.eat('COLON')
+        body = self.block()
+        return While(cond=cond, body=body)
+
+    def for_stmt(self):
+        """for_stmt : FOR NAME IN primary : block"""
+        self.eat('FOR')
+        pointer = self.curvalue
+        self.eat('NAME')
+        self.eat('IN')
+        iterable = self.primary()
+        self.eat('COLON')
+        body = self.block()
+        node = For(pointer=pointer, iterable=iterable, body=body)
+        return node
 
     def expr(self):
         """expr : logic_or"""
@@ -280,13 +269,13 @@ array : '[' arg_list? ']'
     def compare(self):
         """compare : term (COMPARE term)*"""
         node = self.term()
-        while self.curtype == 'COMPARE':
+        while self.curtype in ('COMPARE', 'IN', 'NOT_IN'):
             if node.children:
                 break
             op = self.curvalue
             if op == '>' and self.peek().type in ('DEDENT', 'RPAREN', 'COMMA'):
                 break
-            self.eat('COMPARE')
+            self.eat(self.curtype)
             node = Compare(left=node, op=op, right=self.term())
         return node
 
@@ -341,6 +330,7 @@ array : '[' arg_list? ']'
                 | vector
                 | string
                 | array
+                | TIME
                 | OWID args?
                 | FLOAT
                 | INTEGER
@@ -355,8 +345,11 @@ array : '[' arg_list? ']'
             node = self.variable()
         elif self.curtype == 'COMPARE' and self.curvalue == '<':
             node = self.vector()
-        elif self.curtype in ('STRING'):
+        elif self.curtype in ('STRING', 'F_STRING'):
             node = self.string()
+        elif self.curtype == 'TIME':
+            node = Time(value=self.curvalue)
+            self.eat('TIME')
         elif self.curtype in ('FLOAT', 'INTEGER'):
             node = Numeral(value=self.curvalue)
             self.eat(self.curtype)
@@ -383,7 +376,7 @@ array : '[' arg_list? ']'
         return node
 
     def arglist(self):
-        """arglist : expr ( , expr)*"""
+        """arglist : expr (, expr)*"""
         node = Block()
         node.children.append(self.expr())
         while self.curtype == 'COMMA':
@@ -395,23 +388,26 @@ array : '[' arg_list? ']'
         """variable : GVAR NAME
                     | PVAR (@ primary)? NAME
                     | NAME"""
-        if self.curtype == 'GVAR':
-            self.eat('GVAR')
-            name = self.curvalue
-            self.eat('NAME')
-            node = GlobalVar(name=name)
-        elif self.curtype == 'PVAR':
-            self.eat('PVAR')
-            name = self.curvalue
-            self.eat('NAME')
-            node = PlayerVar(name=name)
-            if self.curvalue == '@':
-                self.eat('AT')
-                node.player = self.primary()
-        elif self.curtype == 'NAME':
-            name = self.curvalue
-            self.eat('NAME')
-            node = GlobalVar(name=name)
+        try:
+            if self.curtype == 'GVAR':
+                self.eat('GVAR')
+                name = self.curvalue
+                self.eat('NAME')
+                node = GlobalVar(name=name)
+            elif self.curtype == 'PVAR':
+                self.eat('PVAR')
+                name = self.curvalue
+                self.eat('NAME')
+                node = PlayerVar(name=name)
+                if self.curvalue == '@':
+                    self.eat('AT')
+                    node.player = self.primary()
+            elif self.curtype == 'NAME':
+                name = self.curvalue
+                self.eat('NAME')
+                node = GlobalVar(name=name)
+        except Errors.ParseError:
+            raise Errors.SyntaxError('Cannot parse variable on line {}:{}'.format(*self.last_pos))
         return node
 
     def vector(self):
@@ -436,9 +432,19 @@ array : '[' arg_list? ']'
         return node
 
     def string(self):
-        """string : STRING"""
-        node = String(value=self.curvalue)
-        self.eat('STRING')
+        """string : (STRING | NAME)+
+                  | F_STRING args"""
+        node = String(value=[])
+        if self.curtype == 'F_STRING':
+            node.value.append(self.curvalue)
+            self.eat('F_STRING')
+            node.children.extend(self.args())
+        else:
+            while self.curtype in ('STRING', 'NAME'):
+                node.value.append(self.curvalue)
+                self.eat(self.curtype)
+        if not node.value:
+            raise Errors.SyntaxError('Invalid string on line {}:{}'.format(*self.last_pos))
         return node
 
     def trailer(self):
@@ -451,7 +457,9 @@ array : '[' arg_list? ']'
             return partial(Attribute, name=name)
         elif self.curtype == 'LPAREN':
             self.eat('LPAREN')
-            args = self.arglist().children
+            args = []
+            if self.curtype != 'RPAREN':
+                args = self.arglist().children
             self.eat('RPAREN')
             return partial(Call, args=args)
         elif self.curtype == 'LBRACK':

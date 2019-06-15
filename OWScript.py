@@ -1,43 +1,38 @@
 import argparse
-import os
-import re
 import sys
-from antlr4 import *
-from src.OWScriptLexer import OWScriptLexer
-from src.OWScriptParser import OWScriptParser
-from src.ASTBuilder import ASTBuilder
-from src.Transpiler import Transpiler
+from OWScript.Lexer import Lexer
+from OWScript.Parser import Parser
+from OWScript.Transpiler import Transpiler
 
-class UppercaseStream(FileStream):
-    def _loadString(self):
-        self._index = 0
-        self.data = [ord(c.upper()) for c in self.strdata]
-        self._size = len(self.data)
- 
-def process(code, minify=False, save=None):
-    input_stream = UppercaseStream(code, 'utf-8')
-    lexer = OWScriptLexer(input_stream)
-    stream = CommonTokenStream(lexer)
-    parser = OWScriptParser(stream)
-    ast = ASTBuilder().run(parser.script())
-    # print(ast)
-    output = Transpiler().run(ast)
-    if minify:
-        output = re.sub(r'[\s\n]*', '', output)
-    if not save:
-        sys.stdout.write(output)
-    else:
-        with open(save, 'w') as f:
-            f.write(output)
- 
+class DEBUG:
+    """Bit flags used for debug code."""
+    TOKENS = 1
+    TREE = 2
+
+def transpile(text, minify=False, save=None, debug=0):
+    """Transpiles an OWScript code into Overwatch Workshop rules."""
+    lexer = Lexer(text=text)
+    tokens = lexer.lex()
+    if debug & DEBUG.TOKENS:
+        lexer.print_tokens()
+    parser = Parser(tokens=tokens)
+    tree = parser.script()
+    if debug & DEBUG.TREE:
+        print(tree.string())
+    transpiler = Transpiler(tree=tree)
+    code = transpiler.run()
+    print(code)
+
+
 if __name__ == '__main__':
-    sys.path.append(os.path.join(os.getcwd(), 'src'))
     parser = argparse.ArgumentParser(description='Generate Overwatch Workshop code from OWScript')
     parser.add_argument('input', nargs='*', type=str, help='Standard input to process')
     parser.add_argument('-m', '--min', action='store_true', help='Minifies the output by removing whitespace')
     parser.add_argument('-s', '--save', help='Save the output to a file instead of printing it')
+    parser.add_argument('-d', '--debug', type=int, help='Debugging tool used for development')
     args = parser.parse_args()
-    if not args.input:
-        process(sys.stdin)
-    for file in args.input:
-        process(file, minify=args.min, save=args.save)
+    file_input = args.input[0] if args.input else sys.stdin
+    with open(file_input) as f:
+        text = f.read()
+    transpile(text, minify=args.min, save=args.save, debug=args.debug)
+    

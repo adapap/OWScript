@@ -1,12 +1,11 @@
 # OWScript
 Python-like scripting language which transpiles into Overwatch Workshop script rulesets.
 
-## Setup
-Installation
-============
+Setup
+=====
+## Installation & Usage
 1. Install Python with `pip` if you have not done so already.
-2. Install the requirements using `pip install -r requirements.txt` on your machine.
-3. Run the command `python OWScript.py` with the following arguments:
+2. Run the command `python OWScript.py` with the following arguments:
 - `input` Path to input file, blank for stdin
 - `-m | --min` Optional: minifies the output by stripping whitespace
 - `-s | --save [FILE]` Optional: saves to the target output file instead of stdout
@@ -14,7 +13,8 @@ Installation
 ## Syntax Highlighting
 In the `Syntax/` folder, you can find the raw Iro code which I used to generate a Sublime Text file with modifications. You can directly import the `OWScript.sublime-syntax` file by putting it in your ST3 `User` folder.
 
-## Documentation
+Documentation
+=============
 *See example code in the `Examples/` folder.*
 Input File: `*.owpy`
 Output File: `*.ows` (standard as agreed upon voting results)
@@ -26,6 +26,7 @@ Output File: `*.ows` (standard as agreed upon voting results)
 * [Logic](#logic)
 * [Functions](#functions)
 * [Loops](#loops)
+* [Attributes / Methods](#attributes--methods)
 
 **Data Types & Structures**
 * [Variables](#variables)
@@ -33,13 +34,13 @@ Output File: `*.ows` (standard as agreed upon voting results)
 * [Vectors](#vectors)
 * [Time](#time)
 * [Arrays](#arrays)
+* [Alias Table](#alias-table)
 
 ## Notes
 - Be sure not to conflict variable/function names with built-in functions such as `Add`, `Wait`, or `Damage`.
 - Many commonly used values have been aliased in order to reduce verbosity. See the table at the bottom for the list of built-in aliases.
 
-Values / Actions
-================
+## Values / Actions
 Values and actions are the main types that come up when working in the Workshop. In general, anything with parameters can be written in two ways (which can be interchanged):
 
 **Indented Blocks**
@@ -50,13 +51,12 @@ Round
             Team 2
     Up
 ```
-** Parenthesized **
+**Parenthesized / Literal**
 ```
 Round(Count Of(All Players(Team 2)), Up) /* Same as output */
 ```
 
-Annotations / Comments
-======================
+## Annotations / Comments
 Annotations are ways to remind yourself what the type of a variable. It is written as text followed by a colon. Comments are written as most traditional languages (`// line comment`, `/* multiline comment */`). Both are ignored in the code output.
 ```
 Event
@@ -65,8 +65,7 @@ Event
     Annotation_2: All
 ```
 
-Assignment / Arithmetic
-=======================
+## Assignment / Arithmetic
 Assignment (regular and augmented), as well as most arithmetic operators work as they do in Python or other traditional programming languages. Operators include: `+ - * / ^ %` as well as the augmented equivalents: `+= -= *= /= ^= %=`
 ```
 x = 1
@@ -75,8 +74,7 @@ x *= 3
 x = x ^ (x + x) % 3
 ```
 
-Logic
-=====
+## Logic
 Boolean logic is implemented exactly as in Python. The operators `and`, `or`, and `not` function as C-style `&&`, `|
 |`, and `!`. Comparison operators include the traditional `<`, `>`, `<=`, `>=`, `!=`, `==` as well as containment operators `in` and `not in`.
 ```
@@ -89,17 +87,17 @@ Count Of(Everyone) == 12
 y = Event Player in Players In Radius(<1, 2, 3>, 15)
 ```
 
-Variables
-=========
+## Variables
 There are 3 ways to manipulate variables:
 
 **Explicit Global Assignment**
 ```
-gVar globalvarname = 1
+gvar varname = 1
 ```
 **Explicit Player Assignment**
 ```
-pVar playervarname = 2
+pvar varname = 2
+pvar varname@Event Player = 3 // Event Player (default) is the player which the variable will be bound to
 ```
 **Implicit Global Assignment**
 ```
@@ -109,8 +107,7 @@ varname = 3
 Using the technique from [@ItsDeltin](https://github.com/ItsDeltin), the limit to
 the number of variables that can be created is the maximum length of an array (\~1000 variables).
 
-Strings
-=======
+## Strings
 There are two types of strings in the workshop: string literals and "formatted" strings, which take children as parameters to display. To write a string literal, simply enclose it in `"quotes"`, which can be used for rulenames. Formatted strings are enclosed with backticks (\`) and have the children nested the same way as a value.
 ```
 Rule "String Demo"
@@ -127,29 +124,26 @@ Rule "String Demo"
         Small Msg(Event Player, `{0}!`("Victory"))
 ```
 
-Vectors
-=======
+## Vectors
 Vectors can be created in 3 ways as well:
 
-**Function**
+**Literal**
 ```
 Vector(1, 2, 3)
 ```
-**Constructor**
+**Block**
 ```
 Vector
     1
     2
     3
 ```
-
 **Idiomatic**
 ```
 <1, 2, 3>
 ```
 
-Time
-====
+## Time
 Time can be represented in *ms*, *s*, or *min*.
 ```
 Wait(1s + 500ms)
@@ -157,8 +151,7 @@ Wait
     0.025min
 ```
 
-Arrays
-======
+## Arrays
 Arrays are created, modified, and accessed as in Python notation. Arrays can be nested inside the global/player variables, which allows for more complex operations on arrays. (No slice support yet)
 
 **Creation**
@@ -172,8 +165,7 @@ costs[1] = 20
 total = costs[0] + costs[1] + costs[2]
 ```
 
-Functions
-=========
+## Functions
 Functions allow you to write a block of code once and reuse it many times. They can be used to generate HUDs like a macro or used as a rule factory. All functions must be defined before they are called, and they must be defined at the top level scope (same as where rules are defined):
 
 **Input**
@@ -213,14 +205,38 @@ rule("Add Two") {
    }
 }
 ```
+**Builtin Functions**
 
-Loops
-=====
+|Function|Parameters|Description|
+|:------:|----------|-----------|
+|range|*stop* or *start[, stop[, step]]*|Creates an array of numbers from start to stop (exclusive), counting by step|
+
+## Loops
 The while loop is syntactic sugar for using the `Loop` action in the Workshop. At the moment, only use while loops if the purpose of the rule is solely to repeat code until a condition is met.
 ```
 while pvar life > 10:
     Damage(Event Player, Null, 10)
 ```
+
+## Attributes / Methods
+Attributes are properties of an object that can be accessed using the dot operator `.`, which refers to the value before it in order to access a property. A method is simply an attribute followed by a call, which has parameters. Refer to the table below for builtin attributes and methods.
+```
+pvar x = Event Player.x // Attribute
+y = Victim.jumping and Attacker.moving
+scores.append(123) // Method
+```
+
+**Attribute & Method Table**
+
+|Name|Parameters|Description|
+|:--:|----------|-----------|
+|x||Gets the X component of a vector|
+|y||Gets the Y component of a vector|
+|z||Gets the Z component of a vector|
+|jumping||Check if a player is holding the Jump key|
+|crouching||Check if a player is holding the Crouch key|
+|moving||Check if the speed of a player is non-zero|
+|append|*element*|Appends an element to the given array|
 
 ## Alias Table
 |Alias|Output|

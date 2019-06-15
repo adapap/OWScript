@@ -23,6 +23,7 @@ ALIASES = {
         'ABS': 'ABSOLUTE VALUE',
         'ANY TRUE': 'IS TRUE FOR ANY',
         'ALL TRUE': 'IS TRUE FOR ALL',
+        'ARRAY CONTAINS': 'ARRAY CONTAINS',
         'COS': 'COSINE FROM DEGREES',
         'COSR': 'COSINE FROM RADIANS',
         'INDEX': 'INDEX OF ARRAY VALUE',
@@ -49,7 +50,7 @@ OWID.sort(key=len, reverse=True)
 
 class Tokens:
     """Mapping of token names to regular expressions."""
-    COMMENT : r'(\/\*(.|[\n])*?\*\/|\/\/[^\n]*)'
+    COMMENT : r'(\/\*(.|[\n])*?\*\/|\/\/[^\n]*\n?)'
     COMPARE : r'(>=|<=|==|!=|>|<)'
     ASSIGN : r'(=|\+=|-=|\*=|\/=|^=|%=)'
     PLUS : r'\+'
@@ -65,24 +66,26 @@ class Tokens:
     LBRACK : r'\['
     RBRACK : r'\]'
     STRING : r'"[^\\\r\n\f]*"'
-    F_STRING : r'`[^\\\r\n\f]*"'
+    F_STRING : r'`[^\\\r\n\f]*`'
+    TIME : r'[0-9]+(\.[0-9]+)?(ms|s|min)'
     FLOAT : r'[0-9]+\.[0-9]+'
     INTEGER : r'[0-9]+'
-    OWID : f'({"|".join(OWID)})'
-    RULEBLOCK : r'(EVENT|CONDITIONS|ACTIONS)\b'
-    RULE : r'RULE\b'
     IF : r'IF\b'
     ELIF : r'ELIF\b'
     ELSE : r'ELSE\b'
     WHILE : r'WHILE\b'
     FOR : r'FOR\b'
+    NOT_IN : r'NOT IN\b'
     IN : r'IN\b'
     NOT : r'NOT\b'
     AND : r'AND\b'
     OR : r'OR\b'
     PVAR : r'PVAR\b'
     GVAR : r'GVAR\b'
-    ANNOTATION : r'[_a-zA-Z0-9][_a-zA-Z0-9]*:'
+    RULE : r'RULE\b'
+    ANNOTATION : r'[_a-zA-Z0-9][_a-zA-Z0-9]*:(?!\n)'
+    OWID : fr'({"|".join(OWID)})(?=[\b\s\n\(,]+)'
+    RULEBLOCK : r'(EVENT|CONDITIONS|ACTIONS)\b'
     NAME : r'[_a-zA-Z][_\-a-zA-Z0-9]*'
     WHITESPACE : r'[ \t]+'
     NEWLINE : r'[\r\n\f]+'

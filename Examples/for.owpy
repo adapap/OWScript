@@ -1,0 +1,8 @@
+Rule "For Loop"
+    Event
+        On Global
+    Actions
+        angles = [15, 30, 45, 60, 75, 90]
+        angles2 = range(15, 91, 15)
+        for ang in angles:
+            Msg(Event Player, ang)

@@ -1,6 +1,5 @@
 Rule "Time Shorthands"
     Actions
         Wait(16ms)
-        Wait 3.5s
         Wait /* It takes a parameter, so indent if you please! */
             0.35min

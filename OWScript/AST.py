@@ -1,10 +1,21 @@
 class AST:
+    children = []
     def __init__(self):
         self.children = []
 
     @property 
     def format_children(self):
         return ', '.join(map(repr, self.children))
+
+    def string(self, indent=0):
+        string = ''
+        if not self.__class__ == Block:
+            string += ' ' * indent + '{}'.format(self.__class__.__name__) + '\n'
+        else:
+            indent -= 3
+        for child in self.children:
+            string += child.string(indent=indent + 3)
+        return string
 
     def __repr__(self):
         if not self.children:
@@ -69,6 +80,9 @@ class Const(Terminal):
 class String(Terminal):
     pass
 
+class Time(Terminal):
+    pass
+
 class Numeral(Terminal):
     pass
 
@@ -76,8 +90,8 @@ class OWID(Data):
     pass
 
 class Array(AST):
-    def __init__(self):
-        self.elements = []
+    def __init__(self, elements=None):
+        self.elements = elements or []
 
     def append(self, elem):
         self.elements.append(elem)
@@ -119,6 +133,32 @@ class If(AST):
 
     def __repr__(self):
         return 'if {}: {} | else: {}'.format(self.cond, self.true_block, self.false_block)
+
+class While:
+    def __init__(self, cond, body):
+        self.cond = cond
+        self.body = body
+    
+    def __repr__(self):
+        return 'while {}: {}'.format(self.cond, self.body)
+
+class For:
+    def __init__(self, pointer, iterable, body):
+        self.pointer = pointer
+        self.iterable = iterable
+        self.body = body
+
+    def __repr__(self):
+        return 'for {} in {}: {}'.format(self.pointer, self.iterable, self.body)
+
+class Function(AST):
+    def __init__(self, name, params):
+        super().__init__()
+        self.name = name
+        self.params = params
+
+    def __repr__(self):
+        return '%{}({}): {}'.format(self.name, ', '.join(self.params), self.format_children)
 
 class Attribute(Trailer):
     def __init__(self, name, parent):

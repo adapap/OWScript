@@ -3,4 +3,4 @@ Rule "Variables"
         On Global
 
     Actions
-        pVar h@Event Player = 1
+        pvar h@Event Player = 1

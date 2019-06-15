@@ -7,4 +7,6 @@ Rule "Attributes"
     Conditions
         Position Of
             Event Player
-        .X.Y == True
+        .X < 10
+        Event Player.moving == True
+        Event Player.jumping == True

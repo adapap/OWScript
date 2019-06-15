@@ -19,13 +19,11 @@
             All
             All
         Conditions
-            Array Contains
-                Players In Radius
-                    Center: origin
-                    Radius: radius
-                    Team: All
-                    LOS: Surfaces
-                Event Player 
+            Event Player in Players In Radius
+                Center: origin
+                Radius: radius
+                Team: All
+                LOS: Surfaces    
             == True
         Actions
             Teleport

@@ -25,7 +25,7 @@ if __name__ == '__main__':
     reserved_list.extend([(x, 'ACTION') for x in actions])
     reserved_list.extend([(x, 'VALUE') if values.get(x).get('args') else (x, 'CONST') for x in values])
     reserved_list.extend([(x, 'VALUE') for x in types.get('NUMBER').get('values')])
-    const_types = ['EVENT', 'EFFECT REEVALUATION', 'HUD TEXT REEVALUATION', 'WORLD TEXT REEVALUATION',
+    const_types = ['EVENT', 'EFFECT REEVALUATION', 'HUD TEXT REEVALUATION', 'HUD LOCATION', 'WORLD TEXT REEVALUATION',
     'CHASE RATE REEVALUATION', 'CHASE TIME REEVALUATION', 'OBJECTIVE DESCRIPTION REEVALUATION', 'DAMAGE MODIFICATION REEVALUATION',
     'WAIT BEHAVIOR', 'LOS CHECK', 'COLOR', 'HERO CONSTANT', 'CREATE EFFECT']
     for const_type in const_types:

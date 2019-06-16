@@ -16,14 +16,12 @@
         Reevaluation: Visible To
 %UpgradePortal(pos)
     Portal(pos, Good Aura, Yellow, "Upgrades")
-    portals.append(pos)
 %ShopPortal(pos)
     Portal(pos, Good Aura, Purple, `{0} {1}`("Previous", "Boss"))
-    shop_portal = pos
 %UpgradeEffect(pos, cost, cost_rate, color_)
     Create Effect
         Visible_To: Everyone
-        Type: Light Orb
+        Type: Orb
         Color: color_
         Position: pos
         Radius: 1.5
@@ -55,8 +53,7 @@ Rule "Initialize Constants"
         boss_heroes = [Hero(Roadhog), Hero(Soldier: 76), Hero(Mei), Hero(Lucio), Hero(Ana), Hero(Reaper)]
         boss2_boundary = <-29, -2, 56>
         boss4_boundary = <-54, 1, 109>
-        Pause Match Time
-        Set Match Time(123)
+        Set Match Time(90min)
 
 Rule "Initialize Player Stats"
     Event_Team(All)
@@ -83,15 +80,12 @@ Rule "Initialize Player Stats"
 Rule "Initialize Effects (Portals / Upgrades / Boundaries)"
     Event_Global()
     Actions
-        portals = []
+        portals = [<-50, 1, 137.350>, <-37, 6.5, 48>, <-70, 1.5, 63.5>, <-58, 2, 122>, <41, 3.5, 78.5>, <-118.5, 1.5, 99.5>]
+        shop_portal = <-7.000, 3, 75>
         // Bosses 1-6 -> Shop
-        UpgradePortal(<-50, 1, 137.350>)
-        UpgradePortal(<-37, 6.5, 48>)
-        UpgradePortal(<-70, 1.5, 63.5>)
-        UpgradePortal(<-58, 2, 122>)
-        UpgradePortal(<41, 3.5, 78.5>)
-        UpgradePortal(<-118.5, 1.5, 99.5>)
-        ShopPortal(<-7.000, 3, 75>)
+        for portal in portals:
+            UpgradePortal(portal)
+        ShopPortal(shop_portal)
 //        // 1 -> 2 Modify Global Variable(E, Append To Array, Vector(-55.000, 1.500, 141.500));
 //        // 2 -> 3 Modify Global Variable(E, Append To Array, Vector(-25.500, 7.500, 50.500));
 //        // 3 -> 4 Modify Global Variable(E, Append To Array, Vector(-80.000, 1.500, 71));
@@ -100,23 +94,41 @@ Rule "Initialize Effects (Portals / Upgrades / Boundaries)"
 //        // prestige: <-172, 3, 96>
 //        // create boundary function
 //
-//Rule "Initialize Player HUD Stats"
-//    Event_Team(Team 1)
-//    Actions
-//        Hud
-//            Visible_To: Event Player
-//            Header: `{0}: {1}`("Money", pvar money)
-//            Subheader: Null
-//            Text: Null
-//            Location: Top
-//            Sort_Order: 0
-//            Header_Color: White
-//            Subheader_Color: White
-//            Text_Color: White
-//            Reevaluation: Visible To And String
-//        SmallHud(Top, `{0} / {1}`(`{0}: {1}`("Damage", `{0}%`(pvar damage_scale)), `{0}: {1}`("Defend", `{0}%`(pvar defense))), Red)
+Rule "Initialize Player HUD Stats"
+    Event_Team(Team 1)
+    Actions
+        Hud
+            Visible_To: Event Player
+            Header: `{0}: {1}`("Money", pvar money)
+            Subheader: Null
+            Text: Null
+            Location: Top
+            Sort_Order: 0
+            Header_Color: White
+            Subheader_Color: White
+            Text_Color: White
+            Reevaluation: Visible To And String
+        SmallHud(Top, `{0} / {1}`(`{0}: {1}`("Damage", `{0}%`(pvar damage_scale)), `{0}: {1}`("Defend", `{0}%`(pvar defense))), Red)
 //        SmallHud(Top, `{0} sec`(pvar reload_speed), Yellow)
 //        SmallHud(Top, `{0} {1}`(`{0}%`(pvar money_multiplier * 100), "Money"), Green)
+//        Text
+//            Visible_To: All Players(Team 1)
+//            Header: `{0} - {1} - {2}`
+//                `{0}: {1}`
+//                    "Damage"
+//                    `{0}%`
+//                        pvar damage_scale * 100
+//                `{0} sec`
+//                    pvar reload_speed
+//                `{0} {1}`
+//                    `{0}%`
+//                        pvar money_multiplier * 100
+//                    "Money"
+//            Position: Event Player
+//            Scale: 0.750
+//            Clipping: Clip Against Surfaces
+//            Reevaluation: Visible To Position And String
+//
 //        //Create In-World Text(All Players(Team 1), String("{0} - {1} - {2}", String("{0}: {1}", String("Damage", Null, Null, Null), String(
 ////            "{0}%", Player Variable(Event Player, B), Null, Null), Null), String("{0} sec", Player Variable(Event Player, E), Null, Null),
 ////            String("{0} {1}", String("{0}%", Multiply(Player Variable(Event Player, J), 100), Null, Null), String("Money", Null, Null,

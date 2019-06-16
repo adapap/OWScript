@@ -1,0 +1,3 @@
+Rule "More strings"
+    Actions
+        x = `{0} / {1}`(`{0}: {1}`("Damage", `{0}%`(pvar damage_scale)), `{0}: {1}`("Defend", `{0}%`(pvar defense)))

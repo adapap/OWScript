@@ -321,6 +321,7 @@ class Parser:
     def primary(self):
         """primary : atom trailer*"""
         node = self.atom()
+        print('primary:', node)
         while self.curtype in ('DOT', 'LPAREN', 'LBRACK'):
             node = self.trailer()(parent=node)
         return node
@@ -368,12 +369,12 @@ class Parser:
         """args : block
                 | ( arg_list )"""
         node = None
-        if self.peek().type == 'INDENT':
-            node = self.block().children
-        elif self.curtype == 'LPAREN':
+        if self.curtype == 'LPAREN':
             self.eat('LPAREN')
             node = self.arglist().children
             self.eat('RPAREN')
+        elif self.peek().type == 'INDENT':
+            node = self.block().children
         return node
 
     def arglist(self):

@@ -217,6 +217,14 @@ The while loop is syntactic sugar for using the `Loop` action in the Workshop. A
 while pvar life > 10:
     Damage(Event Player, Null, 10)
 ```
+A for loop lets you iterate over custom iterables, such as an array of values or a range. Iteration over workshop types such as All Players is not supported.
+```
+for x in range(1, 10, 2):
+    Msg(Event Player, x)
+for y in [Genji, Tracer, Widowmaker]:
+    Kill
+        Players On Hero(y)
+```
 
 ## Attributes / Methods
 Attributes are properties of an object that can be accessed using the dot operator `.`, which refers to the value before it in order to access a property. A method is simply an attribute followed by a call, which has parameters. Refer to the table below for builtin attributes and methods.

@@ -26,6 +26,7 @@ class Lexer:
         """Outputs the current token list."""
         tokens = '\n'.join(map(repr, self.tokens))
         print(tokens)
+        return tokens
 
     def lex(self):
         """Tokenizes input into a list of tokens."""

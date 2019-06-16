@@ -10,9 +10,9 @@ except ImportError:
     from AST import *
 
 class Scope:
-    def __init__(self, name):
+    def __init__(self, name, namespace=None):
         self.name = name
-        self.namespace = {}
+        self.namespace = namespace or {}
 
     def __repr__(self):
         return f"<Scope '{self.name}'>"
@@ -36,11 +36,11 @@ class Transpiler:
         self.player_vars = {}
         self.global_index = count()
         self.player_index = defaultdict(count)
-        self.array_modify_index = 0
+        self.pointer_index = 0
         self.line = 0
         self.functions = Builtin.functions
         self.arrays = {}
-        self.scopes = []
+        self.scopes = [Scope(name='global')]
         self.aliases = {k: v for d in ALIASES.values() for k, v in d.items()}
 
     @property
@@ -58,10 +58,11 @@ class Transpiler:
                     code += ''.join(scope.namespace.get(name).value).replace('"', '')
                     break
             else:
-                code += name.replace('"', '').replace('`', '')
+                code += name.replace('"', '').replace("'", '').replace('`', '')
         return code + '"'
 
     def assign(self, node, value):
+        self.scopes[-1].namespace.update({node.name: value})
         code = ''
         name = node.name
         if type(node) == GlobalVar:
@@ -143,8 +144,15 @@ class Transpiler:
     def visitAssign(self, node):
         code = ''
         value = node.right
-        if type(node.right) == Array:
-            self.arrays[node.left.name] = value
+        name = node.left.parent.name if type(node.left) in (Item,) else node.left.name
+        if type(value) == Array:
+            self.arrays[name] = value
+        elif type(value) == Call:
+            function = self.functions[value.parent.name]
+            if type(function) != Function:
+                result = function(map(self.visit, value.args))
+                if type(result) == Array:
+                    self.arrays[name] = result
         value = {
             '+=': BinaryOp(left=node.left, op='+', right=value),
             '-=': BinaryOp(left=node.left, op='-', right=value),
@@ -157,7 +165,6 @@ class Transpiler:
             raise Errors.SyntaxError('Invalid variable type in assignment')
         if type(node.left) == Item:
             item = node.left
-            name = item.parent.name
             index = self.lookup(node=item.parent)
             try:
                 array_index = int(self.visit(item.index))
@@ -170,8 +177,6 @@ class Transpiler:
             code += self.tabs + f'Set Global Variable At Index(B, {array_index}, {self.visit(value)});\n'
             code += self.tabs + f'Set Global Variable At Index(A, {index}, Global Variable(B))'
             return code
-        else:
-            name = node.left.name
         code += self.assign(node=node.left, value=value)
         return code
 
@@ -206,7 +211,27 @@ class Transpiler:
         return code
 
     def visitFor(self, node):
-        print(node)
+        code = ''
+        pointer = node.pointer
+        if node.iterable.name in self.arrays:
+            iterable = self.arrays.get(node.iterable.name)
+            lines = []
+            for elem in iterable:
+                scope = Scope(name='for', namespace={pointer: elem})
+                self.scopes.append(scope)
+                lines.append(self.visit(node.body))
+                self.scopes.pop()
+            code += (';\n' + self.tabs).join(lines)
+        else:
+            # for scope in self.scopes[::-1]:
+            #     if node.iterable.name in scope.namespace:
+            #         value = scope.namespace.get(node.iterable.name)
+            #         print(value)
+            #         break
+            # else:
+            #     raise NotImplementedError('For loops do not work with Overwatch types')
+            raise NotImplementedError('Overwatch types not supported in loops yet')
+        return code
 
     def visitBinaryOp(self, node):
         code = {
@@ -233,7 +258,10 @@ class Transpiler:
         for scope in self.scopes[::-1]:
             if node.name in scope.namespace:
                 value = scope.namespace.get(node.name)
-                return self.visit(value)
+                if value == node:
+                    continue
+                result = self.visit(value)
+                return result
         index = self.lookup(node=node)
         return f'Value In Array(Global Variable(A), {index})'
 

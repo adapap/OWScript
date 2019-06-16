@@ -96,6 +96,9 @@ class Array(AST):
     def append(self, elem):
         self.elements.append(elem)
 
+    def __iter__(self):
+        return iter(self.elements)
+
     def __len__(self):
         return len(self.elements)
 
@@ -158,7 +161,7 @@ class Function(AST):
         self.params = params
 
     def __repr__(self):
-        return '%{}({}): {}'.format(self.name, ', '.join(self.params), self.format_children)
+        return '%{}({}): {}'.format(self.name, ', '.join(map(repr, self.params)), self.format_children)
 
 class Attribute(Trailer):
     def __init__(self, name, parent):

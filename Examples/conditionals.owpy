@@ -12,3 +12,5 @@ Rule "If and Else"
             y = 4
         elif x < 1:
             z = 1
+        else:
+            z = 'yes'

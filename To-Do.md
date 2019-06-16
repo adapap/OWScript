@@ -5,14 +5,11 @@
 - Slice operations `myvar[0:2]`
 
 [Loops]
-- For loop?
-- While loop rule factory?
+- Use workshop iterables in for loops
 
-[Attributes]
-- Additional attributes: <Player>.jumping, <Player>.crouching, <Player>.ability1?
+[Improvements]
+- Syntax highlight actions/values when using block form
+- Add more attributes, methods, and builtin functions
 
 [Features]
-- Error handler / type validation
-- Autofill values for Messages, Wait, etc
-- Add aliases to syntax highlighting
-- New parser
+- Completions / Tooltips?

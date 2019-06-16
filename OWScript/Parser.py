@@ -273,7 +273,7 @@ class Parser:
             if node.children:
                 break
             op = self.curvalue
-            if op == '>' and self.peek().type in ('DEDENT', 'RPAREN', 'COMMA'):
+            if op == '>' and self.peek().type in ('DEDENT', 'RPAREN', 'RBRACK', 'COMMA', 'NEWLINE'):
                 break
             self.eat(self.curtype)
             node = Compare(left=node, op=op, right=self.term())
@@ -360,6 +360,7 @@ class Parser:
         elif self.curtype == 'LBRACK':
             node = self.array()
         else:
+            print(self.tokens[self.pos - 5:self.pos])
             raise Errors.ParseError('Unexpected token of type {} on line {}:{}'.format(self.curtype, self.curtoken.line, self.curtoken.column))
         return node
 

@@ -16,7 +16,7 @@
         Reevaluation: Visible To
 %UpgradePortal(pos)
     Portal(pos, Good Aura, Yellow, "Upgrades")
-    portals.push(pos)
+    portals.append(pos)
 %ShopPortal(pos)
     Portal(pos, Good Aura, Purple, `{0} {1}`("Previous", "Boss"))
     shop_portal = pos
@@ -92,95 +92,96 @@ Rule "Initialize Effects (Portals / Upgrades / Boundaries)"
         UpgradePortal(<41, 3.5, 78.5>)
         UpgradePortal(<-118.5, 1.5, 99.5>)
         ShopPortal(<-7.000, 3, 75>)
-        // 1 -> 2 Modify Global Variable(E, Append To Array, Vector(-55.000, 1.500, 141.500));
-        // 2 -> 3 Modify Global Variable(E, Append To Array, Vector(-25.500, 7.500, 50.500));
-        // 3 -> 4 Modify Global Variable(E, Append To Array, Vector(-80.000, 1.500, 71));
-        // 4 -> 5 Modify Global Variable(E, Append To Array, Vector(-63.000, 2.500, 115.500));
-        // 5 -> 6 Modify Global Variable(E, Append To Array, Vector(41, 3.500, 67.500));
-        // prestige: <-172, 3, 96>
-        // create boundary function
-
-Rule "Initialize Player HUD Stats"
-    Event_Team(Team 1)
-    Actions
-        Hud
-            Visible_To: Event Player
-            Header: `{0}: {1}`("Money", pvar money)
-            Subheader: Null
-            Text: Null
-            Location: Top
-            Sort_Order: 0
-            Header_Color: White
-            Subheader_Color: White
-            Text_Color: White
-            Reevaluation: Visible To And String
-        SmallHud(Top, `{0} / {1}`(`{0}: {1}`("Damage", `{0}%`(pvar damage_scale)), `{0}: {1}`("Defend", `{0}%`(pvar defense))), Red)
-        SmallHud(Top, `{0} sec`(pvar reload_speed), Yellow)
-        SmallHud(Top, `{0} {1}`(`{0}%`(pvar money_multiplier * 100), "Money"), Green)
-        //Create In-World Text(All Players(Team 1), String("{0} - {1} - {2}", String("{0}: {1}", String("Damage", Null, Null, Null), String(
-//            "{0}%", Player Variable(Event Player, B), Null, Null), Null), String("{0} sec", Player Variable(Event Player, E), Null, Null),
-//            String("{0} {1}", String("{0}%", Multiply(Player Variable(Event Player, J), 100), Null, Null), String("Money", Null, Null,
-//            Null), Null)), Event Player, 0.750, Clip Against Surfaces, Visible To Position and String);
-
-Rule "Validate Bosses"
-    Event_Global()
-    Conditions
-        All True
-            boss_heroes
-            Is Hero Being Played
-                Cur Elem
-                Team 2
-        == False
-    Actions
-        Msg
-            Everyone
-            `{0}: {1}`
-                "Warning"
-                `{0} {1}`
-                    "Bad"
-                    "Bosses"
-        Wait(2min + 1.5s)
-        Loop If Condition Is True
-
-Rule "Initialize Bosses"
-    Event_Global()
-    Conditions
-        Is Game In Progress;
-    Actions
-        Msg(Everyone, "Go")
-        SpawnBoss(Roadhog)
-        SpawnBoss(Soldier: 76)
-        SpawnBoss(Mei)
-        SpawnBoss(Lucio)
-        SpawnBoss(Ana)
-        SpawnBoss(Reaper)
-
-Rule "Teleport to Shop"
-    Event_Team(All)
-    Conditions
-        Any True
-            Array: portals
-            Condition: Distance Between
-                Event Player
-                Cur Elem
-            <= 1.5
-        == True
-    Actions
-        Teleport(Event Player, shop_pos)
-        pvar location = -1
-        // Add sound effect
-
-Rule "Teleport from Shop"
-    Event_Team(All)
-    Conditions
-        Distance Between
-            Event Player
-            shop_portal
-        <= 1.5
-        pvar location == -1
-    Actions
-        Msg(Event Player, "Bosses")
-        Big Msg("Hello")
-        pvar location = pvar cur_boss
-        Teleport(Event Player, player_spawns[pvar location])
-        // Add sound effect
+//        // 1 -> 2 Modify Global Variable(E, Append To Array, Vector(-55.000, 1.500, 141.500));
+//        // 2 -> 3 Modify Global Variable(E, Append To Array, Vector(-25.500, 7.500, 50.500));
+//        // 3 -> 4 Modify Global Variable(E, Append To Array, Vector(-80.000, 1.500, 71));
+//        // 4 -> 5 Modify Global Variable(E, Append To Array, Vector(-63.000, 2.500, 115.500));
+//        // 5 -> 6 Modify Global Variable(E, Append To Array, Vector(41, 3.500, 67.500));
+//        // prestige: <-172, 3, 96>
+//        // create boundary function
+//
+//Rule "Initialize Player HUD Stats"
+//    Event_Team(Team 1)
+//    Actions
+//        Hud
+//            Visible_To: Event Player
+//            Header: `{0}: {1}`("Money", pvar money)
+//            Subheader: Null
+//            Text: Null
+//            Location: Top
+//            Sort_Order: 0
+//            Header_Color: White
+//            Subheader_Color: White
+//            Text_Color: White
+//            Reevaluation: Visible To And String
+//        SmallHud(Top, `{0} / {1}`(`{0}: {1}`("Damage", `{0}%`(pvar damage_scale)), `{0}: {1}`("Defend", `{0}%`(pvar defense))), Red)
+//        SmallHud(Top, `{0} sec`(pvar reload_speed), Yellow)
+//        SmallHud(Top, `{0} {1}`(`{0}%`(pvar money_multiplier * 100), "Money"), Green)
+//        //Create In-World Text(All Players(Team 1), String("{0} - {1} - {2}", String("{0}: {1}", String("Damage", Null, Null, Null), String(
+////            "{0}%", Player Variable(Event Player, B), Null, Null), Null), String("{0} sec", Player Variable(Event Player, E), Null, Null),
+////            String("{0} {1}", String("{0}%", Multiply(Player Variable(Event Player, J), 100), Null, Null), String("Money", Null, Null,
+////            Null), Null)), Event Player, 0.750, Clip Against Surfaces, Visible To Position and String);
+//
+//Rule "Validate Bosses"
+//    Event_Global()
+//    Conditions
+//        All True
+//            boss_heroes
+//            Is Hero Being Played
+//                Cur Elem
+//                Team 2
+//        == False
+//    Actions
+//        Msg
+//            Everyone
+//            `{0}: {1}`
+//                "Warning"
+//                `{0} {1}`
+//                    "Bad"
+//                    "Bosses"
+//        Wait(2min + 1.5s)
+//        Loop If Condition Is True
+//
+//Rule "Initialize Bosses"
+//    Event_Global()
+//    Conditions
+//        Is Game In Progress;
+//    Actions
+//        Msg(Everyone, "Go")
+//        SpawnBoss(Roadhog)
+//        SpawnBoss(Soldier: 76)
+//        SpawnBoss(Mei)
+//        SpawnBoss(Lucio)
+//        SpawnBoss(Ana)
+//        SpawnBoss(Reaper)
+//
+//Rule "Teleport to Shop"
+//    Event_Team(All)
+//    Conditions
+//        Any True
+//            Array: portals
+//            Condition: Distance Between
+//                Event Player
+//                Cur Elem
+//            <= 1.5
+//        == True
+//    Actions
+//        Teleport(Event Player, shop_pos)
+//        pvar location = -1
+//        // Add sound effect
+//
+//Rule "Teleport from Shop"
+//    Event_Team(All)
+//    Conditions
+//        Distance Between
+//            Event Player
+//            shop_portal
+//        <= 1.5
+//        pvar location == -1
+//    Actions
+//        Msg(Event Player, "Bosses")
+//        Big Msg("Hello")
+//        pvar location = pvar cur_boss
+//        Teleport(Event Player, player_spawns[pvar location])
+//        // Add sound effect
+//

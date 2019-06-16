@@ -1,4 +1,5 @@
 import argparse
+import re
 import sys
 from OWScript.Lexer import Lexer
 from OWScript.Parser import Parser
@@ -14,14 +15,24 @@ def transpile(text, minify=False, save=None, debug=0):
     lexer = Lexer(text=text)
     tokens = lexer.lex()
     if debug & DEBUG.TOKENS:
-        lexer.print_tokens()
+        if save:
+            with open(save, 'w', errors='ignore') as f:
+                f.write(lexer.print_tokens())
+        else:
+            lexer.print_tokens()
     parser = Parser(tokens=tokens)
     tree = parser.script()
     if debug & DEBUG.TREE:
         print(tree.string())
     transpiler = Transpiler(tree=tree)
     code = transpiler.run()
-    print(code)
+    if minify:
+        code = re.sub(r'[\s\n]*', '', code)
+    if not save:
+        sys.stdout.write(code)
+    else:
+        with open(save, 'w') as f:
+            f.write(code)
 
 
 if __name__ == '__main__':
@@ -34,5 +45,5 @@ if __name__ == '__main__':
     file_input = args.input[0] if args.input else sys.stdin
     with open(file_input) as f:
         text = f.read()
-    transpile(text, minify=args.min, save=args.save, debug=args.debug)
+    transpile(text, minify=args.min, save=args.save, debug=args.debug or 0)
     

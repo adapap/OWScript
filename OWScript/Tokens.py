@@ -50,7 +50,7 @@ OWID.sort(key=len, reverse=True)
 
 class Tokens:
     """Mapping of token names to regular expressions."""
-    COMMENT : r'(\/\*(.|[\n])*?\*\/|\/\/[^\n]*\n?)'
+    COMMENT : r'(\/\*(.|[\n])*?\*\/\n?|\/\/[^\n]*\n?)'
     COMPARE : r'(>=|<=|==|!=|>|<)'
     ASSIGN : r'(=|\+=|-=|\*=|\/=|^=|%=)'
     PLUS : r'\+'
@@ -65,7 +65,7 @@ class Tokens:
     RPAREN : r'\)'
     LBRACK : r'\['
     RBRACK : r'\]'
-    STRING : r'"[^\\\r\n\f]*"'
+    STRING : r'("[^\\\r\n\f]*"|\'[^\\\r\n\f]*\')'
     F_STRING : r'`[^\\\r\n\f]*`'
     TIME : r'[0-9]+(\.[0-9]+)?(ms|s|min)'
     FLOAT : r'[0-9]+\.[0-9]+'
@@ -84,7 +84,7 @@ class Tokens:
     GVAR : r'GVAR\b'
     RULE : r'RULE\b'
     ANNOTATION : r'[_a-zA-Z0-9][_a-zA-Z0-9]*:(?!\n)'
-    OWID : fr'({"|".join(OWID)})(?=[\b\s\n\(,]+)'
+    OWID : fr'({"|".join(OWID)})(?=[\b\s\n\(\),]+)'
     RULEBLOCK : r'(EVENT|CONDITIONS|ACTIONS)\b'
     NAME : r'[_a-zA-Z][_\-a-zA-Z0-9]*'
     WHITESPACE : r'[ \t]+'

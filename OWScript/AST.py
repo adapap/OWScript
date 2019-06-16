@@ -35,6 +35,12 @@ class Data(AST):
         super().__init__()
         self.name = name
 
+    def __eq__(self, other):
+        return self.name == other.name
+
+    def __hash__(self):
+        return hash(self.__class__.__name__ + self.name)
+
     def __repr__(self):
         if not self.children:
             return self.name

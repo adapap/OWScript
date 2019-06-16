@@ -258,7 +258,7 @@ class Transpiler:
         for scope in self.scopes[::-1]:
             if node.name in scope.namespace:
                 value = scope.namespace.get(node.name)
-                if value == node:
+                if type(value) == type(node) and value == node:
                     continue
                 result = self.visit(value)
                 return result
@@ -330,7 +330,7 @@ class Transpiler:
             if method == 'append':
                 try:
                     assert len(args) == 1
-                    value = node.args[0]
+                    value = self.visit(node.args[0])
                     self.arrays[callee.parent.name].append(value)
                     index = self.lookup(callee.parent)
                     if type(callee.parent) == GlobalVar:
@@ -350,7 +350,7 @@ class Transpiler:
                     scope = Scope(name=callee.name)
                     scope.namespace.update(dict(zip(params, node.args)))
                     self.scopes.append(scope)
-                    code += self.visitChildren(function)
+                    code += (';\n' + self.tabs).join(map(self.visit, function.children))
                     self.scopes.pop()
                 else:
                     try:

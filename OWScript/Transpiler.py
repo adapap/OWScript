@@ -309,7 +309,9 @@ class Transpiler:
         if not node.elements:
             return 'Empty Array'
         else:
-            valid_elems = list(filter(lambda x: type(x) != String, node.elements))
+            not_string = lambda x: type(x) != String
+            owid_has_child = lambda x: True if type(x) != OWID else x.children
+            valid_elems = [x for x in node.elements if not_string(x) and owid_has_child(x)]
             num_elems = len(valid_elems)
             if num_elems == 0:
                 return 'Empty Array'
@@ -345,18 +347,20 @@ class Transpiler:
             if method == 'append':
                 try:
                     assert len(args) == 1
-                    value = self.visit(node.args[0])
-                    self.arrays[callee.parent.name].append(value)
+                    elem = self.visit(node.args[0])
+                    self.arrays[callee.parent.name].append(elem)
                     index = self.lookup(callee.parent)
                     if type(callee.parent) == GlobalVar:
-                        code += f'Modify Global Variable At Index(A, {index}, Append To Array, {value})'
+                        code += f'Modify Global Variable At Index(A, {index}, Append To Array, {elem})'
                 except AssertionError:
-                    raise Errors.SyntaxError('push expected 1 parameter, received {}'.format(len(args)))
+                    raise Errors.SyntaxError('append expected 1 parameter, received {}'.format(len(args)))
             elif method == 'index':
                 try:
                     assert len(args) == 1
+                    elem = self.visit(node.args[0])
+                    code += str(self.arrays[callee.parent.name].index(elem))
                 except AssertionError:
-                    raise Errors.SyntaxError('push expected 1 parameter, received {}'.format(len(args)))
+                    raise Errors.SyntaxError('index expected 1 parameter, received {}'.format(len(args)))
             else:
                 raise Errors.SyntaxError("Unknown method '{}'".format(method))
         else:

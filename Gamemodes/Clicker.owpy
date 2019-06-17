@@ -14,6 +14,18 @@
         Scale: scale
         Clipping: Clip Against Surfaces
         Reevaluation: Visible To Position And String
+%BigHud(loc, text, color_)
+    Hud
+        Visible_To: Event Player
+        Header: text
+        Subheader: Null
+        Text: Null
+        Location: loc
+        Sort_Order: 999
+        Header_Color: color_
+        Subheader_Color: White
+        Text_Color: White
+        Reevaluation: Visible To And String
 %SmallHud(loc, text, color_)
     Hud
         Visible_To: Event Player
@@ -21,7 +33,7 @@
         Subheader: Null
         Text: text
         Location: loc
-        Sort_Order: 0
+        Sort_Order: 999
         Header_Color: White
         Subheader_Color: White
         Text_Color: color_
@@ -46,6 +58,35 @@
         Position: pos
         Radius: 1.5
         Reevaluation: Visible To
+%SaveIcon(pos, icon, color_)
+    Create Icon
+        Visible_To: Filter
+            Everyone
+            In LOS
+        Position: pos
+        Icon: icon
+        Reevaluation: Visible To
+        Icon_Color: White
+        Show_When_Offscreen: False
+    Create Effect
+        Visible_To: Everyone
+        Type: Ring
+        Color: color_
+        Position: pos
+        Radius: 1
+        Reevaluation: Visible To Position And Radius
+
+Rule "Bezier Curve"
+    Event
+        On Global
+    Actions
+        Chase Global Variable At Rate
+            Var: myvar
+            Dest: 10000
+            Rate: 1 / Distance Between(<0, 0, 0>, 3 * ((1 - myvar % 1)^2 * (othervar[1 + Round(...)]))
+            // you get the idea
+
+
 %SpawnBoss(boss)
     Teleport
         boss_player
@@ -61,6 +102,7 @@ Rule "Initialize Constants"
         boss_heroes = [Hero(Roadhog), Hero(Soldier: 76), Hero(Mei), Hero(Lucio), Hero(Ana), Hero(Reaper)]
         boss2_boundary = <-29, -2, 56>
         boss4_boundary = <-54, 1, 109>
+        DEBUG = True
         Set Match Time(90min)
 
 Rule "Initialize Player Stats"
@@ -86,23 +128,29 @@ Rule "Initialize Player Stats"
         pvar ability2 = False
         pvar credits = 0
 
-Rule "Initialize Effects (Portals / Upgrades / Boundaries)"
+Rule "Initialize Effects (Portals / Upgrades / Saves / Boundaries)"
     Event_Global()
     Actions
         portals = [<-50, 1, 137.350>, <-37, 6.5, 48>, <-70, 1.5, 63.5>, <-58, 2, 122>, <41, 3.5, 78.5>, <-118.5, 1.5, 99.5>]
         shop_portal = <-7, 3, 75>
         upgr_pos = <3, 2.5, 70>
-        upgr_offset = <2.5, 0, 0>
+        save_pos = <2.75, 6.5, 86.25>
+        x_offset = <2.5, 0, 0>
+        z_offset = <0, 0, 2.5>
         // Bosses 1-6 -> Shop
         for portal in portals:
             UpgradePortal(portal)
         ShopPortal(shop_portal)
         // HP, Damage, Reload Speed, Money Multiplier, Damage Resistance
-        UpgradeEffect(upgr_pos - 2 * upgr_offset, Purple)
-        UpgradeEffect(upgr_pos - upgr_offset, Red)
+        UpgradeEffect(upgr_pos - 2 * x_offset, Purple)
+        UpgradeEffect(upgr_pos - x_offset, Red)
         UpgradeEffect(upgr_pos, Yellow)
-        UpgradeEffect(upgr_pos + upgr_offset, Green)
-        UpgradeEffect(upgr_pos + 2 * upgr_offset, Blue)
+        UpgradeEffect(upgr_pos + x_offset, Green)
+        UpgradeEffect(upgr_pos + 2 * x_offset, Blue)
+        SaveIcon(save_pos - z_offset, Arrow: Up, Green)
+        SaveIcon(save_pos + z_offset, Arrow: Down, Red)
+        SaveIcon(save_pos - x_offset, Arrow: Left, Blue)
+        SaveIcon(save_pos + z_offset, Arrow: Right, Yellow)
         // 1 -> 2 Modify Global Variable(E, Append To Array, Vector(-55.000, 1.500, 141.500));
         // 2 -> 3 Modify Global Variable(E, Append To Array, Vector(-25.500, 7.500, 50.500));
         // 3 -> 4 Modify Global Variable(E, Append To Array, Vector(-80.000, 1.500, 71));
@@ -114,17 +162,9 @@ Rule "Initialize Effects (Portals / Upgrades / Boundaries)"
 Rule "Initialize Player HUD Stats"
     Event_Team(Team 1)
     Actions
-        Hud
-            Visible_To: Event Player
-            Header: `{0}: {1}`("Money", pvar money)
-            Subheader: Null
-            Text: Null
-            Location: Top
-            Sort_Order: 0
-            Header_Color: White
-            Subheader_Color: White
-            Text_Color: White
-            Reevaluation: Visible To And String
+        BigHud(Top, `{0}: {1}`("Money", pvar money), White)
+        if DEBUG:
+            BigHud(Left, "Stabilizing", Red)
         SmallHud(Top, `{0} / {1}`(`{0}: {1}`("Damage", `{0}%`(pvar damage_scale)), `{0}: {1}`("Defend", `{0}%`(pvar defense))), Red)
         SmallHud(Top, `{0} sec`(pvar reload_speed), Yellow)
         SmallHud(Top, `{0} {1}`(`{0}%`(pvar money_multiplier * 100), "Money"), Green)
@@ -198,7 +238,7 @@ Rule "Initialize Upgrades"
                 "Upgrade"
                 "Heal"
             pvar hp_shop[1]
-        , upgr_pos - 2 * upgr_offset + Up)
+        , upgr_pos - 2 * x_offset + Up * 0.5, 1.5)
 
 Rule "Teleport to Shop"
     Event_Team(All)
@@ -227,6 +267,16 @@ Rule "Teleport from Shop"
         pvar location = pvar cur_boss
         Teleport(Event Player, player_spawns[pvar location])
         // Add sound effect
+
+Rule "Teleport Player to Boss 1"
+    Event_Team(All)
+    Conditions
+        Has Spawned(Event Player)
+        not DEBUG
+    Actions
+        Teleport
+            Event Player
+            player_spawns[cur_boss]
 
 Rule "Attack Money"
     Event
@@ -259,7 +309,6 @@ Disabled Rule "Coordinate Viewer"
             Header: Null
             Subheader: Null
             Text: Event Player.facing + Event Player.eyepos
-            Color: White
             Location: Left
             Sort_Order: Null
             Header_Color: White

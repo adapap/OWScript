@@ -36,7 +36,9 @@ class Data(AST):
         self.name = name
 
     def __eq__(self, other):
-        return self.name == other.name
+        if hasattr(other, 'name'):
+            return self.name == other.name
+        return self.name == other
 
     def __hash__(self):
         return hash(self.__class__.__name__ + self.name)
@@ -103,6 +105,9 @@ class Array(AST):
 
     def append(self, elem):
         self.elements.append(elem)
+
+    def index(self, elem):
+        return self.elements.index(elem)
 
     def __iter__(self):
         return iter(self.elements)

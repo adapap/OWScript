@@ -37,14 +37,17 @@ class Lexer:
             for token_type, pattern in expressions:
                 match = pattern.match(self.text, self.pos)
                 if match:
-                    token = Token(type=token_type, value=match.group(0), line=self.line, column=self.column)
-                    self.pos = match.end()
+                    value = match.group(1) if token_type == 'OWID' else match.group(0)
+                    token = Token(type=token_type, value=value, line=self.line, column=self.column)
+                    if value:
+                        self.pos += len(value)
                     if token.type == 'NEWLINE':
                         token.value = r'\n'
                         self.tokens.append(token)
                         self.line += len(match.group(0))
                         match = whitespace_pattern.match(self.text, self.pos)
-                        self.column = spaces = len(match.group(0).replace('\t', ' ' * 4)) + 1 if match else 1
+                        self.column = len(match.group(0).replace('\t', ' ' * 4)) + 1 if match else 1
+                        spaces = self.column - 1
                         if spaces > self.indents[-1]:
                             indent = Lexer.INDENT(line=self.line, column=self.column)
                             self.tokens.append(indent)

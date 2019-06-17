@@ -17,8 +17,10 @@ In the `Syntax/` folder, you can find the raw Iro code which I used to generate 
 Documentation
 =============
 *See example code in the `Examples/` folder.*
-Input File: `*.owpy`
-Output File: `*.ows` (standard as agreed upon voting results)
+
+**Input** `*.owpy`
+
+**Output** `*.ows` (standard as agreed upon voting results)
 
 **Semantic**
 * [Values / Actions](#values--actions)
@@ -40,6 +42,8 @@ Output File: `*.ows` (standard as agreed upon voting results)
 ## Notes
 - Be sure not to conflict variable/function names with built-in functions such as `Add`, `Wait`, or `Damage`.
 - Many commonly used values have been aliased in order to reduce verbosity. See the table at the bottom for the list of built-in aliases.
+- If you have an unexpected error/suggestion, feel free to submit an issue
+  - Alternatively, I am open to pull requests if you want to contribute
 
 ## Values / Actions
 Values and actions are the main types that come up when working in the Workshop. In general, anything with parameters can be written in two ways (which can be interchanged):
@@ -239,9 +243,13 @@ scores.append(123) // Method
 
 |Name|Parameters|Description|
 |:--:|----------|-----------|
-|x||Gets the X component of a vector|
-|y||Gets the Y component of a vector|
-|z||Gets the Z component of a vector|
+|x||The X component of a vector|
+|y||The Y component of a vector|
+|z||The Z component of a vector|
+|facing||The facing direction of an entity|
+|pos||The position of an entity|
+|eyepos||The eye position of an entity|
+|hero||The hero of an entity|
 |jumping||Check if a player is holding the Jump key|
 |crouching||Check if a player is holding the Crouch key|
 |moving||Check if the speed of a player is non-zero|

@@ -8,3 +8,6 @@ Rule "Advanced Arrays"
         x[1] = y[1] + y[2]
         x.append(<5, 5, 5>)
         x.append(<6, 6, 6>)
+        z = [1, "Rank B", "Rank A"]
+        for i in z:
+            Msg(Everyone, i)

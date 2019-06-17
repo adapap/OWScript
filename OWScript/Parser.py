@@ -71,7 +71,7 @@ class Parser:
         """stmt : (funcdef | ruledef | call)"""
         if self.curvalue == '%':
             return self.funcdef()
-        elif self.curtype == 'RULE':
+        elif self.curtype in ('DISABLED', 'RULE'):
             return self.ruledef()
         else:
             return self.primary()
@@ -104,7 +104,7 @@ class Parser:
         self.eat('NEWLINE', 'INDENT')
         body = []
         while self.curtype != 'DEDENT':
-            if self.curtype == 'RULE':
+            if self.curtype in ('DISABLED', 'RULE'):
                 body.append(self.ruledef())
             elif self.curtype == 'RULEBLOCK':
                 body.append(self.ruleblock())
@@ -114,9 +114,12 @@ class Parser:
         return body
 
     def ruledef(self):
-        """ruledef : RULE STRING NEWLINE INDENT (ruleblock | call)+ DEDENT"""
+        """ruledef : DISABLED? RULE STRING NEWLINE INDENT (ruleblock | call)+ DEDENT"""
+        disabled = self.curtype == 'DISABLED'
+        if disabled:
+            self.eat('DISABLED')
         self.eat('RULE')
-        node = Rule(name=self.string())
+        node = Rule(name=self.string(), disabled=disabled)
         self.eat('NEWLINE', 'INDENT')
         while self.curtype != 'DEDENT':
             if self.curtype == 'RULEBLOCK':
@@ -145,6 +148,7 @@ class Parser:
             self.eat('NEWLINE', 'INDENT')
             while self.curtype != 'DEDENT':
                 line = self.line()
+                self.in_compare_expr = type(line) == Compare
                 if line is not None:
                     node.children.append(line)
             self.eat('DEDENT')
@@ -276,7 +280,7 @@ class Parser:
             if op == '>' and self.peek().type in ('DEDENT', 'RPAREN', 'RBRACK', 'COMMA', 'NEWLINE'):
                 break
             self.eat(self.curtype)
-            node = Compare(left=node, op=op, right=self.term())
+            node = Compare(left=node, op=op, right=self.expr())
         return node
 
     def term(self):

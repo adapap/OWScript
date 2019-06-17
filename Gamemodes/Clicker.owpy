@@ -6,26 +6,14 @@
         On Each Player
         team_
         All
-%Portal(pos, type_, color_, name_)
-    Create Effect
-        Visible_To: Everyone
-        Type: type_
-        Color: color_
+%GameText(who, text, pos, scale)
+    World Text
+        Visible_To: who
+        Header: text
         Position: pos
-        Radius: 1.5
-        Reevaluation: Visible To
-%UpgradePortal(pos)
-    Portal(pos, Good Aura, Yellow, "Upgrades")
-%ShopPortal(pos)
-    Portal(pos, Good Aura, Purple, `{0} {1}`("Previous", "Boss"))
-%UpgradeEffect(pos, cost, cost_rate, color_)
-    Create Effect
-        Visible_To: Everyone
-        Type: Orb
-        Color: color_
-        Position: pos
-        Radius: 1.5
-        Reevaluation: Visible To
+        Scale: scale
+        Clipping: Clip Against Surfaces
+        Reevaluation: Visible To Position And String
 %SmallHud(loc, text, color_)
     Hud
         Visible_To: Event Player
@@ -38,10 +26,30 @@
         Subheader_Color: White
         Text_Color: color_
         Reevaluation: Visible To And String
+%Portal(pos, type_, color_, name_)
+    Create Effect
+        Visible_To: Everyone
+        Type: type_
+        Color: color_
+        Position: pos
+        Radius: 1.5
+        Reevaluation: Visible To
+%UpgradePortal(pos)
+    Portal(pos, Good Aura, Yellow, "Upgrades")
+%ShopPortal(pos)
+    Portal(pos, Good Aura, Purple, `{0} {1}`("Previous", "Boss"))
+%UpgradeEffect(pos, color_)
+    Create Effect
+        Visible_To: Everyone
+        Type: Orb
+        Color: color_
+        Position: pos
+        Radius: 1.5
+        Reevaluation: Visible To
 %SpawnBoss(boss)
     Teleport
-        Players On Hero(boss, Team 2)
-        boss_spawns[Index(boss_spawns, boss)]
+        boss_player
+        boss_spawns[Index(boss_heroes, boss)]
 
 Rule "Initialize Constants"
     Event_Global()
@@ -64,15 +72,16 @@ Rule "Initialize Player Stats"
         pvar bosses_killed = 0
         pvar money = 0
         pvar damage_scale = 1
-        pvar damage_scale_cost = -1
+        // Upgrades are stored as [name, cost, cost rate]
+        pvar damage_scale_shop = ["Damage", 5, 1.003]
         pvar reload_speed = 2.0
-        pvar reload_speed_cost = -1
-        pvar money_multiplier = -1
-        pvar money_multiplier_cost = -1
-        pvar hp = -1
-        pvar hp_cost = -1
-        pvar defense = -1
-        pvar defense_cost = -1
+        pvar reload_speed_shop = ["Faster", 15, 1.03]
+        pvar money_multiplier = 1
+        pvar money_multiplier_shop = ["Money", 10, 1.06]
+        pvar hp = 5
+        pvar hp_shop = ["HP", 250]
+        pvar defense = 100
+        pvar defense_shop = ["Defend", 25, 1.045]
         pvar ability1 = False
         pvar ability2 = False
         pvar credits = 0
@@ -81,19 +90,27 @@ Rule "Initialize Effects (Portals / Upgrades / Boundaries)"
     Event_Global()
     Actions
         portals = [<-50, 1, 137.350>, <-37, 6.5, 48>, <-70, 1.5, 63.5>, <-58, 2, 122>, <41, 3.5, 78.5>, <-118.5, 1.5, 99.5>]
-        shop_portal = <-7.000, 3, 75>
+        shop_portal = <-7, 3, 75>
+        upgr_pos = <3, 2.5, 70>
+        upgr_offset = <2.5, 0, 0>
         // Bosses 1-6 -> Shop
         for portal in portals:
             UpgradePortal(portal)
         ShopPortal(shop_portal)
-//        // 1 -> 2 Modify Global Variable(E, Append To Array, Vector(-55.000, 1.500, 141.500));
-//        // 2 -> 3 Modify Global Variable(E, Append To Array, Vector(-25.500, 7.500, 50.500));
-//        // 3 -> 4 Modify Global Variable(E, Append To Array, Vector(-80.000, 1.500, 71));
-//        // 4 -> 5 Modify Global Variable(E, Append To Array, Vector(-63.000, 2.500, 115.500));
-//        // 5 -> 6 Modify Global Variable(E, Append To Array, Vector(41, 3.500, 67.500));
-//        // prestige: <-172, 3, 96>
-//        // create boundary function
-//
+        // HP, Damage, Reload Speed, Money Multiplier, Damage Resistance
+        UpgradeEffect(upgr_pos - 2 * upgr_offset, Purple)
+        UpgradeEffect(upgr_pos - upgr_offset, Red)
+        UpgradeEffect(upgr_pos, Yellow)
+        UpgradeEffect(upgr_pos + upgr_offset, Green)
+        UpgradeEffect(upgr_pos + 2 * upgr_offset, Blue)
+        // 1 -> 2 Modify Global Variable(E, Append To Array, Vector(-55.000, 1.500, 141.500));
+        // 2 -> 3 Modify Global Variable(E, Append To Array, Vector(-25.500, 7.500, 50.500));
+        // 3 -> 4 Modify Global Variable(E, Append To Array, Vector(-80.000, 1.500, 71));
+        // 4 -> 5 Modify Global Variable(E, Append To Array, Vector(-63.000, 2.500, 115.500));
+        // 5 -> 6 Modify Global Variable(E, Append To Array, Vector(41, 3.500, 67.500));
+        // prestige: <-172, 3, 96>
+        // create boundary function
+
 Rule "Initialize Player HUD Stats"
     Event_Team(Team 1)
     Actions
@@ -133,12 +150,11 @@ Rule "Initialize Player HUD Stats"
 Rule "Validate Bosses"
     Event_Global()
     Conditions
-        All True
+        not All True
             boss_heroes
             Is Hero Being Played
                 Cur Elem
                 Team 2
-        == False
     Actions
         Msg
             Everyone
@@ -160,10 +176,29 @@ Rule "Validate Bosses"
 Rule "Initialize Bosses"
     Event_Global()
     Conditions
-        Is Game In Progress == True
+        All True
+            boss_heroes
+            Has Spawned
+                Players On Hero
+                    Cur Elem
+                    Team 2
     Actions
         for boss in boss_heroes:
+            boss_player = Players On Hero(boss, Team 2)
             SpawnBoss(boss)
+            Set Move Speed(boss_player, 0)
+            Set Status(boss_player, Null, Rooted, 9999)
+            GameText(Everyone, `{0}: {1}`("Heal", Health(boss_player)), boss_player, 1)
+
+Rule "Initialize Upgrades"
+    Event_Team(Team 1)
+    Actions
+        GameText(Event Player, `{0}: {1}`
+            `{0} {1}`
+                "Upgrade"
+                "Heal"
+            pvar hp_shop[1]
+        , upgr_pos - 2 * upgr_offset + Up)
 
 Rule "Teleport to Shop"
     Event_Team(All)
@@ -174,24 +209,60 @@ Rule "Teleport to Shop"
                 Event Player
                 Cur Elem
             <= 1.5
-        == True
     Actions
         Teleport(Event Player, shop_pos)
         pvar location = -1
         // Add sound effect
-//
-//Rule "Teleport from Shop"
-//    Event_Team(All)
-//    Conditions
-//        Distance Between
-//            Event Player
-//            shop_portal
-//        <= 1.5
-//        pvar location == -1
-//    Actions
-//        Msg(Event Player, "Bosses")
-//        Big Msg("Hello")
-//        pvar location = pvar cur_boss
-//        Teleport(Event Player, player_spawns[pvar location])
-//        // Add sound effect
-//
+
+Rule "Teleport from Shop"
+    Event_Team(All)
+    Conditions
+        Distance Between
+            Event Player
+            shop_portal
+        <= 1.5
+        pvar location == -1
+    Actions
+        Big Msg(Event Player, "Hello")
+        pvar location = pvar cur_boss
+        Teleport(Event Player, player_spawns[pvar location])
+        // Add sound effect
+
+Rule "Attack Money"
+    Event
+        Player Dealt Damage
+        Team 1
+        All
+    Actions
+        pvar money += (Event Damage ^ (pvar bosses_killed / 3.5)) * pvar money_multiplier
+
+Disabled Rule "Coordinate Viewer"
+    Event
+        On Each Player
+        All
+        All
+    Conditions
+        Has Spawned(Event Player)
+        Event Player.moving
+        Event Player.crouching
+        Is Communicating Any Voice Line(Event Player)
+    Actions
+        Create Effect
+            Visible_To: Event Player
+            Type: Sphere
+            Color: White
+            Pos: Event Player.facing + Event Player.eyepos
+            Radius: 0.20
+            Reevaluation: Visible To Position And Radius
+        Create Hud Text
+            Visible_To: Event Player
+            Header: Null
+            Subheader: Null
+            Text: Event Player.facing + Event Player.eyepos
+            Color: White
+            Location: Left
+            Sort_Order: Null
+            Header_Color: White
+            Subheader_Color: White
+            Text_Color: White
+            Reevaluation: Visible To And String

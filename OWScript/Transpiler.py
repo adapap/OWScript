@@ -97,7 +97,10 @@ class Transpiler:
         return (code + self.visitChildren(node)).rstrip('\n')
 
     def visitRule(self, node):
-        code = 'rule('
+        code = ''
+        if node.disabled:
+            code += 'disabled '
+        code += 'rule('
         code += self.parse_string(node.name.value)
         code += ') {\n' + self.visitChildren(node) + '}\n'
         return code
@@ -117,7 +120,10 @@ class Transpiler:
         self.indent_level += 1
         for ruleblock in node.children:
             for line in ruleblock.children:
-                code += self.tabs + self.visit(line) + ';\n'
+                code += self.tabs + self.visit(line)
+                if node.name.upper() == 'CONDITIONS':
+                    code += ' == True'
+                code += ';\n'
         self.indent_level -= 1
         code += self.tabs + '}\n'
         return code
@@ -125,20 +131,21 @@ class Transpiler:
     def visitOWID(self, node):
         code = self.aliases.get(node.name.upper(), node.name).title()
         if node.children:
-            code += '('
             children = [self.visit(child) for child in node.children]
-            if node.name.upper() == 'WAIT' and len(children) == 1:
+            if code == 'Wait' and len(children) == 1:
                 children.append('Ignore Condition')
-            code += ', '.join(children)
-            code += ')'
+            code += '(' + ', '.join(children) + ')'
         return code
+
+    def visitConst(self, node):
+        return node.value
 
     def visitCompare(self, node):
         if node.op.lower() == 'in':
             return 'Array Contains(' + self.visit(node.right) + ', ' + self.visit(node.left) + ')'
         elif node.op.lower() == 'not in':
             return 'Not(Array Contains(' + self.visit(node.right) + ', ' + self.visit(node.left) + '))'
-        return self.visit(node.left) + f' {node.op} ' + self.visit(node.right)
+        return 'Compare(' + self.visit(node.left) + f', {node.op}, ' + self.visit(node.right) + ')'
 
     def visitAssign(self, node):
         code = ''
@@ -218,9 +225,8 @@ class Transpiler:
             for elem in iterable:
                 scope = Scope(name='for', namespace={pointer: elem})
                 self.scopes.append(scope)
-                self.indent_level -= 1
-                lines.append(self.visit(node.body))
-                self.indent_level += 1
+                for child in node.body.children:
+                    lines.append(self.visit(child))
                 self.scopes.pop()
             code += (';\n' + self.tabs).join(lines)
         else:
@@ -301,11 +307,14 @@ class Transpiler:
 
     def visitArray(self, node):
         if not node.elements:
-            code = 'Empty Array'
+            return 'Empty Array'
         else:
-            num_elems = len(node.elements)
+            valid_elems = list(filter(lambda x: type(x) != String, node.elements))
+            num_elems = len(valid_elems)
+            if num_elems == 0:
+                return 'Empty Array'
             code = 'Append To Array(' * num_elems
-            code += 'Empty Array, ' + '), '.join(self.visit(elem) for elem in node.elements) + ')'
+            code += 'Empty Array, ' + '), '.join(self.visit(elem) for elem in valid_elems) + ')'
         return code
 
     def visitItem(self, node):
@@ -316,6 +325,10 @@ class Transpiler:
             'x': 'X Component Of({})',
             'y': 'Y Component Of({})',
             'z': 'Z Component Of({})',
+            'facing': 'Facing Direction Of({})',
+            'pos': 'Position Of({})',
+            'eyepos': 'Eye Position({})',
+            'hero': 'Hero Of({})',
             'jumping': 'Is Button Held({}, Jump)',
             'crouching': 'Is Button Held({}, Crouch)',
             'moving': 'Compare(Speed Of({}), >, 0)'
@@ -339,8 +352,11 @@ class Transpiler:
                         code += f'Modify Global Variable At Index(A, {index}, Append To Array, {value})'
                 except AssertionError:
                     raise Errors.SyntaxError('push expected 1 parameter, received {}'.format(len(args)))
-                except Exception as e:
-                    print(e)
+            elif method == 'index':
+                try:
+                    assert len(args) == 1
+                except AssertionError:
+                    raise Errors.SyntaxError('push expected 1 parameter, received {}'.format(len(args)))
             else:
                 raise Errors.SyntaxError("Unknown method '{}'".format(method))
         else:

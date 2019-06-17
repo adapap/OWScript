@@ -71,7 +71,9 @@ class Script(AST):
     pass
 
 class Rule(Data):
-    pass
+    def __init__(self, name, disabled):
+        super().__init__(name)
+        self.disabled = disabled
 
 class Ruleblock(Data):
     pass

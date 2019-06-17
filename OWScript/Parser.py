@@ -321,7 +321,6 @@ class Parser:
     def primary(self):
         """primary : atom trailer*"""
         node = self.atom()
-        print('primary:', node)
         while self.curtype in ('DOT', 'LPAREN', 'LBRACK'):
             node = self.trailer()(parent=node)
         return node
@@ -361,7 +360,7 @@ class Parser:
         elif self.curtype == 'LBRACK':
             node = self.array()
         else:
-            print(self.tokens[self.pos - 5:self.pos])
+            # print(self.tokens[self.pos - 5:self.pos])
             raise Errors.ParseError('Unexpected token of type {} on line {}:{}'.format(self.curtype, self.curtoken.line, self.curtoken.column))
         return node
 

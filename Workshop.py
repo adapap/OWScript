@@ -27,7 +27,7 @@ if __name__ == '__main__':
     reserved_list.extend([(x, 'VALUE') for x in types.get('NUMBER').get('values')])
     const_types = ['EVENT', 'EFFECT REEVALUATION', 'HUD TEXT REEVALUATION', 'HUD LOCATION', 'WORLD TEXT REEVALUATION',
     'CHASE RATE REEVALUATION', 'CHASE TIME REEVALUATION', 'OBJECTIVE DESCRIPTION REEVALUATION', 'DAMAGE MODIFICATION REEVALUATION',
-    'WAIT BEHAVIOR', 'LOS CHECK', 'COLOR', 'HERO CONSTANT', 'CREATE EFFECT']
+    'WAIT BEHAVIOR', 'LOS CHECK', 'COLOR', 'HERO CONSTANT', 'CREATE EFFECT', 'WORLD TEXT CLIPPING']
     for const_type in const_types:
         reserved_list.extend([(x, 'CONST') for x in types.get(const_type).get('values')])
     reserved = dict(reserved_list)
@@ -46,5 +46,5 @@ if __name__ == '__main__':
         'COS': 'COSINE FROM DEGREES',
         'COSR': 'COSINE FROM RADIANS'
     }
-    items = sorted(sorted(["'{}'".format(k) for k, v in reserved.items() if v == 'CONST']))
+    items = sorted(sorted(["'{}'".format(k.replace(',', '')) for k, v in reserved.items() if v == 'CONST']))
     print(", ".join(items))

@@ -41,7 +41,7 @@
 %SpawnBoss(boss)
     Teleport
         Players On Hero(boss, Team 2)
-        boss_spawns[Index(Hero(boss))]
+        boss_spawns[Index(boss_spawns, boss)]
 
 Rule "Initialize Constants"
     Event_Global()
@@ -109,78 +109,76 @@ Rule "Initialize Player HUD Stats"
             Text_Color: White
             Reevaluation: Visible To And String
         SmallHud(Top, `{0} / {1}`(`{0}: {1}`("Damage", `{0}%`(pvar damage_scale)), `{0}: {1}`("Defend", `{0}%`(pvar defense))), Red)
-//        SmallHud(Top, `{0} sec`(pvar reload_speed), Yellow)
-//        SmallHud(Top, `{0} {1}`(`{0}%`(pvar money_multiplier * 100), "Money"), Green)
-//        Text
-//            Visible_To: All Players(Team 1)
-//            Header: `{0} - {1} - {2}`
-//                `{0}: {1}`
-//                    "Damage"
-//                    `{0}%`
-//                        pvar damage_scale * 100
-//                `{0} sec`
-//                    pvar reload_speed
-//                `{0} {1}`
-//                    `{0}%`
-//                        pvar money_multiplier * 100
-//                    "Money"
-//            Position: Event Player
-//            Scale: 0.750
-//            Clipping: Clip Against Surfaces
-//            Reevaluation: Visible To Position And String
-//
-//        //Create In-World Text(All Players(Team 1), String("{0} - {1} - {2}", String("{0}: {1}", String("Damage", Null, Null, Null), String(
-////            "{0}%", Player Variable(Event Player, B), Null, Null), Null), String("{0} sec", Player Variable(Event Player, E), Null, Null),
-////            String("{0} {1}", String("{0}%", Multiply(Player Variable(Event Player, J), 100), Null, Null), String("Money", Null, Null,
-////            Null), Null)), Event Player, 0.750, Clip Against Surfaces, Visible To Position and String);
-//
-//Rule "Validate Bosses"
-//    Event_Global()
-//    Conditions
-//        All True
-//            boss_heroes
-//            Is Hero Being Played
-//                Cur Elem
-//                Team 2
-//        == False
-//    Actions
-//        Msg
-//            Everyone
-//            `{0}: {1}`
-//                "Warning"
-//                `{0} {1}`
-//                    "Bad"
-//                    "Bosses"
-//        Wait(2min + 1.5s)
-//        Loop If Condition Is True
-//
-//Rule "Initialize Bosses"
-//    Event_Global()
-//    Conditions
-//        Is Game In Progress;
-//    Actions
-//        Msg(Everyone, "Go")
-//        SpawnBoss(Roadhog)
-//        SpawnBoss(Soldier: 76)
-//        SpawnBoss(Mei)
-//        SpawnBoss(Lucio)
-//        SpawnBoss(Ana)
-//        SpawnBoss(Reaper)
-//
-//Rule "Teleport to Shop"
-//    Event_Team(All)
-//    Conditions
-//        Any True
-//            Array: portals
-//            Condition: Distance Between
-//                Event Player
-//                Cur Elem
-//            <= 1.5
-//        == True
-//    Actions
-//        Teleport(Event Player, shop_pos)
-//        pvar location = -1
-//        // Add sound effect
+        SmallHud(Top, `{0} sec`(pvar reload_speed), Yellow)
+        SmallHud(Top, `{0} {1}`(`{0}%`(pvar money_multiplier * 100), "Money"), Green)
+        // Player Stats Over Head
+        World Text
+            Visible_To: All Players(Team 1)
+            Header: `{0} - {1} - {2}`
+                `{0}: {1}`
+                    "Damage"
+                    `{0}%`
+                        pvar damage_scale * 100
+                `{0} sec`
+                    pvar reload_speed
+                `{0} {1}`
+                    `{0}%`
+                        pvar money_multiplier * 100
+                    "Money"
+            Position: Event Player
+            Scale: 0.750
+            Clipping: Clip Against Surfaces
+            Reevaluation: Visible To Position And String
+
+Rule "Validate Bosses"
+    Event_Global()
+    Conditions
+        All True
+            boss_heroes
+            Is Hero Being Played
+                Cur Elem
+                Team 2
+        == False
+    Actions
+        Msg
+            Everyone
+            `{0}: {1}`
+                "Warning"
+                `{0} {1}`
+                    "Bad"
+                    "Bosses"
+        for boss in boss_heroes:
+            if not Is Hero Being Played(boss, Team 2):
+                Msg
+                    Everyone
+                    `{0} {1}`
+                        "No"
+                        boss
+        Wait(20s)
+        Loop If Condition Is True
+
+Rule "Initialize Bosses"
+    Event_Global()
+    Conditions
+        Is Game In Progress == True
+    Actions
+        for boss in boss_heroes:
+            SpawnBoss(boss)
+
+Rule "Teleport to Shop"
+    Event_Team(All)
+    Conditions
+        Any True
+            Array: portals
+            Condition: Distance Between
+                Event Player
+                Cur Elem
+            <= 1.5
+        == True
+    Actions
+        Teleport(Event Player, shop_pos)
+        pvar location = -1
+        // Add sound effect
 //
 //Rule "Teleport from Shop"
 //    Event_Team(All)

@@ -47,9 +47,6 @@ class Transpiler:
     def tabs(self):
         return ' ' * self.indent_size * self.indent_level
 
-    def clean(self, str_):
-        return '('.join(capwords(s) for s in str_.split('('))
-
     def parse_string(self, strings):
         code = '"'
         for name in strings:
@@ -126,10 +123,12 @@ class Transpiler:
         return code
 
     def visitOWID(self, node):
-        code = self.clean(self.aliases.get(node.name.upper(), node.name))
+        code = self.aliases.get(node.name.upper(), node.name).title()
         if node.children:
             code += '('
             children = [self.visit(child) for child in node.children]
+            if node.name.upper() == 'WAIT' and len(children) == 1:
+                children.append('Ignore Condition')
             code += ', '.join(children)
             code += ')'
         return code
@@ -219,7 +218,9 @@ class Transpiler:
             for elem in iterable:
                 scope = Scope(name='for', namespace={pointer: elem})
                 self.scopes.append(scope)
+                self.indent_level -= 1
                 lines.append(self.visit(node.body))
+                self.indent_level += 1
                 self.scopes.pop()
             code += (';\n' + self.tabs).join(lines)
         else:
@@ -275,8 +276,9 @@ class Transpiler:
         code += self.parse_string(node.value)
         children = [', ' + self.visit(child) for child in node.children]
         code += ''.join(children)
-        code += ', ' + ', '.join(['Null'] * (3 - len(children))) + ')'
-        return code
+        if len(children) < 3:
+            code += ', ' + ', '.join(['Null'] * (3 - len(children)))
+        return code + ')'
 
     def visitNumeral(self, node):
         return node.value

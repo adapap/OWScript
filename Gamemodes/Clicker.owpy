@@ -97,6 +97,28 @@
         boss_player
         boss_spawns[Index(boss_heroes, boss)]
 
+%ResetPlayer
+    pvar location = 0
+    pvar cur_boss = 0
+    pvar bosses_killed = 0
+    pvar money = 0
+    pvar damage_scale = 1
+    pvar damage_scale_cost = 5
+    pvar reload_speed = 2.0
+    pvar reload_speed_cost = 15
+    pvar money_multiplier = 1
+    pvar money_multiplier_cost = 10
+    pvar hp = 5
+    pvar hp_cost = 250
+    pvar defense = 100
+    pvar defense_cost = 25
+    pvar ability1 = False
+    pvar ability1_cost = 25000
+    pvar ability2 = False
+    Set Damage Dealt(Event Player, pvar damage_scale)
+    Set Damage Received(Event Player, pvar defense)
+    Set Max Health(Event Player, pvar hp)
+
 Rule "Initialize Constants"
     Event_Global()
     Actions
@@ -114,23 +136,7 @@ Rule "Initialize Player Stats"
     Event_Team(All)
     Actions
         /* Player Variables */
-        pvar location = 0
-        pvar cur_boss = 0
-        pvar bosses_killed = 0
-        pvar money = 0
-        pvar damage_scale = 1
-        pvar damage_scale_cost = 5
-        pvar reload_speed = 2.0
-        pvar reload_speed_cost = 15
-        pvar money_multiplier = 1
-        pvar money_multiplier_cost = 10
-        pvar hp = 5
-        pvar hp_cost = 250
-        pvar defense = 100
-        pvar defense_cost = 25
-        pvar ability1 = False
-        pvar ability1_cost = 25000
-        pvar ability2 = False
+        ResetPlayer()
         pvar credits = 0
 
 Rule "Initialize Effects (Portals / Upgrades / Saves / Boundaries)"
@@ -140,6 +146,7 @@ Rule "Initialize Effects (Portals / Upgrades / Saves / Boundaries)"
         shop_portal = <-7, 3, 75>
         upgr_pos = <3, 2.5, 70>
         save_pos = <2.75, 6.5, 86>
+        prestige_pos = <-172, 3, 96>
         x_offset = <2.5, 0, 0>
         z_offset = <0, 0, 2.5>
         upgrade_names = ["Damage", "Faster", "Money", "Heal", "Defend"]
@@ -165,8 +172,6 @@ Rule "Initialize Effects (Portals / Upgrades / Saves / Boundaries)"
         // 3 -> 4 Modify Global Variable(E, Append To Array, Vector(-80.000, 1.500, 71));
         // 4 -> 5 Modify Global Variable(E, Append To Array, Vector(-63.000, 2.500, 115.500));
         // 5 -> 6 Modify Global Variable(E, Append To Array, Vector(41, 3.500, 67.500));
-        // prestige: <-172, 3, 96>
-        // create boundary function
 
 Rule "Initialize Player HUD Stats"
     Event_Team(Team 1)
@@ -301,72 +306,77 @@ Rule "Shop Boundary"
                     shop_pos
                 Msg(Event Player, `{0} {1} {2}`("Avoid", "Going", "Here"))
 
+%ShopCondition(pos)
+    Conditions
+        Event Player in Players In Radius(pos, 1.5, Team(All), Surfaces)
+        Event Player.interacting
 Rule "Buy Damage %"
     Event_Global()
-    Conditions
-        Event Player in Players In Radius(upgrade_positions[0], 1, Team(All), Off)
-        Event Player.interacting
+    ShopCondition(upgrade_positions[0])
     Actions
         if pvar money >= pvar damage_scale_cost:
             pvar money -= pvar damage_scale_cost
+            Skip If(pvar damage_scale < 75, 1)
+            pvar damage_scale += 3
+            Skip If(pvar damage_scale >= 75, 1)
+            pvar damage_scale += 2
+            Set Damage Dealt(Event Player, pvar damage_scale * 100)
             pvar damage_scale_cost = ceil(pvar damage_scale_cost * upgrade_rates[0])
             SuccessSound()
         else:
             Big Msg(Event Player, `{0} {1} {2}`("Go", "Find", `{0} {1}`("More", "Money")))
-Rule "Buy Damage %"
-    Event_Global()
-    Conditions
-        Event Player in Players In Radius(upgrade_positions[0], 1, Team(All), Off)
-        Event Player.interacting
-    Actions
-        if pvar money >= pvar damage_scale_cost:
-            pvar money -= pvar damage_scale_cost
-            pvar damage_scale_cost = ceil(pvar damage_scale_cost * upgrade_rates[0])
-            SuccessSound()
-        else:
-            Big Msg(Event Player, `{0} {1} {2}`("Go", "Find", `{0} {1}`("More", "Money")))
-Rule "Buy Damage %"
-    Event_Global()
-    Conditions
-        Event Player in Players In Radius(upgrade_positions[0], 1, Team(All), Off)
-        Event Player.interacting
-    Actions
-        if pvar money >= pvar damage_scale_cost:
-            pvar money -= pvar damage_scale_cost
-            pvar damage_scale_cost = ceil(pvar damage_scale_cost * upgrade_rates[0])
-            SuccessSound()
-        else:
-            Big Msg(Event Player, `{0} {1} {2}`("Go", "Find", `{0} {1}`("More", "Money")))
-Rule "Buy Damage %"
-    Event_Global()
-    Conditions
-        Event Player in Players In Radius(upgrade_positions[0], 1, Team(All), Off)
-        Event Player.interacting
-    Actions
-        if pvar money >= pvar damage_scale_cost:
-            pvar money -= pvar damage_scale_cost
-            pvar damage_scale_cost = ceil(pvar damage_scale_cost * upgrade_rates[0])
-            SuccessSound()
-        else:
-            Big Msg(Event Player, `{0} {1} {2}`("Go", "Find", `{0} {1}`("More", "Money")))
-Rule "Buy Damage %"
-    Event_Global()
-    Conditions
-        Event Player in Players In Radius(upgrade_positions[0], 1, Team(All), Off)
-        Event Player.interacting
-    Actions
-        if pvar money >= pvar damage_scale_cost:
-            pvar money -= pvar damage_scale_cost
-            pvar damage_scale_cost = ceil(pvar damage_scale_cost * upgrade_rates[0])
-            SuccessSound()
-        else:
-            Big Msg(Event Player, `{0} {1} {2}`("Go", "Find", `{0} {1}`("More", "Money")))
-//BuyUpgrade(1, "Reload Speed", pvar reload_speed_cost)
-//BuyUpgrade(2, "Money Multiplier", pvar money_multiplier_cost)
-//BuyUpgrade(3, "HP", pvar hp_cost)
-//BuyUpgrade(4, "Defense", pvar defense_cost)
 
-Rule "Teleport Player to Boss 1"
+Rule "Buy Reload Speed"
+    Event_Global()
+    ShopCondition(upgrade_positions[1])
+    Actions
+        if pvar money >= pvar reload_speed_cost:
+            pvar money -= pvar reload_speed_cost
+            pvar reload_speed_cost = ceil(pvar reload_speed_cost * upgrade_rates[1])
+            pvar reload_speed *= 0.95
+            SuccessSound()
+        else:
+            Big Msg(Event Player, `{0} {1} {2}`("Go", "Find", `{0} {1}`("More", "Money")))
+
+Rule "Buy Money Multiplier"
+    Event_Global()
+    ShopCondition(upgrade_positions[2])
+    Actions
+        if pvar money >= pvar money_multiplier_cost:
+            pvar money -= pvar money_multiplier_cost
+            pvar money_multiplier_cost = ceil(pvar money_multiplier_cost * upgrade_rates[2])
+            pvar money_multiplier += 7.5
+            SuccessSound()
+        else:
+            Big Msg(Event Player, `{0} {1} {2}`("Go", "Find", `{0} {1}`("More", "Money")))
+
+Rule "Buy HP"
+    Event_Global()
+    ShopCondition(upgrade_positions[3])
+    Actions
+        if pvar money >= pvar hp_cost:
+            pvar money -= pvar hp_cost
+            pvar hp_cost = ceil(pvar hp_cost * upgrade_rates[3])
+            pvar hp += 5
+            Set Max Health(Event Player, pvar hp)
+            SuccessSound()
+        else:
+            Big Msg(Event Player, `{0} {1} {2}`("Go", "Find", `{0} {1}`("More", "Money")))
+
+Rule "Buy Defense"
+    Event_Global()
+    ShopCondition(upgrade_positions[4])
+    Actions
+        if pvar money >= pvar defense_cost:
+            pvar money -= pvar defense_cost
+            pvar defense_cost = ceil(pvar defense_cost * upgrade_rates[4])
+            pvar defense -= 1
+            Set Damage Received(Event Player, pvar defense)
+            SuccessSound()
+        else:
+            Big Msg(Event Player, `{0} {1} {2}`("Go", "Find", `{0} {1}`("More", "Money")))
+
+Rule "Teleport Player to Start"
     Event_Team(All)
     Conditions
         Has Spawned(Event Player)
@@ -381,7 +391,16 @@ Rule "Attack Money"
         Team 1
         All
     Actions
-        pvar money += (Event Damage ^ (pvar bosses_killed / 3.5)) * pvar money_multiplier
+        pvar money += (Event Damage ^ (pvar cur_boss / 3.5)) * pvar money_multiplier
+
+Rule "Boss Kill"
+    Event
+        Player Dealt Final Blow
+        Team 1
+        All
+    Actions
+        pvar bosses_killed = Max(Index(boss_heroes, Victim.hero))
+        pvar money += (100 ^ (1 + pvar bosses_killed / 2)) * pvar money_multiplier
 
 Disabled Rule "Coordinate Viewer"
     Event

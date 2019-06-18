@@ -10,21 +10,46 @@ except ImportError:
     from AST import *
 
 class Scope:
-    def __init__(self, name, namespace=None):
+    def __init__(self, name, parent=None, namespace=None):
         self.name = name
+        self.parent = parent
         self.namespace = namespace or {}
 
+    def get(self, name, default=None):
+        value = self.namespace.get(name, default)
+        if value is not None:
+            if not (type(value) == GlobalVar and value.name == name):
+                return value
+        if self.parent:
+            return self.parent.get(name, default)
+
+    def set(self, name, value):
+        self.namespace[name] = value
+
     def __repr__(self):
-        return f"<Scope '{self.name}'>"
+        return f"<Scope '{self.name}'>{self.parent or ''}"
 
 class Builtin:
-    def range_(args):
+    def range_(tp, args):
+        args = map(tp.visit, args)
         elements = list(map(lambda n: Numeral(value=str(n)), (range(*map(int, args)))))
         array = Array(elements=elements)
         return array
 
+    def ceil(tp, n):
+        node = OWID(name='Round To Integer')
+        node.children.extend([*n, OWID(name='Up')])
+        return node
+
+    def floor(tp, n):
+        node = OWID(name='Round To Integer')
+        node.children.extend([*n, OWID(name='Up')])
+        return node
+
     functions = {
-        'range': range_
+        'range': range_,
+        'ceil': ceil,
+        'floor': floor
     }
 
 class Transpiler:
@@ -40,7 +65,7 @@ class Transpiler:
         self.line = 0
         self.functions = Builtin.functions
         self.arrays = {}
-        self.scopes = [Scope(name='global')]
+        self.scope = Scope(name='global')
         self.aliases = {k: v for d in ALIASES.values() for k, v in d.items()}
 
     @property
@@ -50,16 +75,13 @@ class Transpiler:
     def parse_string(self, strings):
         code = '"'
         for name in strings:
-            for scope in self.scopes[::-1]:
-                if name in scope.namespace:
-                    code += ''.join(scope.namespace.get(name).value).replace('"', '')
-                    break
-            else:
-                code += name.replace('"', '').replace("'", '').replace('`', '')
+            value = self.scope.get(name, name)
+            if type(value) != str:
+                value = value.value[0]
+            code += value.replace('"', '').replace("'", '').replace('`', '')
         return code + '"'
 
     def assign(self, node, value):
-        self.scopes[-1].namespace.update({node.name: value})
         code = ''
         name = node.name
         if type(node) == GlobalVar:
@@ -150,13 +172,16 @@ class Transpiler:
     def visitAssign(self, node):
         code = ''
         value = node.right
+        if type(node.left) == GlobalVar:
+            node.left = self.scope.get(node.left.name) or node.left
         name = node.left.parent.name if type(node.left) in (Item,) else node.left.name
         if type(value) == Array:
             self.arrays[name] = value
+            value = Array(elements=[x for x in value.elements if type(x) != String])
         elif type(value) == Call:
             function = self.functions[value.parent.name]
             if type(function) != Function:
-                result = function(map(self.visit, value.args))
+                result = function(self, value.args)
                 if type(result) == Array:
                     self.arrays[name] = result
         value = {
@@ -219,24 +244,23 @@ class Transpiler:
     def visitFor(self, node):
         code = ''
         pointer = node.pointer
-        if node.iterable.name in self.arrays:
+        iterable = None
+        if type(node.iterable) == Call:
+            function = self.functions[node.iterable.parent.name]
+            if type(function) != Function:
+                result = function(self, node.iterable.args)
+                if type(result) == Array:
+                    iterable = result
+        elif node.iterable.name in self.arrays:
             iterable = self.arrays.get(node.iterable.name)
+        if iterable:
             lines = []
             for elem in iterable:
-                scope = Scope(name='for', namespace={pointer: elem})
-                self.scopes.append(scope)
+                scope = Scope(name='for', parent=self.scope, namespace={pointer: elem})
                 for child in node.body.children:
-                    lines.append(self.visit(child))
-                self.scopes.pop()
+                    lines.append(self.visit(child, scope=scope))
             code += (';\n' + self.tabs).join(lines)
         else:
-            # for scope in self.scopes[::-1]:
-            #     if node.iterable.name in scope.namespace:
-            #         value = scope.namespace.get(node.iterable.name)
-            #         print(value)
-            #         break
-            # else:
-            #     raise NotImplementedError('For loops do not work with Overwatch types')
             raise NotImplementedError('Overwatch types not supported in loops yet')
         return code
 
@@ -262,13 +286,10 @@ class Transpiler:
         return code
 
     def visitGlobalVar(self, node):
-        for scope in self.scopes[::-1]:
-            if node.name in scope.namespace:
-                value = scope.namespace.get(node.name)
-                if type(value) == type(node) and value == node:
-                    continue
-                result = self.visit(value)
-                return result
+        if self.scope.namespace.get(node.name):
+            value = self.scope.namespace.get(node.name)
+            result = self.visit(value, scope=self.scope.parent)
+            return result
         index = self.lookup(node=node)
         return f'Value In Array(Global Variable(A), {index})'
 
@@ -309,9 +330,8 @@ class Transpiler:
         if not node.elements:
             return 'Empty Array'
         else:
-            not_string = lambda x: type(x) != String
-            owid_has_child = lambda x: True if type(x) != OWID else x.children
-            valid_elems = [x for x in node.elements if not_string(x) and owid_has_child(x)]
+            owid_has_child = lambda x: True if type(x) != OWID else len(x.children) > 0
+            valid_elems = [x for x in node.elements if owid_has_child(x)]
             num_elems = len(valid_elems)
             if num_elems == 0:
                 return 'Empty Array'
@@ -320,6 +340,24 @@ class Transpiler:
         return code
 
     def visitItem(self, node):
+        if node.parent.name in self.arrays:
+            array = self.arrays[node.parent.name]
+            index = None
+            try:
+                index = int(node.index)
+            except TypeError:
+                try:
+                    index = int(self.visit(node.index))
+                except ValueError:
+                    return 'Value In Array(' + self.visit(node.parent) + ', ' + self.visit(node.index) + ')'
+            except ValueError:
+                index = int(self.visit(node.index))
+            item = array[index]
+            if type(item) == str:
+                return item
+            if type(item) not in (OWID, String, Numeral):
+                return self.visit(item, scope=self.scope.parent)
+            return self.visit(item)
         return 'Value In Array(' + self.visit(node.parent) + ', ' + self.visit(node.index) + ')'
 
     def visitAttribute(self, node):
@@ -333,6 +371,9 @@ class Transpiler:
             'hero': 'Hero Of({})',
             'jumping': 'Is Button Held({}, Jump)',
             'crouching': 'Is Button Held({}, Crouch)',
+            'interacting': 'Is Button Held({}, Interact)',
+            'LMB': 'Is Button Held({}, Primary Fire)',
+            'RMB': 'Is Button Held({}, Secondary Fire)',
             'moving': 'Compare(Speed Of({}), >, 0)'
         }.get(node.name.lower())
         code = attribute.format(self.visit(node.parent))
@@ -369,16 +410,23 @@ class Transpiler:
                 if type(function) == Function:
                     assert len(function.params) == len(node.args)
                     params = [param.name for param in function.params]
-                    scope = Scope(name=callee.name)
+                    scope = Scope(name=callee.name, parent=self.scope)
                     scope.namespace.update(dict(zip(params, node.args)))
-                    self.scopes.append(scope)
-                    code += (';\n' + self.tabs).join(map(self.visit, function.children))
-                    self.scopes.pop()
+                    children = []
+                    for child in function.children:
+                        child_node = child.children[0]
+                        child_is_func = type(child_node) == Call and child_node.parent.name in self.functions
+                        if child_is_func:
+                            self.indent_level -= 1
+                        children.append(self.visit(child, scope=scope))
+                        if child_is_func:
+                            self.indent_level += 1
+                    code += (';\n' + self.tabs).join(children)
                 else:
                     try:
-                        result = function(map(self.visit, node.args))
+                        result = function(self, node.args)
                         code += self.visit(result)
-                    except ValueError:
+                    except Exception as e:
                         raise Errors.SyntaxError('Invalid parameters for function {}'.format(callee.name))
             except AssertionError:
                 raise Errors.SyntaxError("{} expected {} parameters, received {}".format(callee.name, len(function.params), len(node.args)))
@@ -386,10 +434,15 @@ class Transpiler:
                 raise Errors.SyntaxError("Undefined function '{}'".format(callee.name))
         return code
 
-    def visit(self, node):
+    def visit(self, node, scope=None):
         method_name = 'visit' + type(node).__name__
         visitor = getattr(self, method_name)
-        return visitor(node)
+        prev_scope = self.scope
+        if scope:
+            self.scope = scope
+        result = visitor(node)
+        self.scope = prev_scope
+        return result
 
     def visitChildren(self, node):
         code = ''

@@ -94,7 +94,8 @@ class Time(Terminal):
     pass
 
 class Numeral(Terminal):
-    pass
+    def __int__(self):
+        return int(self.value)
 
 class OWID(Data):
     pass
@@ -119,6 +120,9 @@ class Array(AST):
         while index > len(self) - 1:
             self.append(Numeral('0'))
         self.elements.__setitem__(index, item)
+
+    def __getitem__(self, index):
+        return self.elements.__getitem__(index)
 
     def __repr__(self):
         return '{}'.format(self.elements)

@@ -14,19 +14,19 @@
         Scale: scale
         Clipping: Clip Against Surfaces
         Reevaluation: Visible To Position And String
-%BigHud(loc, text, color_)
+%BigHud(loc, text, color)
     Hud
         Visible_To: Event Player
         Header: text
         Subheader: Null
         Text: Null
         Location: loc
-        Sort_Order: 999
-        Header_Color: color_
+        Sort_Order: 0
+        Header_Color: color
         Subheader_Color: White
         Text_Color: White
         Reevaluation: Visible To And String
-%SmallHud(loc, text, color_)
+%SmallHud(loc, text, color)
     Hud
         Visible_To: Event Player
         Header: Null
@@ -36,33 +36,50 @@
         Sort_Order: 999
         Header_Color: White
         Subheader_Color: White
-        Text_Color: color_
+        Text_Color: color
         Reevaluation: Visible To And String
-%Portal(pos, type_, color_, name_)
+%SuccessSound
+    Play Effect
+        Visible_To: Event Player
+        Type: Buff Explosion Sound
+        Color: Green
+        Position: Event Player
+        Radius: 50
+%Portal(pos, type, color, text)
     Create Effect
         Visible_To: Everyone
-        Type: type_
-        Color: color_
+        Type: type
+        Color: color
         Position: pos
         Radius: 1.5
         Reevaluation: Visible To
+    GameText(Everyone, text, (pos + Up), 1.5)
 %UpgradePortal(pos)
     Portal(pos, Good Aura, Yellow, "Upgrades")
 %ShopPortal(pos)
-    Portal(pos, Good Aura, Purple, `{0} {1}`("Previous", "Boss"))
-%UpgradeEffect(pos, color_)
+    Portal(pos, Good Aura, Purple, `{0} {1}`("Current", "Boss"))
+%UpgradeEffect(pos, color)
     Create Effect
         Visible_To: Everyone
         Type: Orb
-        Color: color_
+        Color: color
         Position: pos
         Radius: 1.5
         Reevaluation: Visible To
-%SaveIcon(pos, icon, color_)
+%UpgradeText(upg, cost_var)
+    GameText(Event Player, `{0}: {1}`
+            `{0} {1}`
+                upgrade_names[upg]
+            cost_var
+        , upgrade_positions[upg] + Up * 0.5, 1.5)
+%SaveIcon(pos, icon, color)
     Create Icon
         Visible_To: Filter
             Everyone
-            In LOS
+            LOS
+                pos
+                Cur Elem
+                Barriers Do Not Block LOS
         Position: pos
         Icon: icon
         Reevaluation: Visible To
@@ -71,22 +88,10 @@
     Create Effect
         Visible_To: Everyone
         Type: Ring
-        Color: color_
+        Color: color
         Position: pos
         Radius: 1
         Reevaluation: Visible To Position And Radius
-
-Rule "Bezier Curve"
-    Event
-        On Global
-    Actions
-        Chase Global Variable At Rate
-            Var: myvar
-            Dest: 10000
-            Rate: 1 / Distance Between(<0, 0, 0>, 3 * ((1 - myvar % 1)^2 * (othervar[1 + Round(...)]))
-            // you get the idea
-
-
 %SpawnBoss(boss)
     Teleport
         boss_player
@@ -114,17 +119,17 @@ Rule "Initialize Player Stats"
         pvar bosses_killed = 0
         pvar money = 0
         pvar damage_scale = 1
-        // Upgrades are stored as [name, cost, cost rate]
-        pvar damage_scale_shop = ["Damage", 5, 1.003]
+        pvar damage_scale_cost = 5
         pvar reload_speed = 2.0
-        pvar reload_speed_shop = ["Faster", 15, 1.03]
+        pvar reload_speed_cost = 15
         pvar money_multiplier = 1
-        pvar money_multiplier_shop = ["Money", 10, 1.06]
+        pvar money_multiplier_cost = 10
         pvar hp = 5
-        pvar hp_shop = ["HP", 250]
+        pvar hp_cost = 250
         pvar defense = 100
-        pvar defense_shop = ["Defend", 25, 1.045]
+        pvar defense_cost = 25
         pvar ability1 = False
+        pvar ability1_cost = 25000
         pvar ability2 = False
         pvar credits = 0
 
@@ -134,23 +139,27 @@ Rule "Initialize Effects (Portals / Upgrades / Saves / Boundaries)"
         portals = [<-50, 1, 137.350>, <-37, 6.5, 48>, <-70, 1.5, 63.5>, <-58, 2, 122>, <41, 3.5, 78.5>, <-118.5, 1.5, 99.5>]
         shop_portal = <-7, 3, 75>
         upgr_pos = <3, 2.5, 70>
-        save_pos = <2.75, 6.5, 86.25>
+        save_pos = <2.75, 6.5, 86>
         x_offset = <2.5, 0, 0>
         z_offset = <0, 0, 2.5>
+        upgrade_names = ["Damage", "Faster", "Money", "Heal", "Defend"]
+        upgrade_rates = [1.003, 1.03, 1.06, Null, 1.045]
+        upgrade_positions = []
+        for i in range(-2, 3):
+            upgrade_positions.append(upgr_pos + i * x_offset)
+        upgrade_colors = [Purple, Red, Yellow, Green, Blue]
         // Bosses 1-6 -> Shop
         for portal in portals:
             UpgradePortal(portal)
         ShopPortal(shop_portal)
         // HP, Damage, Reload Speed, Money Multiplier, Damage Resistance
-        UpgradeEffect(upgr_pos - 2 * x_offset, Purple)
-        UpgradeEffect(upgr_pos - x_offset, Red)
-        UpgradeEffect(upgr_pos, Yellow)
-        UpgradeEffect(upgr_pos + x_offset, Green)
-        UpgradeEffect(upgr_pos + 2 * x_offset, Blue)
+        for i in range(5):
+            UpgradeEffect(upgrade_positions[i], upgrade_colors[i])
+        GameText(Everyone, "Save", save_pos + Up, 1.5)
         SaveIcon(save_pos - z_offset, Arrow: Up, Green)
         SaveIcon(save_pos + z_offset, Arrow: Down, Red)
         SaveIcon(save_pos - x_offset, Arrow: Left, Blue)
-        SaveIcon(save_pos + z_offset, Arrow: Right, Yellow)
+        SaveIcon(save_pos + x_offset, Arrow: Right, Yellow)
         // 1 -> 2 Modify Global Variable(E, Append To Array, Vector(-55.000, 1.500, 141.500));
         // 2 -> 3 Modify Global Variable(E, Append To Array, Vector(-25.500, 7.500, 50.500));
         // 3 -> 4 Modify Global Variable(E, Append To Array, Vector(-80.000, 1.500, 71));
@@ -165,9 +174,11 @@ Rule "Initialize Player HUD Stats"
         BigHud(Top, `{0}: {1}`("Money", pvar money), White)
         if DEBUG:
             BigHud(Left, "Stabilizing", Red)
-        SmallHud(Top, `{0} / {1}`(`{0}: {1}`("Damage", `{0}%`(pvar damage_scale)), `{0}: {1}`("Defend", `{0}%`(pvar defense))), Red)
-        SmallHud(Top, `{0} sec`(pvar reload_speed), Yellow)
+            SmallHud(Left, Event Player.pos, Blue)
+        SmallHud(Top, `{0} {1}`(pvar credits, "Credits"), Purple)
         SmallHud(Top, `{0} {1}`(`{0}%`(pvar money_multiplier * 100), "Money"), Green)
+        SmallHud(Top, `{0} sec`(pvar reload_speed), Yellow)
+        SmallHud(Top, `{0} / {1}`(`{0}: {1}`("Damage", `{0}%`(pvar damage_scale)), `{0}: {1}`("Defend", `{0}%`(pvar defense))), Red)
         // Player Stats Over Head
         World Text
             Visible_To: All Players(Team 1)
@@ -230,15 +241,24 @@ Rule "Initialize Bosses"
             Set Status(boss_player, Null, Rooted, 9999)
             GameText(Everyone, `{0}: {1}`("Heal", Health(boss_player)), boss_player, 1)
 
+Rule "Respawn Bosses"
+    Event
+        Player Died
+        Team 2
+        All
+    Actions
+        Respawn(Event Player)
+        Wait(0.1s)
+        Teleport(Event Player, boss_spawns[Index(boss_heroes, Event Player.hero)])
+
 Rule "Initialize Upgrades"
     Event_Team(Team 1)
     Actions
-        GameText(Event Player, `{0}: {1}`
-            `{0} {1}`
-                "Upgrade"
-                "Heal"
-            pvar hp_shop[1]
-        , upgr_pos - 2 * x_offset + Up * 0.5, 1.5)
+        UpgradeText(0, pvar damage_scale_cost)
+        UpgradeText(1, pvar reload_speed_cost)
+        UpgradeText(2, pvar money_multiplier_cost)
+        UpgradeText(3, pvar hp_cost)
+        UpgradeText(4, pvar defense_cost)
 
 Rule "Teleport to Shop"
     Event_Team(All)
@@ -263,20 +283,97 @@ Rule "Teleport from Shop"
         <= 1.5
         pvar location == -1
     Actions
-        Big Msg(Event Player, "Hello")
         pvar location = pvar cur_boss
+        Wait(0.1s)
         Teleport(Event Player, player_spawns[pvar location])
         // Add sound effect
+
+Rule "Shop Boundary"
+    Event_Team(All)
+    Conditions
+        pvar location == -1
+    Actions
+        while pvar location == -1:
+            Wait(0.1s)
+            if (Event Player.pos.x <= -12) or (Event Player.pos.z <= 25):
+                Teleport
+                    Event Player
+                    shop_pos
+                Msg(Event Player, `{0} {1} {2}`("Avoid", "Going", "Here"))
+
+Rule "Buy Damage %"
+    Event_Global()
+    Conditions
+        Event Player in Players In Radius(upgrade_positions[0], 1, Team(All), Off)
+        Event Player.interacting
+    Actions
+        if pvar money >= pvar damage_scale_cost:
+            pvar money -= pvar damage_scale_cost
+            pvar damage_scale_cost = ceil(pvar damage_scale_cost * upgrade_rates[0])
+            SuccessSound()
+        else:
+            Big Msg(Event Player, `{0} {1} {2}`("Go", "Find", `{0} {1}`("More", "Money")))
+Rule "Buy Damage %"
+    Event_Global()
+    Conditions
+        Event Player in Players In Radius(upgrade_positions[0], 1, Team(All), Off)
+        Event Player.interacting
+    Actions
+        if pvar money >= pvar damage_scale_cost:
+            pvar money -= pvar damage_scale_cost
+            pvar damage_scale_cost = ceil(pvar damage_scale_cost * upgrade_rates[0])
+            SuccessSound()
+        else:
+            Big Msg(Event Player, `{0} {1} {2}`("Go", "Find", `{0} {1}`("More", "Money")))
+Rule "Buy Damage %"
+    Event_Global()
+    Conditions
+        Event Player in Players In Radius(upgrade_positions[0], 1, Team(All), Off)
+        Event Player.interacting
+    Actions
+        if pvar money >= pvar damage_scale_cost:
+            pvar money -= pvar damage_scale_cost
+            pvar damage_scale_cost = ceil(pvar damage_scale_cost * upgrade_rates[0])
+            SuccessSound()
+        else:
+            Big Msg(Event Player, `{0} {1} {2}`("Go", "Find", `{0} {1}`("More", "Money")))
+Rule "Buy Damage %"
+    Event_Global()
+    Conditions
+        Event Player in Players In Radius(upgrade_positions[0], 1, Team(All), Off)
+        Event Player.interacting
+    Actions
+        if pvar money >= pvar damage_scale_cost:
+            pvar money -= pvar damage_scale_cost
+            pvar damage_scale_cost = ceil(pvar damage_scale_cost * upgrade_rates[0])
+            SuccessSound()
+        else:
+            Big Msg(Event Player, `{0} {1} {2}`("Go", "Find", `{0} {1}`("More", "Money")))
+Rule "Buy Damage %"
+    Event_Global()
+    Conditions
+        Event Player in Players In Radius(upgrade_positions[0], 1, Team(All), Off)
+        Event Player.interacting
+    Actions
+        if pvar money >= pvar damage_scale_cost:
+            pvar money -= pvar damage_scale_cost
+            pvar damage_scale_cost = ceil(pvar damage_scale_cost * upgrade_rates[0])
+            SuccessSound()
+        else:
+            Big Msg(Event Player, `{0} {1} {2}`("Go", "Find", `{0} {1}`("More", "Money")))
+//BuyUpgrade(1, "Reload Speed", pvar reload_speed_cost)
+//BuyUpgrade(2, "Money Multiplier", pvar money_multiplier_cost)
+//BuyUpgrade(3, "HP", pvar hp_cost)
+//BuyUpgrade(4, "Defense", pvar defense_cost)
 
 Rule "Teleport Player to Boss 1"
     Event_Team(All)
     Conditions
         Has Spawned(Event Player)
-        not DEBUG
     Actions
         Teleport
             Event Player
-            player_spawns[cur_boss]
+            player_spawns[pvar cur_boss]
 
 Rule "Attack Money"
     Event

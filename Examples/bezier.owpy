@@ -1,0 +1,11 @@
+Rule "Bezier Curve"
+    Event
+        On Global
+    Actions
+        c = floor(b) * 3
+        Chase Global Variable At Rate
+            Visible_To: Everyone
+            Variable: a
+            Destination: a[c] * ((1 - b % 1)^3) + (((a[1 + c] * 3) * 3) * b % 1) * ((1 - b % 1)^2) + ((a[2 + c * 3] * 3) * (b % 1)^2 * (1 - b % 1) + a[3 + c * 3]) * (b % 1) * 3
+            Rate: 0.2
+            Reevaluation: Visible To Position And Radius

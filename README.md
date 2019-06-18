@@ -254,6 +254,7 @@ scores.append(123) // Method
 |crouching||Check if a player is holding the Crouch key|
 |moving||Check if the speed of a player is non-zero|
 |append|*element*|Appends an element to the given array|
+|index|*element*|Returns the numeric index of an array element|
 
 ## Alias Table
 |Alias|Output|
@@ -264,7 +265,9 @@ scores.append(123) // Method
 |Cos|Cosine From Degrees|
 |Cosr|Cosine From Radians|
 |Cur Elem|Current Array Element|
+|Filter|Filtered Array|
 |Everyone|All Players(Team(All))|
+|LOS|Is In Line Of Sight|
 |Index|Index Of Array Value|
 |Lucio|Lúcio|
 |On Each Player|Ongoing - Each Player|

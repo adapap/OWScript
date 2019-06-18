@@ -2,15 +2,15 @@ Rule "If and Else"
     Event
         On Global
     Actions
-        x = 1
-        if x == 1:
-            x = 3
+        z = 1
+        if z == 1:
+            z = 3
             y = 4
-        elif x > 1:
-            x = 2
+        elif h > 1:
+            h = 2
             y = 3
             y = 4
-        elif x < 1:
+        elif h < 1:
             z = 1
         else:
             z = 'yes'

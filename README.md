@@ -255,6 +255,7 @@ scores.append(123) // Method
 |moving||Check if the speed of a player is non-zero|
 |append|*element*|Appends an element to the given array|
 |index|*element*|Returns the numeric index of an array element|
+|halt||Mitigates the motion of a player|
 
 ## Alias Table
 |Alias|Output|

@@ -213,23 +213,23 @@ class Transpiler:
 
     def visitIf(self, node):
         cond = self.visit(node.cond)
-        true_lines = len(node.true_block.children)
-        if node.false_block:
-            true_lines += 1
-            if type(node.false_block) == If:
-                false_lines = len(node.false_block.true_block.children) + 1
-            else:
-                false_lines = len(node.false_block.children)
-        code = 'Skip If(Not(' + cond + '), ' + str(true_lines) + ');\n'
+        skip_code = 'Skip If(Not({}), {});\n'
+        skip_false = ''
+        true_code = ''
+        false_code = ''
         for line in node.true_block.children:
-            code += self.tabs + self.visit(line) + ';\n'
+            true_code += self.tabs + self.visit(line) + ';\n'
         if node.false_block:
-            code += self.tabs + 'Skip(' + str(false_lines) + ');\n'
+            skip_false += self.tabs + 'Skip({});\n'
             if type(node.false_block) == If:
-                code += self.tabs + self.visit(node.false_block)
+                false_code += self.tabs + self.visit(node.false_block)
             else:
                 for line in node.false_block.children:
-                    code += self.tabs + self.visit(line) + ';\n'
+                    false_code += self.tabs + self.visit(line) + ';\n'
+        skip_code = skip_code.format(cond, true_code.count(';\n') + bool(node.false_block))
+        if false_code:
+            skip_false = skip_false.format(false_code.count(';\n') + bool(type(node.false_block) == If))
+        code = skip_code + true_code + skip_false + false_code
         return code.rstrip(';\n')
 
     def visitWhile(self, node):
@@ -372,8 +372,8 @@ class Transpiler:
             'jumping': 'Is Button Held({}, Jump)',
             'crouching': 'Is Button Held({}, Crouch)',
             'interacting': 'Is Button Held({}, Interact)',
-            'LMB': 'Is Button Held({}, Primary Fire)',
-            'RMB': 'Is Button Held({}, Secondary Fire)',
+            'lmb': 'Is Button Held({}, Primary Fire)',
+            'rmb': 'Is Button Held({}, Secondary Fire)',
             'moving': 'Compare(Speed Of({}), >, 0)'
         }.get(node.name.lower())
         code = attribute.format(self.visit(node.parent))
@@ -385,23 +385,26 @@ class Transpiler:
         code = ''
         if type(callee) == Attribute:
             method = callee.name
+            arity = {
+                'append': 1,
+                'index': 1,
+                'halt': 0
+            }
+            try:
+                assert len(args) == arity.get(method)
+            except AssertionError:
+                raise Errors.SyntaxError('{} expected {} parameter, received {}'.format(method, arity.get(method), len(args)))
             if method == 'append':
-                try:
-                    assert len(args) == 1
-                    elem = self.visit(node.args[0])
-                    self.arrays[callee.parent.name].append(elem)
-                    index = self.lookup(callee.parent)
-                    if type(callee.parent) == GlobalVar:
-                        code += f'Modify Global Variable At Index(A, {index}, Append To Array, {elem})'
-                except AssertionError:
-                    raise Errors.SyntaxError('append expected 1 parameter, received {}'.format(len(args)))
+                elem = self.visit(node.args[0])
+                self.arrays[callee.parent.name].append(elem)
+                index = self.lookup(callee.parent)
+                if type(callee.parent) == GlobalVar:
+                    code += f'Modify Global Variable At Index(A, {index}, Append To Array, {elem})'
             elif method == 'index':
-                try:
-                    assert len(args) == 1
-                    elem = self.visit(node.args[0])
-                    code += str(self.arrays[callee.parent.name].index(elem))
-                except AssertionError:
-                    raise Errors.SyntaxError('index expected 1 parameter, received {}'.format(len(args)))
+                elem = self.visit(node.args[0])
+                code += str(self.arrays[callee.parent.name].index(elem))
+            elif method == 'halt':
+                code += 'Apply Impulse({}, Down, Multiply(0.001, 0.001), To World, Cancel Contrary Motion)'.format(self.visit(callee.parent))
             else:
                 raise Errors.SyntaxError("Unknown method '{}'".format(method))
         else:

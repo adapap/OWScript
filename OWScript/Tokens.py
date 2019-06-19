@@ -40,6 +40,7 @@ ALIASES = {
         'BIG MSG': 'BIG MESSAGE',
         'HUD': 'CREATE HUD TEXT',
         'MSG': 'SMALL MESSAGE',
+        'SET HERO': 'START FORCING PLAYER TO BE HERO',
         'SMALL MSG': 'SMALL MESSAGE',
         'WORLD TEXT': 'CREATE IN-WORLD TEXT'
     }

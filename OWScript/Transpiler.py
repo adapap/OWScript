@@ -396,12 +396,21 @@ class Transpiler:
                 raise Errors.SyntaxError('{} expected {} parameter, received {}'.format(method, arity.get(method), len(args)))
             if method == 'append':
                 elem = self.visit(node.args[0])
+                array = self.arrays.get(callee.parent.name)
+                if not array:
+                    self.arrays[callee.parent.name] = Array(elements=[])
                 self.arrays[callee.parent.name].append(elem)
                 index = self.lookup(callee.parent)
                 if type(callee.parent) == GlobalVar:
                     code += f'Modify Global Variable At Index(A, {index}, Append To Array, {elem})'
+                elif type(callee.parent) == PlayerVar:
+                    player = self.visit(callee.parent.player)
+                    code += f'Modify Player Variable At Index({player}, A, {index}, Append To Array, {elem})'
             elif method == 'index':
                 elem = self.visit(node.args[0])
+                array = self.arrays.get(callee.parent.name)
+                if not array:
+                    self.arrays[callee.parent.name] = Array(elements=[])
                 code += str(self.arrays[callee.parent.name].index(elem))
             elif method == 'halt':
                 code += 'Apply Impulse({}, Down, Multiply(0.001, 0.001), To World, Cancel Contrary Motion)'.format(self.visit(callee.parent))

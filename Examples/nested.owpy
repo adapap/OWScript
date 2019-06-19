@@ -1,0 +1,10 @@
+Rule "Nested Blocks"
+    Event
+        On Global
+    Actions
+        if a == 1:
+            b = 2
+            for i in range(4):
+                Msg(Everyone, i)
+        elif a == 2:
+            b = 3

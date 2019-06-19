@@ -113,7 +113,7 @@ Using the technique from [@ItsDeltin](https://github.com/ItsDeltin), the limit t
 the number of variables that can be created is the maximum length of an array (\~1000 variables).
 
 ## Strings
-There are two types of strings in the workshop: string literals and "formatted" strings, which take children as parameters to display. To write a string literal, simply enclose it in `"quotes"`, which can be used for rulenames. Formatted strings are enclosed with backticks (\`) and have the children nested the same way as a value.
+There are two types of strings in the workshop: string literals and "formatted" strings, which take children as parameters to display. To write a string literal, simply enclose it in `"quotes"`, which can be used for rulenames. Formatted strings are enclosed with backticks and have the children nested the same way as a value.
 ```
 Rule "String Demo"
     Event

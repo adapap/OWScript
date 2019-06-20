@@ -1,11 +1,14 @@
-class LexError(SyntaxError):
+class OWSError(Exception):
     pass
 
-class ParseError(SyntaxError):
+class LexError(OWSError):
     pass
 
-class SyntaxError(SyntaxError):
+class ParseError(OWSError):
     pass
 
-class NotImplementedError(NotImplementedError):
+class SyntaxError(OWSError):
+    pass
+
+class NotImplementedError(OWSError):
     pass

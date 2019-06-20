@@ -1,6 +1,7 @@
 import argparse
 import re
 import sys
+from OWScript.Errors import OWSError
 from OWScript.Lexer import Lexer
 from OWScript.Parser import Parser
 from OWScript.Transpiler import Transpiler
@@ -50,5 +51,7 @@ if __name__ == '__main__':
     file_input = args.input[0] if args.input else sys.stdin
     with open(file_input) as f:
         text = f.read()
-    transpile(text, args=args)
-    
+    try:
+        transpile(text, args=args)
+    except OWSError as ex:
+        print('Error:', ex)

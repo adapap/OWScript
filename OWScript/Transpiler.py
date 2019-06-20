@@ -91,7 +91,7 @@ class Transpiler:
                 self.global_vars[name] = index
             code += f'Set Global Variable At Index(A, {index}, '
         elif type(node) == PlayerVar:
-            player = node.player
+            player = self.visit(node.player) if type(node.player) != str else node.player
             index = self.player_vars.get((player, name))
             if index is None:
                 index = next(self.player_index[player])
@@ -108,7 +108,7 @@ class Transpiler:
                 index = self.global_vars[name] = next(self.global_index)
             return index
         elif type(node) == PlayerVar:
-            player = node.player
+            player = self.visit(node.player) if type(node.player) != str else node.player
             index = self.player_vars.get((player, name))
             if index is None:
                 index = self.player_vars[(player, name)] = next(self.player_index[player])
@@ -218,12 +218,19 @@ class Transpiler:
         true_code = ''
         false_code = ''
         for line in node.true_block.children:
+            if type(line) == If:
+                self.indent_level -= 1
             true_code += self.tabs + self.visit(line) + ';\n'
+            if type(line) == If:
+                self.indent_level += 1
         if node.false_block:
-            skip_false += self.tabs + 'Skip({});\n'
             if type(node.false_block) == If:
+                self.indent_level -= 1
+                skip_false += self.tabs + 'Skip({});\n'
                 false_code += self.tabs + self.visit(node.false_block)
+                self.indent_level += 1
             else:
+                skip_false += self.tabs + 'Skip({});\n'
                 for line in node.false_block.children:
                     false_code += self.tabs + self.visit(line) + ';\n'
         skip_code = skip_code.format(cond, true_code.count(';\n') + bool(node.false_block))
@@ -463,4 +470,5 @@ class Transpiler:
         return code
 
     def run(self):
-        return self.visit(self.tree)
+        code = self.visit(self.tree)
+        return code

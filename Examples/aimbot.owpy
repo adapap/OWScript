@@ -1,0 +1,34 @@
+Rule "Start Aimbot"
+    Event
+        On Each Player
+        All
+        All
+    Conditions
+        Is Button Held(Event Player, Primary Fire)
+        Event Player.hero != Hero(Widowmaker)
+        Event Player.hero != Hero(Soldier: 76)
+        Is Alive(Player Closest To Reticle(Event Player, Opposite Team Of(Event Player.team)))
+        Players In Slot(1, All Teams)
+    Actions
+        Start Facing
+            Event Player
+            Direction Towards
+                Event Player
+                Player Closest To Reticle
+                    Event Player
+                    Opposite Team Of(Event Player.team) + <0, 0.240, 0>
+            10000
+            To World
+            Direction and Turn Rate
+
+Rule "Stop Aimbot"
+    Event
+        On Each Player
+        All
+        All
+    Conditions
+        not Event Player.LMB
+        Event Player.hero != Hero(Widowmaker)
+        Players In Slot(1, All Teams)
+    Actions
+        Stop Facing(Event Player)

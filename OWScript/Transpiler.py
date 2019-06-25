@@ -1,13 +1,19 @@
 from collections import defaultdict
-from itertools import count
+from itertools import chain, count
 from string import capwords
 
 try:
     from . import Errors
     from .AST import *
-    from .Tokens import ALIASES
 except ImportError:
     from AST import *
+
+def flatten(l):
+    l = list(l)
+    while l:
+        while l and isinstance(l[0], list):
+            l[0:1] = l[0]
+        if l: yield l.pop(0)
 
 class Scope:
     def __init__(self, name, parent=None, namespace=None):
@@ -66,20 +72,10 @@ class Transpiler:
         self.functions = Builtin.functions
         self.arrays = {}
         self.scope = Scope(name='global')
-        self.aliases = {k: v for d in ALIASES.values() for k, v in d.items()}
 
     @property
     def tabs(self):
         return ' ' * self.indent_size * self.indent_level
-
-    def parse_string(self, strings):
-        code = '"'
-        for name in strings:
-            value = self.scope.get(name, name)
-            if type(value) != str:
-                value = value.value[0]
-            code += value.replace('"', '').replace("'", '').replace('`', '')
-        return code + '"'
 
     def assign(self, node, value):
         code = ''
@@ -123,7 +119,7 @@ class Transpiler:
         if node.disabled:
             code += 'disabled '
         code += 'rule('
-        code += self.parse_string(node.name.value)
+        code += node.name
         code += ') {\n' + self.visitChildren(node) + '}\n'
         return code
 
@@ -151,16 +147,31 @@ class Transpiler:
         return code
 
     def visitOWID(self, node):
-        code = self.aliases.get(node.name.upper(), node.name).title()
-        if node.children:
-            children = [self.visit(child) for child in node.children]
-            if code == 'Wait' and len(children) == 1:
-                children.append('Ignore Condition')
-            code += '(' + ', '.join(children) + ')'
+        name = node.name.title()
+        code = name
+        try:
+            assert len(node.args) == len(node.children)
+        except AssertionError:
+            raise Errors.SyntaxError('\'{}\' on line {}:{} requires {} parameters ({}), received {}'.format(
+                name, *node.pos, len(node.args), ', '.join(map(lambda arg: arg.__name__, node.args)), len(node.children))
+            )
+        for index, types in enumerate(zip(node.args, node.children)):
+            arg, child = types
+            if arg is None:
+                continue
+            extends = arg._extends if hasattr(arg, '_extends') else []
+            values = list(flatten(arg.get_values()))
+            if 'ANY' in values:
+                continue
+            value = self.visit(child).upper()
+            if value not in values:
+                raise Errors.InvalidParameter('\'{}\' expected type {} for parameter {}, received \'{}\' on line {}:{}'.format(name, arg.__name__, index + 1, child, *child.pos))
+        children = [self.visit(child) for child in node.children]
+        code += '(' + ', '.join(children) + ')'
         return code
 
-    def visitConst(self, node):
-        return node.value
+    def visitConstant(self, node):
+        return node.name.title()
 
     def visitCompare(self, node):
         if node.op.lower() == 'in':
@@ -193,7 +204,7 @@ class Transpiler:
             '%=': BinaryOp(left=node.left, op='%', right=value)
         }.get(node.op, value)
         if type(node.left) not in (GlobalVar, PlayerVar, Item):
-            raise Errors.SyntaxError('Invalid variable type in assignment')
+            raise Errors.SyntaxError('Cannot assign to type \'{}\' on line {}:{}'.format(type(node.left).__name__, *node.left.pos))
         if type(node.left) == Item:
             item = node.left
             index = self.lookup(node=item.parent)
@@ -306,15 +317,12 @@ class Transpiler:
         return code
 
     def visitString(self, node):
-        code = 'String('
-        code += self.parse_string(node.value)
-        children = [', ' + self.visit(child) for child in node.children]
-        code += ''.join(children)
-        if len(children) < 3:
-            code += ', ' + ', '.join(['Null'] * (3 - len(children)))
-        return code + ')'
+        code = 'String("' + node.value.title() + '", '
+        children = ', '.join(self.visit(child) for child in node.children)
+        code += children + ')'
+        return code
 
-    def visitNumeral(self, node):
+    def visitNumber(self, node):
         return node.value
 
     def visitTime(self, node):
@@ -376,6 +384,7 @@ class Transpiler:
             'pos': 'Position Of({})',
             'eyepos': 'Eye Position({})',
             'hero': 'Hero Of({})',
+            'team': 'Team Of({})',
             'jumping': 'Is Button Held({}, Jump)',
             'crouching': 'Is Button Held({}, Crouch)',
             'interacting': 'Is Button Held({}, Interact)',

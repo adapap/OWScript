@@ -54,11 +54,11 @@ class Lexer:
                             self.indents.append(spaces)
                         elif spaces < self.indents[-1]:
                             while spaces < self.indents[-1]:
-                                self.column = self.indents.pop() - spaces
+                                self.column = self.indents.pop() - spaces + 1
                                 dedent = Lexer.DEDENT(line=self.line, column=self.column)
                                 self.tokens.append(dedent)
                         else:
-                            self.column = spaces
+                            self.column = spaces + 1
                         if match:
                             self.pos = match.end()
                         break

@@ -10,5 +10,11 @@ class ParseError(OWSError):
 class SyntaxError(OWSError):
     pass
 
+class InvalidParameter(SyntaxError):
+    pass
+
+class StringError(SyntaxError):
+    pass
+
 class NotImplementedError(OWSError):
     pass

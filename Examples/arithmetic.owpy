@@ -1,10 +1,11 @@
 Rule "Arithmetic Operations"
     Actions
-        x = 1 + 1
-        x += 2 - 1
-        x *= 3 / 3
-        x = 2 ^ 2
-        x = (3 + 1) % 4
+        z = Count Of(Allowed Heroes(Event Player))
+        y = 1 + 1
+        y += 2 - 1
+        y *= 3 / 3
+        y = 2 ^ 2
+        y = (3 + 1) % 4
         pvar formula = <sin(pvar num_heroes * 360 / Count Of
             Allowed Heroes
                 Event Player /* Call me crazy for supporting inline blocks! */

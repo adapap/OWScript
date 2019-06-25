@@ -6,3 +6,4 @@ Rule "Variables & Vectors"
             2
             this_is_a_comment_lol_gottem: 3
         pVar CoolV3ctor = <1, 2, 3>
+        // Vectors can span multiple lines

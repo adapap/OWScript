@@ -168,7 +168,6 @@ Rule "Initialize Constants"
         boss_heroes = [Hero(Roadhog), Hero(Soldier: 76), Hero(Mei), Hero(Lucio), Hero(Ana), Hero(Reaper)]
         ability2_pos = <12.5, 2.5, 71>
         ability1_pos = <12.5, 2.5, 71 + 2.5>
-        DEBUG = False
         Set Match Time(90min)
 
 Rule "Initialize Player Stats"
@@ -229,9 +228,6 @@ Rule "Initialize Player HUD Stats"
     Event_Team(Team 1)
     Actions
         BigHud(Top, `{0}: {1}`("Money", pvar money), White)
-        if DEBUG:
-            BigHud(Left, "Stabilizing", Red)
-            SmallHud(Left, Event Player.pos, Blue)
         SmallHud(Top, `{0} {1} {2}`
             pvar credits
             "Credits"

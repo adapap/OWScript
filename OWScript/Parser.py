@@ -1,9 +1,12 @@
+import re
 from collections import deque
 from functools import partial
 
 try:
     from . import Errors
     from .AST import *
+    from .Tokens import ALIASES
+    from .Workshop import *
 except ImportError:
     import Errors
     from AST import *
@@ -56,6 +59,32 @@ class Parser:
             self.pos += 1
         else:
             raise Errors.ParseError('Expected token of type {}, but received {} on line {}:{}'.format(token_type, self.curtype, *self.last_pos))
+
+    def parse_string(self, string, formats):
+        string = re.sub(r'["\'`]', '', string)
+        for pattern in sorted(StringConstant._values, key=len, reverse=True):
+            patt = re.sub(r'([^a-zA-Z0-9_\s{}])', r'\\\1', pattern)
+            patt = re.sub(r'{\d}', '(.+)', patt)
+            regex = re.compile(patt, re.I)
+            match = re.match(regex, string)
+            if match and not match.group(0) == '' and match.end() == len(string):
+                children = []
+                try:
+                    for group in match.groups():
+                        if group == '{}':
+                            child = formats[0]
+                            formats = formats[1:]
+                        else:
+                            child = self.parse_string(group, formats)
+                        children.append(child)
+                except Errors.StringError:
+                    continue
+                node = String(value=pattern)
+                node.children = children + [Constant(name='Null')] * (3 - len(children))
+                return node
+        else:
+            raise Errors.StringError('Invalid string \'{}\''.format(string))
+        return node
 
     def script(self):
         """script : (NEWLINE | stmt)* EOF"""
@@ -119,7 +148,9 @@ class Parser:
         if disabled:
             self.eat('DISABLED')
         self.eat('RULE')
-        node = Rule(name=self.string(), disabled=disabled)
+        name = self.curvalue
+        self.eat('STRING')
+        node = Rule(name=name, disabled=disabled)
         self.eat('NEWLINE', 'INDENT')
         while self.curtype != 'DEDENT':
             if self.curtype == 'RULEBLOCK':
@@ -163,7 +194,6 @@ class Parser:
                 | while_stmt
                 | for_stmt
                 | expr ASSIGN expr
-                | expr COMPARE expr
                 | expr
                 )? NEWLINE"""
         if self.curtype == 'NEWLINE':
@@ -179,10 +209,6 @@ class Parser:
             op = self.curvalue
             self.eat('ASSIGN')
             node = Assign(left=node, op=op, right=self.expr())
-        elif self.curtype == 'COMPARE':
-            op = self.curvalue
-            self.eat('COMPARE')
-            node = Compare(left=node, op=op, right=self.expr())
         while self.curtype == 'NEWLINE':
             self.eat('NEWLINE')
         return node
@@ -273,12 +299,8 @@ class Parser:
     def compare(self):
         """compare : term (COMPARE term)*"""
         node = self.term()
-        while self.curtype in ('COMPARE', 'IN', 'NOT_IN'):
-            if node.children:
-                break
+        while self.curtype in ('COMPARE', 'IN', 'NOT_IN') and self.peek().type not in ('COMMA', 'RPAREN', 'RBRACK', 'COMPARE', 'NEWLINE'):
             op = self.curvalue
-            if op == '>' and self.peek().type in ('DEDENT', 'RPAREN', 'RBRACK', 'COMMA', 'NEWLINE'):
-                break
             self.eat(self.curtype)
             node = Compare(left=node, op=op, right=self.expr())
         return node
@@ -326,7 +348,9 @@ class Parser:
         """primary : atom trailer*"""
         node = self.atom()
         while self.curtype in ('DOT', 'LPAREN', 'LBRACK'):
+            pos = self.curpos
             node = self.trailer()(parent=node)
+            node.pos = pos
         return node
 
     def atom(self):
@@ -339,23 +363,29 @@ class Parser:
                 | FLOAT
                 | INTEGER
                 | ( expr )"""
+        pos = self.curpos
         if self.curtype == 'OWID':
-            node = OWID(name=self.curvalue)
+            name = self.curvalue.upper()
+            for key, aliases in ALIASES.items():
+                name = aliases.get(name, name)
+            node = Workshop[name]
             self.eat('OWID')
-            args = self.args()
-            if args:
-                node.children.extend(args)
+            if type(node) == OWID:
+                args = self.args()
+                if args:
+                    node.children.extend(args)
         elif self.curtype in ('GVAR', 'PVAR', 'NAME'):
             node = self.variable()
-        elif self.curtype == 'COMPARE' and self.curvalue == '<':
+        elif self.curvalue == '<':
             node = self.vector()
         elif self.curtype in ('STRING', 'F_STRING'):
             node = self.string()
         elif self.curtype == 'TIME':
             node = Time(value=self.curvalue)
+            node.pos = self.curpos
             self.eat('TIME')
         elif self.curtype in ('FLOAT', 'INTEGER'):
-            node = Numeral(value=self.curvalue)
+            node = Number(value=self.curvalue)
             self.eat(self.curtype)
         elif self.curtype == 'LPAREN':
             self.eat('LPAREN')
@@ -366,6 +396,7 @@ class Parser:
         else:
             # print(self.tokens[self.pos - 5:self.pos])
             raise Errors.ParseError('Unexpected token of type {} on line {}:{}'.format(self.curtype, self.curtoken.line, self.curtoken.column))
+        node.pos = pos
         return node
 
     def args(self):
@@ -374,7 +405,7 @@ class Parser:
         node = None
         if self.curtype == 'LPAREN':
             self.eat('LPAREN')
-            node = self.arglist().children
+            node = self.arglist()
             self.eat('RPAREN')
         elif self.peek().type == 'INDENT':
             node = self.block().children
@@ -387,12 +418,13 @@ class Parser:
         while self.curtype == 'COMMA':
             self.eat('COMMA')
             node.children.append(self.expr())
-        return node
+        return node.children
 
     def variable(self):
         """variable : GVAR NAME
                     | PVAR (@ primary)? NAME
                     | NAME"""
+        pos = self.curpos
         try:
             if self.curtype == 'GVAR':
                 self.eat('GVAR')
@@ -413,6 +445,7 @@ class Parser:
                 node = GlobalVar(name=name)
         except Errors.ParseError:
             raise Errors.SyntaxError('Cannot parse variable on line {}:{}'.format(*self.last_pos))
+        node.pos = pos
         return node
 
     def vector(self):
@@ -432,24 +465,33 @@ class Parser:
         node = Array()
         self.eat('LBRACK')
         if self.curtype != 'RBRACK':
-            node.elements.extend(self.arglist().children)
+            node.elements.extend(self.arglist())
         self.eat('RBRACK')
         return node
 
     def string(self):
-        """string : (STRING | NAME)+
-                  | F_STRING args"""
-        node = String(value=[])
-        if self.curtype == 'F_STRING':
-            node.value.append(self.curvalue)
-            self.eat('F_STRING')
-            node.children.extend(self.args())
+        """string : STRING
+                  | F_STRING (LPAREN arglist RPAREN)?"""
+        pos = self.curpos
+        if self.curtype == 'STRING':
+            node = String(value=self.curvalue)
+            self.eat('STRING')
+            node.children = [Constant(name='Null')] * 3
         else:
-            while self.curtype in ('STRING', 'NAME'):
-                node.value.append(self.curvalue)
-                self.eat(self.curtype)
-        if not node.value:
-            raise Errors.SyntaxError('Invalid string on line {}:{}'.format(*self.last_pos))
+            string = self.curvalue
+            num_params = string.count('{')
+            formats = []
+            self.eat('F_STRING')
+            if self.curtype == 'LPAREN':
+                self.eat('LPAREN')
+                formats = self.arglist()
+                self.eat('RPAREN')
+            try:
+                assert len(formats) == num_params
+            except AssertionError:
+                raise Errors.SyntaxError('String on line {}:{} expected {} parameters, received {}'.format(*pos, num_params, len(formats)))
+            node = self.parse_string(string, formats)
+        node.pos = pos
         return node
 
     def trailer(self):
@@ -464,7 +506,7 @@ class Parser:
             self.eat('LPAREN')
             args = []
             if self.curtype != 'RPAREN':
-                args = self.arglist().children
+                args = self.arglist()
             self.eat('RPAREN')
             return partial(Call, args=args)
         elif self.curtype == 'LBRACK':

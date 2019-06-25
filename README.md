@@ -113,7 +113,8 @@ Using the technique from [@ItsDeltin](https://github.com/ItsDeltin), the limit t
 the number of variables that can be created is the maximum length of an array (\~1000 variables).
 
 ## Strings
-There are two types of strings in the workshop: string literals and "formatted" strings, which take children as parameters to display. To write a string literal, simply enclose it in `"quotes"`, which can be used for rulenames. Formatted strings are enclosed with backticks and have the children nested the same way as a value.
+Strings are now made with enclosing quotes, using `{}` whenever you need to format a value.
+~There are two types of strings in the workshop: string literals and "formatted" strings, which take children as parameters to display. To write a string literal, simply enclose it in `"quotes"`, which can be used for rulenames. Formatted strings are enclosed with backticks and have the children nested the same way as a value.~
 ```
 Rule "String Demo"
     Event
@@ -239,20 +240,26 @@ y = Victim.jumping and Attacker.moving
 scores.append(123) // Method
 ```
 
-**Attribute & Method Table**
+**Attribute Table**
+
+|Name|Description|
+|:--:|-----------|
+|x|The X component of a vector|
+|y|The Y component of a vector|
+|z|The Z component of a vector|
+|facing|The facing direction of a player|
+|pos|The position of a player|
+|eyepos|The eye position of a player|
+|hero|The hero of a player|
+|team|The team of a player|
+|jumping|Check if a player is holding the Jump key|
+|crouching|Check if a player is holding the Crouch key|
+|moving|Check if the speed of a player is non-zero|
+
+**Method Table**
 
 |Name|Parameters|Description|
-|:--:|----------|-----------|
-|x||The X component of a vector|
-|y||The Y component of a vector|
-|z||The Z component of a vector|
-|facing||The facing direction of an entity|
-|pos||The position of an entity|
-|eyepos||The eye position of an entity|
-|hero||The hero of an entity|
-|jumping||Check if a player is holding the Jump key|
-|crouching||Check if a player is holding the Crouch key|
-|moving||Check if the speed of a player is non-zero|
+|:--:|:--------:|-----------|
 |append|*element*|Appends an element to the given array|
 |index|*element*|Returns the numeric index of an array element|
 |halt||Mitigates the motion of a player|

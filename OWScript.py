@@ -39,7 +39,6 @@ def transpile(text, args):
         pyperclip.copy(code)
         sys.stdout.write('Code copied to clipboard.')
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Generate Overwatch Workshop code from OWScript')
     parser.add_argument('input', nargs='*', type=str, help='Standard input to process')

@@ -1,7 +1,7 @@
 import argparse
 import re
 import sys
-from OWScript.Errors import OWSError
+from OWScript import Errors
 from OWScript.Lexer import Lexer
 from OWScript.Parser import Parser
 from OWScript.Transpiler import Transpiler
@@ -13,6 +13,7 @@ class DEBUG:
 
 def transpile(text, args):
     """Transpiles an OWScript code into Overwatch Workshop rules."""
+    Errors.TEXT = text
     lexer = Lexer(text=text + '\n')
     tokens = lexer.lex()
     if args.debug & DEBUG.TOKENS:
@@ -52,5 +53,5 @@ if __name__ == '__main__':
         text = f.read()
     try:
         transpile(text, args=args)
-    except OWSError as ex:
+    except Errors.OWSError as ex:
         print('Error:', ex)

@@ -15,8 +15,8 @@ class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
         self.pos = 0
-        self.last_pos = (tokens[0].line, tokens[0].column)
         self.call_stack = deque(maxlen=5)
+        Errors.POS = (tokens[0].line, tokens[0].column)
 
     @property
     def curtoken(self):
@@ -54,14 +54,16 @@ class Parser:
             return
         # print(self.curtoken)
         token_type = tokens[0]
-        self.last_pos = self.curpos
+        Errors.POS = self.curpos
         if self.curtype == token_type:
             self.pos += 1
         else:
-            raise Errors.ParseError('Expected token of type {}, but received {} on line {}:{}'.format(token_type, self.curtype, *self.last_pos))
+            raise Errors.ParseError('Expected token of type {}, but received {}'.format(token_type, self.curtype))
 
     def parse_string(self, string, formats):
         string = re.sub(r'["\'`]', '', string)
+        if string == '{}':
+            return formats[0]
         for pattern in sorted(StringConstant._values, key=len, reverse=True):
             patt = re.sub(r'([^a-zA-Z0-9_\s{}])', r'\\\1', pattern)
             patt = re.sub(r'{\d}', '(.+)', patt)
@@ -221,7 +223,7 @@ class Parser:
         try:
             true_block = self.block()
         except Errors.ParseError:
-            raise Errors.SyntaxError('Invalid block after if statement on line {}:{}'.format(*self.last_pos))
+            raise Errors.SyntaxError('Invalid block after if statement')
         false_block = self.elif_else()
         node = If(cond=cond, true_block=true_block, false_block=false_block)
         return node
@@ -236,7 +238,7 @@ class Parser:
             try:
                 return self.block()
             except Errors.ParseError:
-                raise Errors.SyntaxError('Invalid block after else statement on line {}:{}'.format(*self.last_pos))
+                raise Errors.SyntaxError('Invalid block after else statement')
         else:
             return None
         cond = self.expr()
@@ -244,7 +246,7 @@ class Parser:
         try:
             true_block = self.block()
         except Errors.ParseError:
-            raise Errors.SyntaxError('Invalid block after elif statement on line {}:{}'.format(*self.last_pos))
+            raise Errors.SyntaxError('Invalid block after elif statement')
         false_block = self.elif_else()
         return If(cond=cond, true_block=true_block, false_block=false_block)
 
@@ -394,8 +396,8 @@ class Parser:
         elif self.curtype == 'LBRACK':
             node = self.array()
         else:
-            # print(self.tokens[self.pos - 5:self.pos])
-            raise Errors.ParseError('Unexpected token of type {} on line {}:{}'.format(self.curtype, self.curtoken.line, self.curtoken.column))
+            Errors.POS = (self.curtoken.line, self.curtoken.column)
+            raise Errors.ParseError('Unexpected token of type {}'.format(self.curtype))
         node.pos = pos
         return node
 
@@ -444,7 +446,7 @@ class Parser:
                 self.eat('NAME')
                 node = GlobalVar(name=name)
         except Errors.ParseError:
-            raise Errors.SyntaxError('Cannot parse variable on line {}:{}'.format(*self.last_pos))
+            raise Errors.SyntaxError('Invalid variable')
         node.pos = pos
         return node
 
@@ -471,10 +473,10 @@ class Parser:
 
     def string(self):
         """string : STRING
-                  | F_STRING (LPAREN arglist RPAREN)?"""
+                  | F_STRING args?"""
         pos = self.curpos
         if self.curtype == 'STRING':
-            node = String(value=self.curvalue)
+            node = String(value=self.curvalue.strip('"').strip("'"))
             self.eat('STRING')
             node.children = [Constant(name='Null')] * 3
         else:
@@ -482,14 +484,12 @@ class Parser:
             num_params = string.count('{')
             formats = []
             self.eat('F_STRING')
-            if self.curtype == 'LPAREN':
-                self.eat('LPAREN')
-                formats = self.arglist()
-                self.eat('RPAREN')
+            if num_params > 0:
+                formats = self.args()
             try:
                 assert len(formats) == num_params
             except AssertionError:
-                raise Errors.SyntaxError('String on line {}:{} expected {} parameters, received {}'.format(*pos, num_params, len(formats)))
+                raise Errors.SyntaxError('String \'{}\' expected {} parameters, received {}'.format(string, num_params, len(formats)))
             node = self.parse_string(string, formats)
         node.pos = pos
         return node

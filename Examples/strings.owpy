@@ -6,16 +6,16 @@ Rule "String Builder"
     Actions
         pvar money = 100
         test = "Hello"
-        MSG
+        Msg
             Everyone
-            `{0}: {1}`
-                "Money"
-                `{0}!`
-                    pvar money
+            `Money: {}!`
+                pvar money
+        `#use ultimate ability, up`
+        `{}`(pvar money)
 
-%RuleFactory(name_)
+/*%RuleFactory(name_)
     Rule "My Custom " name_
         Event
-            On Global
+            On Global*/
 
-RuleFactory("Portal")
+//RuleFactory("Portal")

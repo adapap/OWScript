@@ -71,7 +71,8 @@ class Lexer:
                     self.column += len(token.value)
                     break
             else:
-                raise Errors.LexError("Unexpected symbol '{}' on line {}:{}".format(self.text[self.pos], self.line, self.column))
+                Errors.POS = (self.line, self.column)
+                raise Errors.LexError("Unexpected symbol '{}'".format(self.text[self.pos]))
         while self.indents[-1] > 0:
             self.column = self.indents.pop()
             dedent = Lexer.DEDENT(line=self.line, column=self.column)

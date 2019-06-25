@@ -1,5 +1,16 @@
+TEXT = None
+POS = None
+
 class OWSError(Exception):
-    pass
+    def __init__(self, msg):
+        global POS, TEXT
+        if POS:
+            line, col = POS
+            POS = None
+            text = '\n' + TEXT.split('\n')[line - 1]
+            char = '\n' + ' ' * (col - 1) + '^\n'
+            msg = 'Line {}'.format(line) + text + char + msg
+        super().__init__(msg)
 
 class LexError(OWSError):
     pass

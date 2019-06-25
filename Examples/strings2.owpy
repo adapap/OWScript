@@ -1,5 +1,0 @@
-Rule "More Strings"
-    Actions
-        pvar dmg = 1
-        pvar def = 2
-        `Damage: {}% / Defend: {}%`(pvar dmg, pvar def)

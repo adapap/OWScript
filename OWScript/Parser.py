@@ -62,17 +62,24 @@ class Parser:
 
     def parse_string(self, string, formats):
         string = re.sub(r'["\'`]', '', string)
+        null = Constant(name='Null')
         if string == '{}':
-            return formats[0]
-        for pattern in sorted(StringConstant._values, key=len, reverse=True):
+            node = String(value='{0}')
+            node.children = [formats[0]] + [null] * 2
+            return node
+        elif string == ' ':
+            node = String(value='')
+            node.children = [null] * 3
+            return node
+        for pattern in StringConstant.sorted_values:
             patt = re.sub(r'([^a-zA-Z0-9_\s{}])', r'\\\1', pattern)
-            patt = re.sub(r'{\d}', '(.+)', patt)
-            regex = re.compile(patt, re.I)
-            match = re.match(regex, string)
+            patt = re.sub(r'{\d}', r'(.+)', patt)
+            match = re.match(patt, string, re.I)
             if match and not match.group(0) == '' and match.end() == len(string):
+                groups = match.groups()
                 children = []
                 try:
-                    for group in match.groups():
+                    for group in groups:
                         if group == '{}':
                             child = formats[0]
                             formats = formats[1:]
@@ -82,11 +89,10 @@ class Parser:
                 except Errors.StringError:
                     continue
                 node = String(value=pattern)
-                node.children = children + [Constant(name='Null')] * (3 - len(children))
+                node.children = children + [null] * (3 - len(children))
                 return node
         else:
             raise Errors.StringError('Invalid string \'{}\''.format(string))
-        return node
 
     def script(self):
         """script : (NEWLINE | stmt)* EOF"""
@@ -272,7 +278,9 @@ class Parser:
 
     def expr(self):
         """expr : logic_or"""
-        return self.logic_or()
+        node = self.logic_or()
+        node.pos = self.curpos
+        return node
 
     def logic_or(self):
         """logic_or : logic_and (OR logic_and)*"""

@@ -6,6 +6,7 @@ Rule "Arithmetic Operations"
         y *= 3 / 3
         y = 2 ^ 2
         y = (3 + 1) % 4
+        pvar num_heroes = 3
         pvar formula = <sin(pvar num_heroes * 360 / Count Of
             Allowed Heroes
                 Event Player /* Call me crazy for supporting inline blocks! */

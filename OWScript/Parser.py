@@ -212,6 +212,7 @@ class Parser:
             return self.while_stmt()
         if self.curtype == 'FOR':
             return self.for_stmt()
+        pos = self.curpos
         node = self.expr()
         if self.curtype == 'ASSIGN':
             op = self.curvalue
@@ -219,6 +220,7 @@ class Parser:
             node = Assign(left=node, op=op, right=self.expr())
         while self.curtype == 'NEWLINE':
             self.eat('NEWLINE')
+        node.pos = pos
         return node
 
     def if_stmt(self):
@@ -440,19 +442,19 @@ class Parser:
                 self.eat('GVAR')
                 name = self.curvalue
                 self.eat('NAME')
-                node = GlobalVar(name=name)
+                node = GlobalVar(name='gvar_' + name)
             elif self.curtype == 'PVAR':
                 self.eat('PVAR')
                 name = self.curvalue
                 self.eat('NAME')
-                node = PlayerVar(name=name)
+                node = PlayerVar(name='pvar_' + name)
                 if self.curvalue == '@':
                     self.eat('AT')
                     node.player = self.primary()
             elif self.curtype == 'NAME':
                 name = self.curvalue
                 self.eat('NAME')
-                node = GlobalVar(name=name)
+                node = GlobalVar(name='gvar_' + name)
         except Errors.ParseError:
             raise Errors.SyntaxError('Invalid variable')
         node.pos = pos

@@ -79,6 +79,10 @@ class Variable(WorkshopType):
     _values = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
     _extends = []
 
+    def __init__(self, value, index):
+        self.value = value
+        self.index = index
+
 class PlayEffect(WorkshopType):
     _values = ['BAD EXPLOSION', 'BAD PICKUP EFFECT', 'BUFF EXPLOSION SOUND', 'BUFF IMPACT SOUND', 'DEBUFF IMPACT SOUND', 'EXPLOSION SOUND', 'GOOD EXPLOSION', 'GOOD PICKUP EFFECT', 'RING EXPLOSION', 'RING EXPLOSION SOUND']
     _extends = []
@@ -189,6 +193,24 @@ class Number(WorkshopType):
 
     def __init__(self, value):
         self.value = value
+
+    def __add__(self, other):
+        return float(self.value) + float(other.value)
+
+    def __sub__(self, other):
+        return float(self.value) - float(other.value)
+
+    def __mul__(self, other):
+        return float(self.value) * float(other.value)
+
+    def __truediv__(self, other):
+        return float(self.value) / float(other.value)
+
+    def __pow__(self, other):
+        return float(self.value) ** float(other.value)
+
+    def __mod__(self, other):
+        return float(self.value) % float(other.value)
 
     def __repr__(self):
         return '{}'.format(self.value)

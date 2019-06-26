@@ -27,5 +27,8 @@ class InvalidParameter(SyntaxError):
 class StringError(SyntaxError):
     pass
 
+class NameError(SyntaxError):
+    pass
+
 class NotImplementedError(OWSError):
     pass

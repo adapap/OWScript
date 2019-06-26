@@ -7,5 +7,5 @@ Rule "Ton commentaire n'est pas necessaire"
         // x = 1
         Msg(Event Player, /* even inline comments
         should work */ "Hello")
-        x = 1 // Yes, it is indeed
+        var = 1 // Yes, it is indeed
         /* Comments are the best! */

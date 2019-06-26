@@ -387,72 +387,73 @@ class Transpiler:
 
     def visitCall(self, node):
         callee = node.parent
-        args = list(map(self.visit, node.args))
-        code = ''
-        if type(callee) == Attribute:
-            method = callee.name
-            arity = {
-                'append': 1,
-                'index': 1,
-                'halt': 0
-            }
-            try:
-                assert len(args) == arity.get(method)
-            except AssertionError:
-                Errors.POS = callee.pos
-                raise Errors.SyntaxError('{} expected {} parameter, received {}'.format(method, arity.get(method), len(args)))
-            if method == 'append':
-                elem = self.visit(node.args[0])
-                array = self.arrays.get(callee.parent.name)
-                if not array:
-                    self.arrays[callee.parent.name] = Array(elements=[])
-                self.arrays[callee.parent.name].append(elem)
-                index = self.lookup(callee.parent)
-                if type(callee.parent) == GlobalVar:
-                    code += f'Modify Global Variable At Index(A, {index}, Append To Array, {elem})'
-                elif type(callee.parent) == PlayerVar:
-                    player = self.visit(callee.parent.player)
-                    code += f'Modify Player Variable At Index({player}, A, {index}, Append To Array, {elem})'
-            elif method == 'index':
-                elem = self.visit(node.args[0])
-                array = self.arrays.get(callee.parent.name)
-                if not array:
-                    self.arrays[callee.parent.name] = Array(elements=[])
-                code += str(self.arrays[callee.parent.name].index(elem))
-            elif method == 'halt':
-                code += 'Apply Impulse({}, Down, Multiply(0.001, 0.001), To World, Cancel Contrary Motion)'.format(self.visit(callee.parent))
-            else:
-                raise Errors.SyntaxError("Unknown method '{}'".format(method))
-        else:
-            Errors.POS = callee.pos
-            try:
-                function = self.functions[callee.name]
-                if type(function) == Function:
-                    assert len(function.params) == len(node.args)
-                    params = [param.name for param in function.params]
-                    scope = Scope(name=callee.name, parent=self.scope)
-                    scope.namespace.update(dict(zip(params, node.args)))
-                    children = []
-                    for child in function.children:
-                        child_node = child.children[0]
-                        child_is_func = type(child_node) == Call and child_node.parent.name in self.functions
-                        if child_is_func:
-                            self.indent_level -= 1
-                        children.append(self.visit(child, scope=scope))
-                        if child_is_func:
-                            self.indent_level += 1
-                    code += (';\n' + self.tabs).join(children)
-                else:
-                    try:
-                        result = function(self, node.args)
-                        code += self.visit(result)
-                    except Exception as e:
-                        raise Errors.SyntaxError('Invalid parameters for function {}'.format(callee.name))
-            except AssertionError:
-                raise Errors.SyntaxError("{} expected {} parameters, received {}".format(callee.name, len(function.params), len(node.args)))
-            except KeyError:
-                raise Errors.SyntaxError("Undefined function '{}'".format(callee.name))
-        return code
+        print(callee, type(callee))
+        # args = list(map(self.visit, node.args))
+        # code = ''
+        # if type(callee) == Attribute:
+        #     method = callee.name
+        #     arity = {
+        #         'append': 1,
+        #         'index': 1,
+        #         'halt': 0
+        #     }
+        #     try:
+        #         assert len(args) == arity.get(method)
+        #     except AssertionError:
+        #         Errors.POS = callee.pos
+        #         raise Errors.SyntaxError('{} expected {} parameter, received {}'.format(method, arity.get(method), len(args)))
+        #     if method == 'append':
+        #         elem = self.visit(node.args[0])
+        #         array = self.arrays.get(callee.parent.name)
+        #         if not array:
+        #             self.arrays[callee.parent.name] = Array(elements=[])
+        #         self.arrays[callee.parent.name].append(elem)
+        #         index = self.lookup(callee.parent)
+        #         if type(callee.parent) == GlobalVar:
+        #             code += f'Modify Global Variable At Index(A, {index}, Append To Array, {elem})'
+        #         elif type(callee.parent) == PlayerVar:
+        #             player = self.visit(callee.parent.player)
+        #             code += f'Modify Player Variable At Index({player}, A, {index}, Append To Array, {elem})'
+        #     elif method == 'index':
+        #         elem = self.visit(node.args[0])
+        #         array = self.arrays.get(callee.parent.name)
+        #         if not array:
+        #             self.arrays[callee.parent.name] = Array(elements=[])
+        #         code += str(self.arrays[callee.parent.name].index(elem))
+        #     elif method == 'halt':
+        #         code += 'Apply Impulse({}, Down, Multiply(0.001, 0.001), To World, Cancel Contrary Motion)'.format(self.visit(callee.parent))
+        #     else:
+        #         raise Errors.SyntaxError("Unknown method '{}'".format(method))
+        # else:
+        #     Errors.POS = callee.pos
+        #     try:
+        #         function = self.functions[callee.name]
+        #         if type(function) == Function:
+        #             assert len(function.params) == len(node.args)
+        #             params = [param.name for param in function.params]
+        #             scope = Scope(name=callee.name, parent=self.scope)
+        #             scope.namespace.update(dict(zip(params, node.args)))
+        #             children = []
+        #             for child in function.children:
+        #                 child_node = child.children[0]
+        #                 child_is_func = type(child_node) == Call and child_node.parent.name in self.functions
+        #                 if child_is_func:
+        #                     self.indent_level -= 1
+        #                 children.append(self.visit(child, scope=scope))
+        #                 if child_is_func:
+        #                     self.indent_level += 1
+        #             code += (';\n' + self.tabs).join(children)
+        #         else:
+        #             try:
+        #                 result = function(self, node.args)
+        #                 code += self.visit(result)
+        #             except Exception as e:
+        #                 raise Errors.SyntaxError('Invalid parameters for function {}'.format(callee.name))
+        #     except AssertionError:
+        #         raise Errors.SyntaxError("{} expected {} parameters, received {}".format(callee.name, len(function.params), len(node.args)))
+        #     except KeyError:
+        #         raise Errors.SyntaxError("Undefined function '{}'".format(callee.name))
+        # return code
 
     def visit(self, node, scope=None):
         method_name = 'visit' + type(node).__name__

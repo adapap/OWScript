@@ -7,6 +7,71 @@ class AST:
     def format_children(self):
         return ', '.join(map(repr, self.children))
 
+    @property
+    def x(self):
+        return 'X Component Of({})'
+
+    @property
+    def y(self):
+        return 'Y Component Of({})'
+
+    @property
+    def z(self):
+        return 'Z Component Of({})'
+
+    @property
+    def moving(self):
+        return 'Compare(Speed Of({}), >, 0)'
+
+    @property
+    def jumping(self):
+        return 'Is In Air({})'
+
+    @property
+    def facing(self):
+        return 'Facing Direction Of({})'
+
+    @property
+    def pos(self):
+        return 'Position Of({})'
+
+    @property
+    def eyepos(self):
+        return 'Eye Position({})'
+
+    @property
+    def hero(self):
+        return 'Hero Of({})'
+
+    @property
+    def team(self):
+        return 'Team Of({})'
+
+    @property
+    def jumping(self):
+        return 'Is Button Held({}, Jump)'
+
+    @property
+    def crouching(self):
+        return 'Is Button Held({}, Crouch)'
+
+    @property
+    def interacting(self):
+        return 'Is Button Held({}, Interact)'
+
+    @property
+    def lmb(self):
+        return 'Is Button Held({}, Primary Fire)'
+
+    @property
+    def rmb(self):
+        return 'Is Button Held({}, Secondary Fire)'
+
+    @property
+    def moving(self):
+        return 'Compare(Speed Of({}), >, 0)'
+
+
     def string(self, indent=0):
         string = ''
         if not self.__class__ == Block:
@@ -218,6 +283,7 @@ class Number(WorkshopType):
 class Vector(WorkshopType):
     _values = ['VELOCITY OF']
     _extends = [Any]
+    
 
 class Direction(WorkshopType):
     _values = ['DIRECTION TOWARDS', 'FACING DIRECTION OF', 'RAY CAST HIT NORMAL', 'VECTOR TOWARDS', 'LEFT', 'RIGHT', 'FORWARD', 'BACKWARD', 'UP', 'DOWN']
@@ -234,6 +300,7 @@ class BaseVector(WorkshopType):
 class Player(WorkshopType):
     _values = ['PLAYERS IN VIEW ANGLE', 'PLAYER CLOSEST TO RETICLE', 'ALL DEAD PLAYERS', 'ALL LIVING PLAYERS', 'ALL PLAYERS', 'ALL PLAYERS NOT ON OBJECTIVE', 'ALL PLAYERS ON OBJECTIVE', 'ATTACKER', 'CLOSEST PLAYER TO', 'EVENT PLAYER', 'FARTHEST PLAYER FROM', 'LAST CREATED ENTITY', 'NULL', 'PLAYER CARRYING FLAG', 'PLAYERS IN SLOT', 'PLAYERS ON HERO', 'PLAYERS WITHIN RADIUS', 'RAY CAST HIT PLAYER', 'VICTIM']
     _extends = [BaseVector]
+    
 
 class Team(WorkshopType):
     _values = ['CONTROL MODE SCORING TEAM', 'OPPOSITE TEAM OF', 'TEAM', 'TEAM OF']

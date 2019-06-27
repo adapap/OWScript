@@ -5,8 +5,6 @@ Rule "Attributes"
         All
 
     Conditions
-        Position Of
-            Event Player
-        .X < 10
+        Position Of(Event Player).x < 10
         Event Player.moving == True
         Event Player.jumping == True

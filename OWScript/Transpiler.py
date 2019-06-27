@@ -5,6 +5,7 @@ from string import capwords
 try:
     from . import Errors
     from .AST import *
+    from .Workshop import Workshop
 except ImportError:
     from AST import *
 
@@ -110,16 +111,14 @@ class Transpiler:
     def visitOWID(self, node, scope):
         name = node.name.title()
         code = name
-        Errors.POS = node.pos
         try:
             assert len(node.args) == len(node.children)
         except AssertionError:
             raise Errors.SyntaxError('\'{}\' requires {} parameters ({}), received {}'.format(
                 name, len(node.args), ', '.join(map(lambda arg: arg.__name__, node.args)), len(node.children))
-            )
+            , pos=node._pos)
         for index, types in enumerate(zip(node.args, node.children)):
             arg, child = types
-            Errors.POS = child.pos
             if arg is None:
                 continue
             extends = arg._extends if hasattr(arg, '_extends') else []
@@ -128,7 +127,9 @@ class Transpiler:
                 continue
             value = self.visit(child, scope).upper()
             if value not in values:
-                raise Errors.InvalidParameter('\'{}\' expected type {} for parameter {}, received {}'.format(name, arg.__name__, index + 1, child.__class__.__name__))
+                raise Errors.InvalidParameter('\'{}\' expected type {} for parameter {}, received {}'.format(
+                    name, arg.__name__, index + 1, child.__class__.__name__)
+                , pos=child._pos)
         children = [self.visit(child, scope) for child in node.children]
         code += '(' + ', '.join(children) + ')'
         return code
@@ -179,8 +180,7 @@ class Transpiler:
             except ValueError:
                 # create temp variable, adjust and rebuild array
                 # index = self.visit(node.left.index)
-                Errors.POS = node.pos
-                raise Errors.NotImplementedError('Array assignment only supports literal indices')
+                raise Errors.NotImplementedError('Array assignment only supports literal indices', pos=node._pos)
             player = self.visit(parent.player, scope) if type(parent) == PlayerVar else None
             scope.assign(name=name, value=value, index=index)
         else:
@@ -288,7 +288,7 @@ class Transpiler:
         var = scope.get(name)
         consts = (Number, Constant, String)
         if not var:
-            raise Errors.NameError('\'{}\' is undefined'.format(node.name[5:]), pos=node.pos)
+            raise Errors.NameError('\'{}\' is undefined'.format(node.name[5:]), pos=node._pos)
         elif type(var) != Variable:
             return self.visit(var, scope)
         elif type(var.value) in consts:
@@ -300,8 +300,7 @@ class Transpiler:
         name = node.name
         var = scope.get(name)
         if not var:
-            Errors.POS = node.pos
-            raise Errors.NameError('pvar \'{}\' is undefined'.format(node.name[5:]))
+            raise Errors.NameError('pvar \'{}\' is undefined'.format(node.name[5:]), pos=node._pos)
         elif type(var.value) in (Number, Constant, String):
             return self.visit(var.value, scope)
         node = 'Value In Array(Player Variable({}, A), {})'.format(self.visit(node.player, scope), var.index)
@@ -355,8 +354,7 @@ class Transpiler:
                 index = int(node.index.value)
                 var = scope.get(node.parent.name)
                 if not var:
-                    Errors.POS = node.parent.pos
-                    raise Errors.NameError('{}\'{}\' is undefined'.format('pvar ' if type(node.parent) == PlayerVar else '', node.parent.name[5:]))
+                    raise Errors.NameError('{}\'{}\' is undefined'.format('pvar ' if type(node.parent) == PlayerVar else '', node.parent.name[5:]), pos=node.parent._pos)
                 try:
                     item = var.value[index]
                 except IndexError:
@@ -368,22 +366,10 @@ class Transpiler:
 
     def visitAttribute(self, node, scope):
         attr = node.name.lower()
-        attribute = {
-            'x': 'X Component Of({})',
-            'y': 'Y Component Of({})',
-            'z': 'Z Component Of({})',
-            'facing': 'Facing Direction Of({})',
-            'pos': 'Position Of({})',
-            'eyepos': 'Eye Position({})',
-            'hero': 'Hero Of({})',
-            'team': 'Team Of({})',
-            'jumping': 'Is Button Held({}, Jump)',
-            'crouching': 'Is Button Held({}, Crouch)',
-            'interacting': 'Is Button Held({}, Interact)',
-            'lmb': 'Is Button Held({}, Primary Fire)',
-            'rmb': 'Is Button Held({}, Secondary Fire)',
-            'moving': 'Compare(Speed Of({}), >, 0)'
-        }.get(attr)
+        try:
+            attribute = getattr(node.parent, attr)
+        except AttributeError:
+            raise Errors.AttributeError('\'{}\' has no attribute \'{}\''.format(node.parent.name.title(), attr), pos=node._pos)
         code = attribute.format(self.visit(node.parent, scope))
         return code
 
@@ -401,13 +387,13 @@ class Transpiler:
             print('called by:', type(parent))
         var = scope.get(func_name)
         if not var:
-            raise Errors.NameError('Undefined function \'{}\''.format(func_name), pos=parent.pos)
+            raise Errors.NameError('Undefined function \'{}\''.format(func_name), pos=parent._pos)
         func = var.value
         # Assert arity
         try:
             assert len(func.params) == len(node.args)
         except AssertionError:
-            raise Errors.InvalidParameter('\'{}\' expected {} parameters, received {}'.format(func_name, len(func.params), len(node.args)), pos=node.pos)
+            raise Errors.InvalidParameter('\'{}\' expected {} parameters, received {}'.format(func_name, len(func.params), len(node.args)), pos=node._pos)
         # Resolve variables in call
         scope = Scope(name=func_name, parent=scope)
         scope.namespace.update(dict(zip(map(lambda p: p.name, func.params), node.args)))

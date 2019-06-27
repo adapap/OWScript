@@ -16,7 +16,6 @@ class Parser:
         self.tokens = tokens
         self.pos = 0
         self.call_stack = deque(maxlen=5)
-        Errors.POS = (tokens[0].line, tokens[0].column)
 
     @property
     def curtoken(self):
@@ -54,11 +53,11 @@ class Parser:
             return
         # print(self.curtoken)
         token_type = tokens[0]
-        Errors.POS = self.curpos
+        pos = self.curpos
         if self.curtype == token_type:
             self.pos += 1
         else:
-            raise Errors.ParseError('Expected token of type {}, but received {}'.format(token_type, self.curtype))
+            raise Errors.ParseError('Expected token of type {}, but received {}'.format(token_type, self.curtype), pos=pos)
 
     def parse_string(self, string, formats):
         string = re.sub(r'["\'`]', '', string)
@@ -223,7 +222,7 @@ class Parser:
             node = Assign(left=node, op=op, right=self.expr())
         while self.curtype == 'NEWLINE':
             self.eat('NEWLINE')
-        node.pos = pos
+        node._pos = pos
         return node
 
     def if_stmt(self):
@@ -293,7 +292,7 @@ class Parser:
     def expr(self):
         """expr : logic_or"""
         node = self.logic_or()
-        node.pos = self.curpos
+        node._pos = self.curpos
         return node
 
     def logic_or(self):
@@ -374,7 +373,7 @@ class Parser:
         while self.curtype in ('DOT', 'LPAREN', 'LBRACK'):
             pos = self.curpos
             node = self.trailer()(parent=node)
-            node.pos = pos
+            node._pos = pos
         return node
 
     def atom(self):
@@ -406,7 +405,6 @@ class Parser:
             node = self.string()
         elif self.curtype == 'TIME':
             node = Time(value=self.curvalue)
-            node.pos = self.curpos
             self.eat('TIME')
         elif self.curtype in ('FLOAT', 'INTEGER'):
             node = Number(value=self.curvalue)
@@ -418,9 +416,9 @@ class Parser:
         elif self.curtype == 'LBRACK':
             node = self.array()
         else:
-            Errors.POS = (self.curtoken.line, self.curtoken.column)
-            raise Errors.ParseError('Unexpected token of type {}'.format(self.curtype))
-        node.pos = pos
+            pos = (self.curtoken.line, self.curtoken.column)
+            raise Errors.ParseError('Unexpected token of type {}'.format(self.curtype), pos=pos)
+        node._pos = pos
         return node
 
     def args(self):
@@ -469,7 +467,7 @@ class Parser:
                 node = GlobalVar(name='gvar_' + name)
         except Errors.ParseError:
             raise Errors.SyntaxError('Invalid variable')
-        node.pos = pos
+        node._pos = pos
         return node
 
     def vector(self):
@@ -513,7 +511,7 @@ class Parser:
             except AssertionError:
                 raise Errors.SyntaxError('String \'{}\' expected {} parameters, received {}'.format(string, num_params, len(formats)))
             node = self.parse_string(string, formats)
-        node.pos = pos
+        node._pos = pos
         return node
 
     def trailer(self):

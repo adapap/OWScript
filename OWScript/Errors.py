@@ -28,6 +28,9 @@ class StringError(SyntaxError):
 class NameError(SyntaxError):
     pass
 
+class AttributeError(SyntaxError):
+    pass
+
 class NotImplementedError(OWSError):
     pass
 

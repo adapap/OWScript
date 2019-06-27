@@ -373,10 +373,10 @@ class Compare(BinaryOp):
 class Assign(BinaryOp):
     pass
 
-class GlobalVar(Data):
+class GlobalVar(Data, Array):
     vartype = 'global'
 
-class PlayerVar(Data):
+class PlayerVar(Data, Array):
     vartype = 'player'
     def __init__(self, name, player=None):
         super().__init__(name)
@@ -416,6 +416,13 @@ class Function(AST):
 
     def __repr__(self):
         return '%{}({}): {}'.format(self.name, ', '.join(map(repr, self.params)), self.format_children)
+
+class Return(AST):
+    def __init__(self, value):
+        self.value = value
+
+    def __repr__(self):
+        return 'return {}'.format(self.value)
 
 class Attribute(Trailer):
     def __init__(self, name, parent):

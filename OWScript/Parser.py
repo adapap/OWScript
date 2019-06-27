@@ -105,13 +105,13 @@ class Parser:
         return node
 
     def stmt(self):
-        """stmt : (funcdef | ruledef | call)"""
+        """stmt : (funcdef | ruledef | line)"""
         if self.curvalue == '%':
             return self.funcdef()
         elif self.curtype in ('DISABLED', 'RULE'):
             return self.ruledef()
         else:
-            return self.primary()
+            return self.line()
 
     def funcdef(self):
         """funcdef : % NAME params? funcbody"""
@@ -201,6 +201,7 @@ class Parser:
                 ( if_stmt
                 | while_stmt
                 | for_stmt
+                | return_stmt
                 | expr ASSIGN expr
                 | expr
                 )? NEWLINE"""
@@ -212,6 +213,8 @@ class Parser:
             return self.while_stmt()
         if self.curtype == 'FOR':
             return self.for_stmt()
+        if self.curtype == 'RETURN':
+            return self.return_stmt()
         pos = self.curpos
         node = self.expr()
         if self.curtype == 'ASSIGN':
@@ -277,6 +280,15 @@ class Parser:
         body = self.block()
         node = For(pointer=pointer, iterable=iterable, body=body)
         return node
+
+    def return_stmt(self):
+        """return_stmt : RETURN expr? NEWLINE"""
+        self.eat('RETURN')
+        expr = None
+        if self.curtype != 'NEWLINE':
+            expr = self.expr()
+        self.eat('NEWLINE')
+        return Return(value=expr)
 
     def expr(self):
         """expr : logic_or"""

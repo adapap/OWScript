@@ -95,6 +95,7 @@ class Tokens:
     PVAR : r'PVAR\b'
     GVAR : r'GVAR\b'
     DISABLED : r'DISABLED\b'
+    RETURN : r'RETURN\b'
     RULE : r'RULE\b'
     OWID : fr'(?<!\.)({"|".join(OWID)})(?=([\b\s\n\(\),\.\]]))'
     ANNOTATION : r'[_a-zA-Z0-9][_a-zA-Z0-9]*:(?!\n)'

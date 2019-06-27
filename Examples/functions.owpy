@@ -4,10 +4,10 @@
         All
         All
 %add_rule(a, b, name_)
-    Rule name_
+    Rule "test"
         event_func()
         Actions
-            x = a + b
+            c = a + b
 Rule "Function Demo"
     event_func()
 add_rule(1, 5, "Add Two")

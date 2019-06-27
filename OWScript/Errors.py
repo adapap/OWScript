@@ -1,12 +1,10 @@
 TEXT = None
-POS = None
 
 class OWSError(Exception):
-    def __init__(self, msg):
-        global POS, TEXT
-        if POS:
-            line, col = POS
-            POS = None
+    def __init__(self, msg, pos):
+        global TEXT
+        if pos:
+            line, col = pos
             text = '\n' + TEXT.split('\n')[line - 1]
             char = '\n' + ' ' * (col - 1) + '^\n'
             msg = 'Line {}'.format(line) + text + char + msg
@@ -32,3 +30,7 @@ class NameError(SyntaxError):
 
 class NotImplementedError(OWSError):
     pass
+
+class ReturnError(Exception):
+    def __init__(self, value):
+        self.value = value

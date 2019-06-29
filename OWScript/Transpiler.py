@@ -37,9 +37,9 @@ class Scope:
         return f"<Scope '{self.name}'[{self.level}]>"
 
 class Builtin:
-    def range_(tp, args):
-        args = map(tp.visit, args)
-        elements = list(map(lambda n: Numeral(value=str(n)), (range(*map(int, args)))))
+    def range(*args):
+        args = list(map(int, args))
+        elements = list(map(Number, map(str, range(*args))))
         array = Array(elements=elements)
         return array
 
@@ -53,11 +53,9 @@ class Builtin:
         node.children.extend([*n, OWID(name='Up')])
         return node
 
-    functions = {
-        'range': range_,
-        'ceil': ceil,
-        'floor': floor
-    }
+    range: range
+    ceil: ceil
+    floor: floor
 
 class Transpiler:
     def __init__(self, tree, indent_size=3):
@@ -230,27 +228,14 @@ class Transpiler:
         return code
 
     def visitFor(self, node, scope):
+        # Skip to for block on action list start
+        # Set the current array element as a temporary variable
+        # Evaluate block
+        # Post-loop actions (reset index pointer, pop loop index)
         code = ''
         pointer = node.pointer
         iterable = None
-        if type(node.iterable) == Call:
-            function = self.functions[node.iterable.parent.name]
-            if type(function) != Function:
-                result = function(self, node, scope.iterable.args)
-                if type(result) == Array:
-                    iterable = result
-        elif node.iterable.name in self.arrays:
-            iterable = self.arrays.get(node.iterable.name)
-        if iterable:
-            lines = []
-            for elem in iterable:
-                scope = Scope(name='for', parent=scope, namespace={pointer: elem})
-                for child in node.body.children:
-                    lines.append(self.visit(child, scope))
-            code += (';\n' + self.tabs).join(lines)
-        else:
-            raise NotImplementedError('Overwatch types not supported in loops yet')
-        return code
+        print('iterable:', type(node.iterable))
 
     def visitBinaryOp(self, node, scope):
         if type(node.left) == Number and type(node.right) == Number:
@@ -383,7 +368,7 @@ class Transpiler:
     def visitCall(self, node, scope):
         parent = node.parent
         base_name = self.base_node(node).name
-        base_node = scope.get(base_name).value
+        base_node = scope.get(base_name)
         code = ''
         if type(parent) == Attribute:
             method = getattr(base_node, parent.name)
@@ -398,23 +383,29 @@ class Transpiler:
             func_name = parent.name[5:]
         else:
             print('called by:', type(parent))
-        var = scope.get(base_name)
-        if not var:
-            raise Errors.NameError('Undefined function \'{}\''.format(func_name), pos=parent._pos)
-        func = var.value
-        # Assert arity
-        try:
-            assert len(func.params) == len(node.args)
-        except AssertionError:
-            raise Errors.InvalidParameter('\'{}\' expected {} arguments, received {}'.format(func_name, len(func.params), len(node.args)), pos=node._pos)
-        # Resolve variables in call
-        scope = Scope(name=func_name, parent=scope)
-        scope.namespace.update(dict(zip(map(lambda p: p.name, func.params), node.args)))
-        for child in func.children:
+        if not base_node:
+            raise Errors.NameError('Undefined function \'{}\''.format(base_name), pos=parent._pos)
+        func = base_node if type(base_node) != Variable else base_node.value
+        if type(func) == Function:
+            # Assert arity
             try:
-                code += self.visit(child, scope=scope)
-            except Errors.ReturnError as ex:
-                code += self.visit(ex.value, scope=scope)
+                assert len(func.params) == len(node.args)
+            except AssertionError:
+                raise Errors.InvalidParameter('\'{}\' expected {} arguments, received {}'.format(func_name, len(func.params), len(node.args)), pos=node._pos)
+            # Resolve variables in call
+            scope = Scope(name=func_name, parent=scope)
+            scope.namespace.update(dict(zip(map(lambda p: p.name, func.params), node.args)))
+            for child in func.children:
+                try:
+                    code += self.visit(child, scope=scope)
+                except Errors.ReturnError as ex:
+                    code += self.visit(ex.value, scope=scope)
+        else:
+            try:
+                result = func(*node.args)
+                code += self.visit(result, scope)
+            except TypeError as ex:
+                print('typeerror', ex)
         return code
 
     def visitReturn(self, node, scope):
@@ -434,5 +425,7 @@ class Transpiler:
         return code
 
     def run(self):
-        code = self.visit(self.tree, scope=Scope(name='global'))
+        global_scope = Scope(name='global')
+        global_scope.namespace.update({'gvar_' + name: func for name, func in Builtin.__annotations__.items()})
+        code = self.visit(self.tree, scope=global_scope)
         return code

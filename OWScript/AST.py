@@ -259,6 +259,9 @@ class Number(WorkshopType):
     def __init__(self, value):
         self.value = value
 
+    def __int__(self):
+        return int(self.value)
+
     def __add__(self, other):
         return float(self.value) + float(other.value)
 

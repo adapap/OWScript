@@ -9,3 +9,7 @@ Rule "For Loop"
                 Direction From Angles
                     horizontal: ang
                     vertical: 45
+        for i in range(3):
+            Msg(Everyone, i)
+        for player in Everyone:
+            Msg(player, "Hello")

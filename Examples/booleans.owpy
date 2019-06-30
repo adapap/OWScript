@@ -3,4 +3,4 @@ Rule "Boolean Operators"
         On Global
 
     Actions
-        x = 1 and 2 or 3 and not 4
+        n = 1 and 2 or 3 and not 4

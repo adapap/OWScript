@@ -3,6 +3,7 @@ Rule "If and Else"
         On Global
     Actions
         z = 1
+        h = 2
         if z == 1:
             z = 3
             y = 4

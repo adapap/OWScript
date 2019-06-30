@@ -97,7 +97,7 @@ class Tokens:
     DISABLED : r'DISABLED\b'
     RETURN : r'RETURN\b'
     RULE : r'RULE\b'
-    OWID : fr'(?<!\.)({"|".join(OWID)})(?=([\b\s\n\(\),\.\]]))'
+    OWID : fr'(?<!\.)({"|".join(OWID)})(?=([\b\s\n\(\),\.\]]|:\n))'
     ANNOTATION : r'[_a-zA-Z0-9][_a-zA-Z0-9]*:(?!\n)'
     RULEBLOCK : r'(EVENT|CONDITIONS|ACTIONS)\b'
     NAME : r'[_a-zA-Z][_\-a-zA-Z0-9]*'

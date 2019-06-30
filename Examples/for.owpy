@@ -7,9 +7,12 @@ Rule "For Loop"
         if True:
             for ang in angles2:
                 Set Facing
+                    Event Player
                     Direction From Angles
                         horizontal: ang
                         vertical: 45
+                    To World
+                Msg(Everyone, "HEllo")
         // for i in range(3):
         //     Msg(Everyone, i)
         // for player in Everyone:

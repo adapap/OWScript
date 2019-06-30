@@ -271,8 +271,7 @@ class Parser:
     def for_stmt(self):
         """for_stmt : FOR NAME IN primary : block"""
         self.eat('FOR')
-        pointer = self.curvalue
-        self.eat('NAME')
+        pointer = self.variable()
         self.eat('IN')
         iterable = self.primary()
         self.eat('COLON')

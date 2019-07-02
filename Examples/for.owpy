@@ -4,15 +4,14 @@ Rule "For Loop"
     Actions
         angles = [15, 30, 45, 60, 75, 90]
         angles2 = range(15, 91, 15)
-        if True:
-            for ang in angles2:
-                Set Facing
-                    Event Player
-                    Direction From Angles
-                        horizontal: ang
-                        vertical: 45
-                    To World
-                Msg(Everyone, "HEllo")
+        for ang in angles:
+            Set Facing
+                Event Player
+                Direction From Angles
+                    horizontal: ang
+                    vertical: 45
+                To World
+            Msg(Everyone, "HEllo")
         // for i in range(3):
         //     Msg(Everyone, i)
         // for player in Everyone:

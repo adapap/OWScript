@@ -107,7 +107,7 @@ class Transpiler:
         return code
 
     def visitFunction(self, node, scope):
-        scope.assign(node.name, node)
+        scope.assign('gvar_' + node.name, node)
         return ''
 
     def visitBlock(self, node, scope):

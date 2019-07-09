@@ -59,7 +59,7 @@ class Parser:
         else:
             raise Errors.ParseError('Expected token of type {}, but received {}'.format(token_type, self.curtype), pos=pos)
 
-    def parse_string(self, string, formats):
+    def parse_string(self, string, formats, _pos):
         string = re.sub(r'["\'`]', '', string)
         null = Constant(name='Null')
         if string == '{}':
@@ -83,15 +83,15 @@ class Parser:
                             child = formats[0]
                             formats = formats[1:]
                         else:
-                            child = self.parse_string(group, formats)
+                            child = self.parse_string(group, formats, _pos)
                         children.append(child)
                 except Errors.StringError:
                     continue
-                node = String(value=pattern)
+                node = String(value=pattern.replace('_', ' '))
                 node.children = children + [null] * (3 - len(children))
                 return node
         else:
-            raise Errors.StringError('Invalid string \'{}\''.format(string))
+            raise Errors.StringError('Invalid string \'{}\''.format(string), pos=_pos)
 
     def script(self):
         """script : (NEWLINE | stmt)* EOF"""
@@ -509,7 +509,7 @@ class Parser:
                 assert len(formats) == num_params
             except AssertionError:
                 raise Errors.SyntaxError('String \'{}\' expected {} parameters, received {}'.format(string, num_params, len(formats)))
-            node = self.parse_string(string, formats)
+            node = self.parse_string(string, formats, pos)
         node._pos = pos
         return node
 

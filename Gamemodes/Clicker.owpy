@@ -1,7 +1,7 @@
-%Event_Global
+%Global
     Event
         On Global
-%Event_Team(team_)
+%Each(team_)
     Event
         On Each Player
         team_
@@ -14,19 +14,8 @@
         Scale: scale
         Clipping: Clip Against Surfaces
         Reevaluation: Visible To And String
-%CodeText(who, code_1, code_2, code_3, code_4, code_5, pos, scale)
-    GameText(who, `{0}: {1}`
-        "Save"
-        `{0} + {1}`
-            code_1
-            `{0} + {1}`
-                code_2
-                `{0} + {1}`
-                    code_3
-                    `{0} + {1}`
-                        code_4
-                        code_5
-    , pos, scale)
+%CodeText(who, code, pos, scale)
+    GameText(who, `Save: {} + {} + {} + {} + {}`(code[0], code[1], code[2], code[3], code[4]), pos, scale)
 %BigHud(loc, text, color)
     Hud
         Visible_To: Event Player
@@ -67,7 +56,7 @@
 %BoomSound
     Sound(Explosion Sound)
 %MissingFunds
-    Big Msg(Event Player, `{0} {1} {2}`("Go", "Find", `{0} {1}`("More", "Money")))
+    Big Msg(Event Player, `Go Find More Money`)
 %Warp(player, destination, facing)
     Teleport(player, destination)
     Set Facing
@@ -90,7 +79,7 @@
 %UpgradePortal(pos)
     Portal(pos, Good Aura, Yellow, "Upgrades")
 %ShopPortal(pos)
-    Portal(pos, Good Aura, Purple, `{0} {1}`("Current", "Boss"))
+    Portal(pos, Good Aura, Purple, `Current Boss`)
 %NextBossPortal(pos, text)
     Portal(pos, Good Aura, Blue, text)
 %UpgradeEffect(pos, color)
@@ -102,10 +91,7 @@
         Radius: 1.5
         Reevaluation: Visible To
 %UpgradeText(upg, cost_var)
-    GameText(Event Player, `{0}: {1}`
-            upgrade_names[upg]
-            cost_var
-        , upgrade_positions[upg] + Up * 0.5, 1.5)
+    GameText(Event Player, `{}: {}`(upgrade_names[upg], cost_var), upgrade_positions[upg] + Up * 0.5, 1.5)
 %SaveIcon(pos, icon, color)
     Create Icon
         Visible_To: Filter
@@ -206,8 +192,8 @@ Rule "Initialize Effects (Portals / Upgrades / Saves / Boundaries)"
             UpgradeEffect(upgrade_positions[i], upgrade_colors[i])
         // Next Boss
         for i in range(5):
-            NextBossPortal(next_boss_portals[i], `{0}: {1}`(`{0} {1}`("Next", "Boss"), next_boss_cost[i]))
-        Portal(prestige_pos, Bad Aura, Red, `{0} {1}`("Start", "Over"))
+            NextBossPortal(next_boss_portals[i], `Next Boss: {}`(next_boss_cost[i]))
+        Portal(prestige_pos, Bad Aura, Red, `Start Over`)
         // Saves
         SaveIcon(save_pos - z_offset, Arrow: Up, Green)
         SaveIcon(save_pos + z_offset, Arrow: Down, Red)
@@ -217,31 +203,21 @@ Rule "Initialize Effects (Portals / Upgrades / Saves / Boundaries)"
         UpgradeEffect(ability1_pos, White)
         UpgradeEffect(ability2_pos, White)
         UpgradeEffect(soldier_temp_pos, Blue)
-        GameText(All Players(Team 1), `{0} {1}`("Buy", `{0}: {1}`("Ability 1", ability1_cost)), ability1_pos + Up * 0.5, 1.5)
-        GameText(All Players(Team 1), `{0} {1}`("Buy", `{0}: {1}`("Ability 2", ability2_cost)), ability2_pos + Up * 0.5, 1.5)
-        GameText(All Players(Team 1), `{0} {1}`("Unlock", `{0}: {1}`(Hero(Soldier: 76), `{0} {1}`(1, "Credit"))), soldier_temp_pos + Up * 0.5, 1.5)
+        GameText(All Players(Team 1), `Buy Ability_1: {}`(ability1_cost), ability1_pos + Up * 0.5, 1.5)
+        GameText(All Players(Team 1), `Buy Ability_2: {}`(ability2_cost), ability1_pos + Up * 0.5, 1.5)
+        GameText(All Players(Team 1), `Unlock {}: {} Credit`(Hero(Soldier: 76), 1), soldier_temp_pos + Up * 0.5, 1.5)
         // Secrets
         secret2_pos = <31, 2.5, 49.5>
-        CodeText(Players In Radius(secret2_pos, 5, Team(All), Off), "Left", "Up", "Down", "Up", "Right", secret2_pos, 0.75)
+        CodeText(Players In Radius(secret2_pos, 5, Team(All), Off), ["Left", "Up", "Down", "Up", "Right"], secret2_pos, 0.75)
 
 Rule "Initialize Player HUD Stats"
     Event_Team(Team 1)
     Actions
-        BigHud(Top, `{0}: {1}`("Money", pvar money), White)
-        SmallHud(Top, `{0} {1} {2}`
-            pvar credits
-            "Credits"
-            `({0})`(`{0} / {1}`
-                pvar bosses_killed
-                `{0} {1} {2}`
-                    6
-                    "Boss"
-                    "Kills"
-            )
-        , Purple)
-        SmallHud(Top, `{0} {1}`(`{0}%`(pvar money_multiplier * 100), "Money"), Green)
-        SmallHud(Top, `{0} sec`(pvar reload_speed), Yellow)
-        SmallHud(Top, `{0} / {1}`(`{0}: {1}`("Damage", `{0}%`(pvar damage_scale)), `{0}: {1}`("Defend", `{0}%`(pvar defense))), Red)
+        BigHud(Top, `Money: {}`(pvar money), White)
+        SmallHud(Top, `{} Credits ({} / {} Boss Kills)`(pvar credits, pvar bosses_killed, 6), Purple)
+        SmallHud(Top, `{}% Money`(pvar money_multiplier * 100), Green)
+        SmallHud(Top, `{} sec`(pvar reload_speed), Yellow)
+        SmallHud(Top, `Damage: {}% / Defend: {}%`(pvar damage_scale, pvar defense), Red)
         // Player Stats Over Head
         World Text
             Visible_To: All Players(Team 1)

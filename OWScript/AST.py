@@ -347,14 +347,6 @@ class Data(AST):
         super().__init__()
         self.name = name
 
-    def __eq__(self, other):
-        if hasattr(other, 'name'):
-            return self.name == other.name
-        return self.name == other
-
-    def __hash__(self):
-        return hash(self.__class__.__name__ + self.name)
-
     def __repr__(self):
         if not self.children:
             return self.name
@@ -449,10 +441,10 @@ class Compare(BinaryOp):
 class Assign(BinaryOp):
     pass
 
-class GlobalVar(Data, Array):
+class GlobalVar(Data):
     vartype = 'global'
 
-class PlayerVar(Data, Array):
+class PlayerVar(Data):
     vartype = 'player'
     def __init__(self, name, player=None):
         super().__init__(name)

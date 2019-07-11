@@ -18,11 +18,18 @@ def flatten(l):
         if l: yield l.pop(0)
 
 class Scope:
-    def __init__(self, name, parent=None, namespace=None, level=0):
+    def __init__(self, name, parent=None, namespace=None):
         self.name = name
         self.parent = parent
         self.namespace = namespace or {}
-        self.level = 0
+        self.level = parent.level + 1 if parent else 0
+
+    @property
+    def all_vars(self):
+        keys = list(self.namespace.keys())
+        if self.parent:
+            keys.extend(self.parent.all_vars)
+        return keys
 
     def get(self, name, default=None):
         value = self.namespace.get(name, default)
@@ -451,7 +458,7 @@ class Transpiler:
                 result = func(*node.args)
                 code += self.visit(result, scope)
             except TypeError as ex:
-                print('typeerror', ex)
+                print('DEBUG - typeerror', ex)
         return code
 
     def visitReturn(self, node, scope):

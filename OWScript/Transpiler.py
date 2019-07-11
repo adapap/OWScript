@@ -27,6 +27,8 @@ class Scope:
     def get(self, name, default=None):
         value = self.namespace.get(name, default)
         if value is not None:
+            if type(value) == GlobalVar and value.name == name:
+                return self.parent.get(name, default)
             return value
         if self.parent:
             return self.parent.get(name, default)

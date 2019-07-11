@@ -254,7 +254,7 @@ class Transpiler:
         cond = self.visit(node.cond, scope)
         skip_code = 'Skip If(Not({}), {});\n'
         skip_false = ''
-        true_code = ''.join(self.visit_children(node.true_block, scope)) + ';\n'
+        true_code = ';\n'.join(self.visit_children(node.true_block, scope)) + ';\n'
         false_code = ''
         if node.false_block:
             skip_false = 'Skip({});\n'

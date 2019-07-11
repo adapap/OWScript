@@ -402,8 +402,11 @@ class Parser:
             name = self.curvalue.upper()
             for key, aliases in ALIASES.items():
                 name = aliases.get(name, name)
-            node = Workshop[name]
             self.eat('OWID')
+            maps = ['BLACK FOREST', 'BLIZZARD WORLD', 'BUSAN', 'CASTILLO', 'CHÂTEAU GUILLARD', 'DORADO', 'ECOPOINT: ANTARCTICA', 'EICHENWALDE', 'HANAMURA', 'HAVANA', 'HOLLYWOOD', 'HORIZON LUNAR COLONY', 'ILIOS', 'JUNKERTOWN', "KING'S ROW", 'LIJIANG TOWER', 'NECROPOLIS', 'NEPAL', 'NUMBANI', 'OASIS', 'PARIS', 'PETRA', 'RIALTO', 'ROUTE 66', 'TEMPLE OF ANUBIS', 'VOLSKAYA INDUSTRIES', 'WATCHPOINT: GIBRALTAR', 'AYUTTHAYA', 'BUSAN DOWNTOWN', 'BUSAN SANCTUARY', 'ILIOS LIGHTHOUSE', 'ILIOS RUINS', 'ILIOS WELL', 'LIJIANG CONTROL CENTER', 'LIJIANG GARDEN', 'LIJIANG NIGHT MARKET', 'NEPAL SANCTUM', 'NEPAL SHRINE', 'NEPAL VILLAGE', 'OASIS CITY CENTER', 'OASIS GARDENS', 'OASIS UNIVERSITY']
+            if name in maps:
+                return Number(value=str(maps.index(name)))
+            node = Workshop[name]
             if type(node) == OWID:
                 args = self.args()
                 if args:

@@ -66,7 +66,7 @@ class Builtin:
     def get_map(tp):
         node = OWID(name='Index Of Array Value', args=[None] * 2)
         def map_2pos(a, b):
-            node = Raw(code='First Of(Filtered Array(Append To Array(Append To Array(Empty Array, {}), {}), Compare(Current Array Element, ==, Value In Array(Global Variable(A), 0))'.format(a, b))
+            node = Raw(code='First Of(Filtered Array(Append To Array(Append To Array(Empty Array, {}), {}), Compare(Current Array Element, ==, Value In Array(Global Variable(A), 0)))'.format(a, b))
             return tp.visit(node, tp.scope)
         elems = list(map(lambda x: Number(value=str(x)), [153, 468, 1196, 135, 139, 477, 184, map_2pos(343, 347), 366, map_2pos(433, 436), 403, map_2pos(382, 384), 993, 386, map_2pos(331, 348), 659, 145, 569, 384, 1150, 371, 179, 497, 374, 312, 324, 434, 297, 276, 330, 376, 347, 480, 310, 342, 360, 364, 372, 370, 450, 356, 305]))
         array = Array(elements=elems)

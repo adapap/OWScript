@@ -47,7 +47,7 @@ class Scope:
         return f"<Scope '{self.name}'[{self.level}]>"
 
 class Builtin:
-    def range(*args):
+    def range(tp, *args):
         args = list(map(int, args))
         elements = list(map(Number, map(str, range(*args))))
         array = Array(elements=elements)
@@ -55,24 +55,42 @@ class Builtin:
 
     def ceil(tp, n):
         node = OWID(name='Round To Integer')
-        node.children.extend([*n, OWID(name='Up')])
+        node.children.extend([n, OWID(name='Up')])
         return node
 
     def floor(tp, n):
         node = OWID(name='Round To Integer')
-        node.children.extend([*n, OWID(name='Up')])
+        node.children.extend([n, OWID(name='Down')])
         return node
+
+    def get_map(tp):
+        code = Raw(code='Set Global Variable At Index(Global Variable(A), 0, Round To Integer(Add(Distance Between(Nearest Walkable Position(Vector(-500.000, 0, 0)), Nearest Walkable Position(Vector(500, 0, 0))), Distance Between(Nearest Walkable Position(Vector(0, 0, -500.000)), Nearest Walkable Position(Vector(0, 0, 500))), Down));\n')
+        node = OWID(name='Index Of Array Value', args=[None] * 2)
+        def map_2pos(a, b):
+            node = Raw(code='First Of(Filtered Array(Append To Array(Append To Array(Empty Array, {}), {})), Compare(Current Array Element, ==, Value In Array(Global Variable(A), 0))'.format(a, b))
+            return tp.visit(node, tp.scope)
+        elems = list(map(lambda x: Number(value=str(x)), [153, 468, 1196, 135, 139, 477, 184, map_2pos(343, 347), 366, map_2pos(433, 436), 403, map_2pos(382, 384), 993, 386, map_2pos(331, 348), 659, 145, 569, 384, 1150, 371, 179, 497, 374, 312, 324, 434, 297, 276, 330, 376, 347, 480, 310, 342, 360, 364, 372, 370, 450, 356, 305]))
+        array = Array(elements=elems)
+        value = Raw(code='Value In Array(Global Variable(A), 0)')
+        node.children.extend([array, value])
+        block = Block()
+        block.children = [code, node]
+        return block
 
     range: range
     ceil: ceil
     floor: floor
+    get_map: get_map
 
 class Transpiler:
     def __init__(self, tree, indent_size=3):
         self.tree = tree
         self.indent_size = indent_size
         self.indent_level = 0
-        self.global_index = count()
+        # Reserved:
+        # 0: Map ID
+        self.global_reserved = 1
+        self.global_index = count(self.global_reserved)
         self.player_index = count()
         self.curblock = []
 
@@ -118,6 +136,9 @@ class Transpiler:
         code += '"' + ''.join(x if type(x) == str else self.visit(x, scope) for x in node.name) + '"'
         code += ') {\n' + '\n'.join(self.visit_children(node, scope)) + '}\n'
         return code
+
+    def visitRaw(self, node, scope):
+        return node.code
 
     def visitFunction(self, node, scope):
         scope.assign('gvar_' + node.name, node)
@@ -455,7 +476,8 @@ class Transpiler:
                     lines.append(self.visit(ex.value, scope=scope))
         else:
             try:
-                result = func(*node.args)
+                self.scope = scope
+                result = func(*([self] + node.args))
                 lines.append(self.visit(result, scope))
             except TypeError as ex:
                 print('DEBUG - typeerror', ex)

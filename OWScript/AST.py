@@ -87,6 +87,13 @@ class AST:
             return self.__class__.__name__
         return '{}({})'.format(self.__class__.__name__, self.format_children)
 
+class Raw(AST):
+    def __init__(self, code):
+        self.code = code
+
+    def __repr__(self):
+        return '<Raw {}>'.format(len(self.code))
+
 # Workshop Types
 class WorkshopType(AST):
     @classmethod
@@ -353,7 +360,7 @@ class Data(AST):
         return '{}({})'.format(self.name, self.format_children)
 
 class OWID(AST):
-    def __init__(self, name, description, args):
+    def __init__(self, name, description='', args=[]):
         super().__init__()
         self.name = name
         self.description = description

@@ -373,7 +373,7 @@ class Transpiler:
         else:
             elements = []
             for elem in node.elements:
-                if type(elem) == String:
+                if type(elem) in (String, Constant):
                     elements.append(Constant(name='Null'))
                 else:
                     elements.append(elem)

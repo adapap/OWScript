@@ -422,7 +422,7 @@ class Transpiler:
         parent = node.parent
         base_name = self.base_node(node).name
         base_node = scope.get(base_name)
-        code = ''
+        lines = []
         if type(parent) == Attribute:
             method = getattr(base_node.value, parent.name)
             try:
@@ -430,8 +430,8 @@ class Transpiler:
             except TypeError:
                 raise Errors.InvalidParameter("'{}' method received invalid arguments".format(parent.name), pos=parent._pos)
             if result:
-                code += self.visit(result, scope)
-            return code
+                lines.append(self.visit(result, scope))
+            return ';\n'.join(lines)
         elif type(parent) in (GlobalVar, PlayerVar):
             func_name = parent.name[5:]
         else:
@@ -450,16 +450,16 @@ class Transpiler:
             scope.namespace.update(dict(zip(map(lambda p: p.name, func.params), node.args)))
             for child in func.children:
                 try:
-                    code += self.visit(child, scope=scope)
+                    lines.append(self.visit(child, scope=scope))
                 except Errors.ReturnError as ex:
-                    code += self.visit(ex.value, scope=scope)
+                    lines.append(self.visit(ex.value, scope=scope))
         else:
             try:
                 result = func(*node.args)
-                code += self.visit(result, scope)
+                lines.append(self.visit(result, scope))
             except TypeError as ex:
                 print('DEBUG - typeerror', ex)
-        return code
+        return ';\n'.join(lines)
 
     def visitReturn(self, node, scope):
         if node.value is not None:

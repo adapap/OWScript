@@ -71,6 +71,10 @@ class Transpiler:
     def tabs(self):
         return ' ' * self.indent_size * self.indent_level
 
+    @property
+    def min_wait(self):
+        return 'Wait(0.016, Ignore Condition)'
+
     def base_node(self, node):
         while type(node) in (Attribute, Call, Item):
             node = node.parent
@@ -102,7 +106,7 @@ class Transpiler:
         if node.disabled:
             code += 'disabled '
         code += 'rule('
-        code += node.name
+        code += '"' + ''.join(x if type(x) == str else self.visit(x, scope) for x in node.name) + '"'
         code += ') {\n' + '\n'.join(self.visit_children(node, scope)) + '}\n'
         return code
 
@@ -242,8 +246,8 @@ class Transpiler:
         lines = len(node.body.children) + 2
         code = f'Skip If(Not({self.visit(node.cond, scope)}), {lines});\n'
         for line in node.body.children:
-            code += self.tabs + self.visit(line) + ';\n'
-        code += f'{self.tabs}Wait(0.001, Ignore Condition);\n'
+            code += self.tabs + self.visit(line, scope) + ';\n'
+        code += f'{self.tabs}{self.min_wait};\n'
         code += f'{self.tabs}Loop If({self.visit(node.cond, scope)})'
         return code
 
@@ -269,7 +273,7 @@ class Transpiler:
             skip_code = '//FOR STARTSkip If(Compare(Count Of({}), ==, {}), {})'.format(self.visit(iterable, for_scope), self.visit(pointer, for_scope), '{}')
             block = ';\n'.join(self.visit_children(node.body, for_scope) + [
                 'Modify Global Variable At Index(A, {}, Add, 1)'.format(index),
-                'Wait(0.001)',
+                self.min_wait,
                 'Loop',
                 reset_pointer])
             code += skip_code.format(block.count(';\n')) + ';\n' + block
@@ -317,28 +321,26 @@ class Transpiler:
     def visitGlobalVar(self, node, scope):
         name = node.name
         var = scope.get(name)
-        consts = (Constant, String)
         if not var:
             raise Errors.NameError('\'{}\' is undefined'.format(node.name[5:]), pos=node._pos)
         elif type(var) != Variable:
             return self.visit(var, scope)
-        elif type(var.value) in consts:
-            return self.visit(var.value, scope)
-        else:
-            return self.visit(var.value, scope)
-        node = 'Value In Array(Global Variable(A), {})'.format(var.index)
-        return node
+        elif type(var.value) == String:
+            return var.value.value
+        code = 'Value In Array(Global Variable(A), {})'.format(var.index)
+        return code
 
     def visitPlayerVar(self, node, scope):
         name = node.name
         var = scope.get(name)
-        consts = (Constant, String)
         if not var:
             raise Errors.NameError('pvar \'{}\' is undefined'.format(node.name[5:]), pos=node._pos)
-        elif type(var.value) in consts:
-            return self.visit(var.value, scope)
-        node = 'Value In Array(Player Variable({}, A), {})'.format(self.visit(node.player, scope), var.index)
-        return node
+        elif type(var) != Variable:
+            return self.visit(var, scope)
+        elif type(var.value) == String:
+            return var.value.value
+        code = 'Value In Array(Player Variable({}, A), {})'.format(self.visit(node.player, scope), var.index)
+        return code
 
     def visitString(self, node, scope):
         code = 'String("' + node.value.title() + '", '
@@ -424,9 +426,9 @@ class Transpiler:
         elif type(parent) in (GlobalVar, PlayerVar):
             func_name = parent.name[5:]
         else:
-            print('called by:', type(parent))
+            print('DEBUG - called by:', type(parent))
         if not base_node:
-            raise Errors.NameError('Undefined function \'{}\''.format(base_name), pos=parent._pos)
+            raise Errors.NameError('Undefined function \'{}\''.format(base_name[5:]), pos=parent._pos)
         func = base_node if type(base_node) != Variable else base_node.value
         if type(func) == Function:
             # Assert arity

@@ -70,26 +70,27 @@ class Parser:
             node = String(value='')
             node.children = [null] * 3
             return node
-        for pattern in StringConstant.sorted_values:
-            patt = re.sub(r'([^a-zA-Z0-9_\s{}])', r'\\\1', pattern)
-            patt = re.sub(r'{\d}', r'(.+)', patt)
-            match = re.match(patt, string, re.I)
-            if match and not match.group(0) == '' and match.end() == len(string):
-                groups = match.groups()
-                children = []
-                try:
-                    for group in groups:
-                        if group == '{}':
-                            child = formats[0]
-                            formats = formats[1:]
-                        else:
-                            child = self.parse_string(group, formats, _pos)
-                        children.append(child)
-                except Errors.StringError:
-                    continue
-                node = String(value=pattern.replace('_', ' '))
-                node.children = children + [null] * (3 - len(children))
-                return node
+        for group in StringConstant.sorted_values:
+            for pattern in group:
+                patt = re.sub(r'([^a-zA-Z0-9_\s{}])', r'\\\1', pattern)
+                patt = re.sub(r'{\d}', r'(.+?)', patt) + '$'
+                match = re.match(patt, string, re.I)
+                if match and not match.group(0) == '':
+                    groups = match.groups()
+                    children = []
+                    try:
+                        for group in groups:
+                            if group == '{}':
+                                child = formats[0]
+                                formats = formats[1:]
+                            else:
+                                child = self.parse_string(group, formats, _pos)
+                            children.append(child)
+                    except Errors.StringError:
+                        continue
+                    node = String(value=pattern)
+                    node.children = children + [null] * (3 - len(children))
+                    return node
         else:
             raise Errors.StringError('Invalid string \'{}\''.format(string), pos=_pos)
 
@@ -150,13 +151,24 @@ class Parser:
         return body
 
     def ruledef(self):
-        """ruledef : DISABLED? RULE STRING NEWLINE INDENT (ruleblock | call)+ DEDENT"""
+        """ruledef : DISABLED? RULE STRING (+ STRING|NAME)* NEWLINE INDENT (ruleblock | call)+ DEDENT"""
         disabled = self.curtype == 'DISABLED'
         if disabled:
             self.eat('DISABLED')
         self.eat('RULE')
-        name = self.curvalue
-        self.eat('STRING')
+        name = [self.curvalue.replace('"', '')]
+        self.eat(self.curtype)
+        while self.curtype == 'PLUS':
+            self.eat('PLUS')
+            if self.curtype == 'STRING':
+                name.append(self.curvalue.replace('"', ''))
+            elif self.curtype == 'NAME':
+                var = GlobalVar(name='gvar_' + self.curvalue)
+                var._pos = self.curpos
+                name.append(var)
+            else:
+                raise Errors.ParseError('Unexpected token \'{}\' in rule name'.format(self.curvalue), pos=self.curpos)
+            self.eat(self.curtype)
         node = Rule(name=name, disabled=disabled)
         self.eat('NEWLINE', 'INDENT')
         while self.curtype != 'DEDENT':
@@ -233,7 +245,7 @@ class Parser:
         try:
             true_block = self.block()
         except Errors.ParseError:
-            raise Errors.SyntaxError('Invalid block after if statement')
+            raise Errors.SyntaxError('Invalid block after if statement', pos=self.curpos)
         false_block = self.elif_else()
         node = If(cond=cond, true_block=true_block, false_block=false_block)
         return node
@@ -248,7 +260,7 @@ class Parser:
             try:
                 return self.block()
             except Errors.ParseError:
-                raise Errors.SyntaxError('Invalid block after else statement')
+                raise Errors.SyntaxError('Invalid block after else statement', pos=self.curpos)
         else:
             return None
         cond = self.expr()
@@ -256,7 +268,7 @@ class Parser:
         try:
             true_block = self.block()
         except Errors.ParseError:
-            raise Errors.SyntaxError('Invalid block after elif statement')
+            raise Errors.SyntaxError('Invalid block after elif statement', pos=self.curpos)
         false_block = self.elif_else()
         return If(cond=cond, true_block=true_block, false_block=false_block)
 

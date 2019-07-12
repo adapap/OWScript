@@ -502,6 +502,12 @@
                     "default": "VISIBLE TO AND POSITION"
                 },
                 {
+                    "name": "ICON COLOR",
+                    "description": "The color of the icon to be created. If a particular team is chosen, the effect will either be red or blue, depending on whether the team is hostile to the viewer.",
+                    "type": "COLOR",
+                    "default": "WHITE"
+                },
+                {
                     "name": "SHOW WHEN OFFSCREEN",
                     "description": "Should this icon appear even when it is behind you?",
                     "type": "BOOLEAN",

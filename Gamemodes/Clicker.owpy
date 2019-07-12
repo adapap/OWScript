@@ -135,8 +135,6 @@
     pvar ability2 = False
     pvar money_cd = 0
     pvar damage_cd = 0
-    ability1_cost = 25000
-    ability2_cost = 10000
     Set Damage Dealt(Event Player, pvar damage_scale)
     Set Damage Received(Event Player, pvar defense)
     Set Max Health(Event Player, pvar hp)
@@ -154,6 +152,8 @@ Rule "Initialize Constants"
         boss_heroes = [Hero(Roadhog), Hero(Soldier: 76), Hero(Mei), Hero(Lucio), Hero(Ana), Hero(Reaper)]
         ability2_pos = <12.5, 2.5, 71>
         ability1_pos = <12.5, 2.5, 71 + 2.5>
+        ability1_cost = 25000
+        ability2_cost = 10000
         Set Match Time(90min)
 
 Rule "Initialize Player Stats"

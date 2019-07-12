@@ -290,6 +290,23 @@ class Transpiler:
                 scope.assign('{}'.format(pointer.name), value=elem)
                 lines.append(';\n'.join(self.visit_children(node.body, scope)))
             code += ';\n'.join(lines)
+        elif type(iterable) == Call:
+            func_name = self.base_node(iterable).name
+            func = scope.get(func_name)
+            try:
+                self.scope = scope
+                array = func(*([self] + iterable.args))
+                assert type(array) == Array
+                lines = []
+                for elem in array.elements:
+                    scope = Scope(name='for', parent=scope)
+                    scope.assign('{}'.format(pointer.name), value=elem)
+                    lines.append(';\n'.join(self.visit_children(node.body, scope)))
+                code += ';\n'.join(lines)
+            except AssertionError:
+                raise Errors.SyntaxError('Function call did not return an array', pos=iterable._pos)
+            except TypeError as ex:
+                print('DEBUG - typeerror', ex)
         else:
             for_scope = Scope(name='for', parent=scope)
             value = Number(value='0')
@@ -333,7 +350,10 @@ class Transpiler:
             'or': 'Or',
             'and': 'And'
         }.get(node.op)
-        code += '(' + self.visit(node.left, scope) + ', ' + self.visit(node.right, scope) + ')'
+        try:
+            code += '(' + self.visit(node.left, scope) + ', ' + self.visit(node.right, scope) + ')'
+        except RecursionError:
+            pass
         return code
 
     def visitUnaryOp(self, node, scope):
@@ -354,6 +374,8 @@ class Transpiler:
             return self.visit(var, scope)
         elif type(var.value) == String:
             return var.value.value
+        # else:
+        #     return self.visit(var.value, scope)
         code = 'Value In Array(Global Variable(A), {})'.format(var.index)
         return code
 
@@ -425,7 +447,13 @@ class Transpiler:
                 return self.visit(item, scope)
             except ValueError:
                 pass
-        return 'Value In Array(' + self.visit(node.parent, scope) + ', ' + self.visit(node.index, scope) + ')'
+        else:
+            try:
+                index = int(scope.get(node.index.name).value)
+                item = scope.get(node.parent.name).value[index]
+                return self.visit(item, scope)
+            except:
+                return 'Value In Array(' + self.visit(node.parent, scope) + ', ' + self.visit(node.index, scope) + ')'
 
     def visitAttribute(self, node, scope):
         attr = node.name.lower()

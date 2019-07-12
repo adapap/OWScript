@@ -1,0 +1,3 @@
+- Allow manipulation of variables manually
+    - Support for chase variables
+- Import rules/functions from other `.owpy` files

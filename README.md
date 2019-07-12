@@ -73,17 +73,17 @@ Event
 ## Assignment / Arithmetic
 Assignment (regular and augmented), as well as most arithmetic operators work as they do in Python or other traditional programming languages. Operators include: `+ - * / ^ %` as well as the augmented equivalents: `+= -= *= /= ^= %=`
 ```
-x = 1
-x += -1
-x *= 3
-x = x ^ (x + x) % 3
+a = 1
+a += -1
+a *= 3
+a = a ^ (a + a) % 3
 ```
 
 ## Logic
 Boolean logic is implemented exactly as in Python. The operators `and`, `or`, and `not` function as C-style `&&`, `|
 |`, and `!`. Comparison operators include the traditional `<`, `>`, `<=`, `>=`, `!=`, `==` as well as containment operators `in` and `not in`.
 ```
-x = True and not True
+b = True and not True
 Count Of
     Everyone
 == 12 // The reason why == 12 is here is to distinguish between the constant "Everyone" and the value "Count Of".
@@ -113,8 +113,7 @@ Using the technique from [@ItsDeltin](https://github.com/ItsDeltin), the limit t
 the number of variables that can be created is the maximum length of an array (\~1000 variables).
 
 ## Strings
-Strings are now made with enclosing quotes, using `{}` whenever you need to format a value.
-~There are two types of strings in the workshop: string literals and "formatted" strings, which take children as parameters to display. To write a string literal, simply enclose it in `"quotes"`, which can be used for rulenames. Formatted strings are enclosed with backticks and have the children nested the same way as a value.~
+String literals are enclosed with quotes. Formatted strings are made with enclosing backticks, using `{}` whenever you want to use a variable instead of a string constant.
 ```
 Rule "String Demo"
     Event
@@ -123,11 +122,8 @@ Rule "String Demo"
         All
     Actions
         Msg(Event Player, "Hello") // Alias for Small Message
-        Big Msg(Event Player, `{0}: {1}`
-            "Money"
-            pvar money
-        )
-        Small Msg(Event Player, `{0}!`("Victory"))
+        Big Msg(Event Player, `Money: {}`(pvar money)) // Example formatted string
+        Small Msg(Event Player, `Unlocked {} / {}: Victory!`(5, 5)) // More advanced formatted string
 ```
 
 ## Vectors
@@ -174,6 +170,8 @@ total = costs[0] + costs[1] + costs[2]
 ## Functions
 Functions allow you to write a block of code once and reuse it many times. They can be used to generate HUDs like a macro or used as a rule factory. All functions must be defined before they are called, and they must be defined at the top level scope (same as where rules are defined):
 
+*Note: Functions can access global-scope variables; however, the global scope cannot access variables defined locally in functions*
+
 **Input**
 ```
 %event_func
@@ -184,7 +182,7 @@ Functions allow you to write a block of code once and reuse it many times. They 
 %add_rule(a, b, name_)
     Rule name_
         event_func()
-        x = a + b
+        c = a + b
 Rule "Function Demo"
     event_func()
 add_rule(1, 5, "Add Two")
@@ -207,7 +205,7 @@ rule("Add Two") {
    }
 
    Actions {
-      Set Global Variable At Index(A, 0, Add(1, 5));
+      Set Global Variable At Index(A, 1, Add(1, 5));
    }
 }
 ```
@@ -216,6 +214,9 @@ rule("Add Two") {
 |Function|Parameters|Description|
 |:------:|----------|-----------|
 |range|*stop* or *start[, stop[, step]]*|Creates an array of numbers from start to stop (exclusive), counting by step|
+|floor|*n*|Rounds a numeric expression down to the nearest integer
+|ceil|*n*|Rounds a numeric expression up to the nearest integer
+|get_map|Returns the current map ID. This can be compared with map names which alias to their respective ID: `get_map() == Dorado`. For the list of maps and their corresponding IDs, please review [@Xerxes post](https://us.forums.blizzard.com/en/overwatch/t/workshop-resource-map-identifier-map-detection-script-v2-0-only-2-actions/341132).
 
 ## Loops
 The while loop is syntactic sugar for using the `Loop` action in the Workshop. At the moment, only use while loops if the purpose of the rule is solely to repeat code until a condition is met.
@@ -223,10 +224,10 @@ The while loop is syntactic sugar for using the `Loop` action in the Workshop. A
 while pvar life > 10:
     Damage(Event Player, Null, 10)
 ```
-A for loop lets you iterate over custom iterables, such as an array of values or a range. Iteration over workshop types such as All Players is not supported.
+A for loop lets you iterate over custom iterables, such as an array of values, a range, or workshop values such as All Players.
 ```
-for x in range(1, 10, 2):
-    Msg(Event Player, x)
+for i in range(1, 10, 2):
+    Msg(Event Player, i)
 for y in [Genji, Tracer, Widowmaker]:
     Kill
         Players On Hero(y)
@@ -235,7 +236,7 @@ for y in [Genji, Tracer, Widowmaker]:
 ## Attributes / Methods
 Attributes are properties of an object that can be accessed using the dot operator `.`, which refers to the value before it in order to access a property. A method is simply an attribute followed by a call, which has parameters. Refer to the table below for builtin attributes and methods.
 ```
-pvar x = Event Player.x // Attribute
+pvar xpos = Event Player.x // Attribute
 y = Victim.jumping and Attacker.moving
 scores.append(123) // Method
 ```
@@ -270,6 +271,7 @@ scores.append(123) // Method
 |Abs|Absolute Value|
 |Any True|Is True For Any|
 |All True|Is True For All|
+|Chateau Guillard|Château Guillard|
 |Cos|Cosine From Degrees|
 |Cosr|Cosine From Radians|
 |Cur Elem|Current Array Element|

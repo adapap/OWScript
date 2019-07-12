@@ -145,7 +145,7 @@
     Set Ability 2 Enabled(Event Player, False)
 
 Rule "Initialize Constants"
-    Event_Global()
+    Global()
     Actions
         /* Global Variables */
         shop_pos = <2.500, 3.500, 75>
@@ -157,7 +157,7 @@ Rule "Initialize Constants"
         Set Match Time(90min)
 
 Rule "Initialize Player Stats"
-    Event_Team(Team 1)
+    Each(Team 1)
     Actions
         /* Player Variables */
         ResetPlayer()
@@ -165,7 +165,7 @@ Rule "Initialize Player Stats"
         pvar save_code = []
 
 Rule "Initialize Effects (Portals / Upgrades / Saves / Boundaries)"
-    Event_Global()
+    Global()
     Actions
         portals = [<-50, 1, 137.350>, <-37, 6.5, 48>, <-71, 1.5, 62.5>, <-58, 2, 122>, <41, 3.5, 78.5>, <-118.5, 1.5, 99.5>]
         next_boss_portals = [<-55, 1.5, 141.5>, <-25.5, 7.5, 50.5>, <-80, 1.5, 71>, <-63, 2.5, 115.5>, <41, 3.5, 67.5>]
@@ -203,42 +203,35 @@ Rule "Initialize Effects (Portals / Upgrades / Saves / Boundaries)"
         UpgradeEffect(ability1_pos, White)
         UpgradeEffect(ability2_pos, White)
         UpgradeEffect(soldier_temp_pos, Blue)
-        GameText(All Players(Team 1), `Buy Ability_1: {}`(ability1_cost), ability1_pos + Up * 0.5, 1.5)
-        GameText(All Players(Team 1), `Buy Ability_2: {}`(ability2_cost), ability1_pos + Up * 0.5, 1.5)
+        GameText(All Players(Team 1), `Buy Ability 1: {}`(ability1_cost), ability1_pos + Up * 0.5, 1.5)
+        GameText(All Players(Team 1), `Buy Ability 2: {}`(ability2_cost), ability1_pos + Up * 0.5, 1.5)
         GameText(All Players(Team 1), `Unlock {}: {} Credit`(Hero(Soldier: 76), 1), soldier_temp_pos + Up * 0.5, 1.5)
         // Secrets
         secret2_pos = <31, 2.5, 49.5>
         CodeText(Players In Radius(secret2_pos, 5, Team(All), Off), ["Left", "Up", "Down", "Up", "Right"], secret2_pos, 0.75)
 
 Rule "Initialize Player HUD Stats"
-    Event_Team(Team 1)
+    Each(Team 1)
     Actions
         BigHud(Top, `Money: {}`(pvar money), White)
         SmallHud(Top, `{} Credits ({} / {} Boss Kills)`(pvar credits, pvar bosses_killed, 6), Purple)
         SmallHud(Top, `{}% Money`(pvar money_multiplier * 100), Green)
-        SmallHud(Top, `{} sec`(pvar reload_speed), Yellow)
+        SmallHud(Top, `{} Sec`(pvar reload_speed), Yellow)
         SmallHud(Top, `Damage: {}% / Defend: {}%`(pvar damage_scale, pvar defense), Red)
         // Player Stats Over Head
         World Text
             Visible_To: All Players(Team 1)
-            Header: `{0} - {1} - {2}`
-                `{0}: {1}`
-                    "Damage"
-                    `{0}%`
-                        pvar damage_scale
-                `{0} sec`
-                    pvar reload_speed
-                `{0} {1}`
-                    `{0}%`
-                        pvar money_multiplier * 100
-                    "Money"
+            Header: `Damage: {}% - {} sec - {}% Money`
+                pvar damage_scale
+                pvar reload_speed
+                pvar money_multiplier * 100
             Position: Event Player
             Scale: 0.750
             Clipping: Clip Against Surfaces
             Reevaluation: Visible To Position And String
 
 Rule "Validate Bosses"
-    Event_Global()
+    Global()
     Conditions
         not All True
             boss_heroes
@@ -248,18 +241,12 @@ Rule "Validate Bosses"
     Actions
         Msg
             Everyone
-            `{0}: {1}`
-                "Warning"
-                `{0} {1}`
-                    "Bad"
-                    "Bosses"
+            `Warning: Bad Bosses`
         for boss in boss_heroes:
             if not Is Hero Being Played(boss, Team 2):
                 Msg
                     Everyone
-                    `{0} {1}`
-                        "No"
-                        boss
+                    `No {}`(boss)
         Wait(20s)
         Loop If Condition Is True
 
@@ -267,7 +254,7 @@ Rule "Validate Bosses"
     Set Move Speed(Players On Hero(hero_, Team 2), speed)
     Clear Status(Players On Hero(hero_, Team 2), Rooted)
 Rule "Initialize Bosses"
-    Event_Global()
+    Global()
     Conditions
         All True
             boss_heroes
@@ -281,7 +268,7 @@ Rule "Initialize Bosses"
             SpawnBoss(boss)
             Set Move Speed(boss_player, 0)
             Set Status(boss_player, Null, Rooted, 9999)
-            GameText(Everyone, `{0}: {1}`("Heal", Health(Players On Hero(boss, Team 2))), Players On Hero(boss, Team 2), 1)
+            GameText(Everyone, `Heal: {}`(Health(Players On Hero(boss, Team 2))), Players On Hero(boss, Team 2), 1)
         BossMovement(Hero(Mei), 10)
         BossMovement(Hero(Lucio), 100)
         BossMovement(Hero(Reaper), 100)
@@ -297,7 +284,7 @@ Rule "Respawn Bosses"
         Teleport(Event Player, boss_spawns[Index(boss_heroes, Event Player.hero)])
 
 Rule "Initialize Upgrade Text"
-    Event_Team(Team 1)
+    Each(Team 1)
     Actions
         UpgradeText(0, pvar hp_cost)
         UpgradeText(1, pvar damage_scale_cost)
@@ -306,7 +293,7 @@ Rule "Initialize Upgrade Text"
         UpgradeText(4, pvar defense_cost)
 
 Rule "Teleport to Shop"
-    Event_Team(Team 1)
+    Each(Team 1)
     Conditions
         Any True
             Array: portals
@@ -320,7 +307,7 @@ Rule "Teleport to Shop"
         pvar location = -1
 
 Rule "Teleport from Shop"
-    Event_Team(Team 1)
+    Each(Team 1)
     Conditions
         Distance Between
             Event Player
@@ -334,7 +321,7 @@ Rule "Teleport from Shop"
         WooshSound()
 
 Rule "Shop Boundary & Heal"
-    Event_Team(Team 1)
+    Each(Team 1)
     Conditions
         pvar location == -1
     Actions
@@ -343,20 +330,20 @@ Rule "Shop Boundary & Heal"
             Wait(0.1s)
             Skip If(Not((Event Player.pos.x <= -12) or (Event Player.pos.z <= 25)), 6)
             Warp(Event Player, shop_pos, upgr_pos)
-            Msg(Event Player, `{0} {1} {2}`("Avoid", "Going", "Here"))
+            Msg(Event Player, `Avoid Going Here`)
             FailSound()
 
 %BossBoundary(loc, hero_)
     if Event Player in All Players(Team 1):
         if pvar location == loc:
             Teleport(Event Player, player_spawns[pvar cur_boss])
-            Msg(Event Player, `{0} {1} {2}`("Avoid", "Going", "Here"))
+            Msg(Event Player, `Avoid Going Here`)
             FailSound()
     elif Event Player.hero == hero_:
         Teleport(Event Player, boss_spawns[Index(boss_heroes, hero_)])
 
 Rule "Boss Boundaries (Soldier: 76)"
-    Event_Team(All)
+    Each(All)
     Conditions
         Event Player.pos.y < 4.5
     Actions
@@ -364,7 +351,7 @@ Rule "Boss Boundaries (Soldier: 76)"
         Wait(2s)
         Loop If Condition Is True
 Rule "Boss Boundaries (Mei)"
-    Event_Team(All)
+    Each(All)
     Conditions
         Event Player.pos.x > -72
     Actions
@@ -372,7 +359,7 @@ Rule "Boss Boundaries (Mei)"
         Wait(2s)
         Loop If Condition Is True
 Rule "Boss Boundaries (Lucio)"
-    Event_Team(All)
+    Each(All)
     Conditions
         not Event Player in Players In Radius(boss_spawns[3], 20, Team(All), Off)
     Actions
@@ -380,7 +367,7 @@ Rule "Boss Boundaries (Lucio)"
         Wait(2s)
         Loop If Condition Is True
 Rule "Boss Boundaries (Reaper)"
-    Event_Team(All)
+    Each(All)
     Conditions
         Event Player.pos.x > -94
     Actions
@@ -397,7 +384,7 @@ Rule "Boss Boundaries (Reaper)"
     Wait(0.1s)
     Loop If Condition Is True
 Rule "Buy HP"
-    Event_Team(Team 1)
+    Each(Team 1)
     ShopCondition(upgrade_positions[0])
     Actions
         if pvar money >= pvar hp_cost:
@@ -412,7 +399,7 @@ Rule "Buy HP"
             FailSound()
 
 Rule "Buy Damage %"
-    Event_Team(Team 1)
+    Each(Team 1)
     ShopCondition(upgrade_positions[1])
     Actions
         if pvar money >= pvar damage_scale_cost:
@@ -430,7 +417,7 @@ Rule "Buy Damage %"
             FailSound()
 
 Rule "Buy Reload Speed"
-    Event_Team(Team 1)
+    Each(Team 1)
     ShopCondition(upgrade_positions[2])
     Actions
         if pvar money >= pvar reload_speed_cost:
@@ -444,7 +431,7 @@ Rule "Buy Reload Speed"
             FailSound()
 
 Rule "Buy Money Multiplier"
-    Event_Team(Team 1)
+    Each(Team 1)
     ShopCondition(upgrade_positions[3])
     Actions
         if pvar money >= pvar money_multiplier_cost:
@@ -458,7 +445,7 @@ Rule "Buy Money Multiplier"
             FailSound()
 
 Rule "Buy Defense"
-    Event_Team(Team 1)
+    Each(Team 1)
     ShopCondition(upgrade_positions[4])
     Actions
         if (pvar money >= pvar defense_cost) and (pvar defense > 5):
@@ -469,14 +456,14 @@ Rule "Buy Defense"
             SuccessSound()
             ShopAutobuy()
         elif pvar defense == 5:
-            Msg(Event Player, `{0} {1}`("Max", "Defend"))
+            Msg(Event Player, `Max Defend`)
             FailSound()
         else:
             MissingFunds()
             FailSound()
 
 Rule "Buy Ability 1"
-    Event_Team(Team 1)
+    Each(Team 1)
     ShopCondition(ability1_pos)
     Actions
         if (pvar money >= ability1_cost) and (not pvar ability1):
@@ -485,13 +472,13 @@ Rule "Buy Ability 1"
             Set Ability 1 Enabled(Event Player, True)
             SuccessSound()
         elif pvar ability1:
-            Msg(Event Player, `{0} {1} {2}`("You", "Bought", "Ability 1"))
+            Msg(Event Player, `You Bought Ability 1`)
             FailSound()
         else:
             MissingFunds()
 
 Rule "Buy Ability 2"
-    Event_Team(Team 1)
+    Each(Team 1)
     ShopCondition(ability2_pos)
     Actions
         if (pvar money >= ability2_cost) and (not pvar ability2):
@@ -500,13 +487,13 @@ Rule "Buy Ability 2"
             Set Ability 2 Enabled(Event Player, True)
             SuccessSound()
         elif pvar ability2:
-            Msg(Event Player, `{0} {1} {2}`("You", "Bought", "Ability 2"))
+            Msg(Event Player, `You Bought Ability 2`)
             FailSound()
         else:
             MissingFunds()
 
 Rule "Teleport Player to Start"
-    Event_Team(Team 1)
+    Each(Team 1)
     Conditions
         Has Spawned(Event Player)
     Actions
@@ -515,7 +502,7 @@ Rule "Teleport Player to Start"
             player_spawns[pvar cur_boss]
 
 Rule "Shooting Control"
-    Event_Team(Team 1)
+    Each(Team 1)
     Conditions
         Has Spawned(Event Player)
         Is Firing Primary(Event Player)
@@ -541,7 +528,7 @@ Rule "Boss Kill"
         pvar money += (100 ^ (1 + pvar cur_boss / 2)) * pvar money_multiplier
         pvar bosses_killed = Max(Index(boss_heroes, Victim.hero) + 1, pvar bosses_killed)
         if pvar bosses_killed == 6:
-            Msg(Event Player, `{0} {1} {2}`("Find", "Start", "Over"))
+            Msg(Event Player, `Find Start Over`)
 
 Rule "Player Death"
     Event
@@ -554,7 +541,7 @@ Rule "Player Death"
         Warp(Event Player, shop_pos, upgr_pos)
 
 Rule "Next Boss"
-    Event_Team(Team 1)
+    Each(Team 1)
     Conditions
         Event Player in Players In Radius(next_boss_portals[pvar cur_boss], 2, Team(All), Off)
     Actions
@@ -569,12 +556,12 @@ Rule "Next Boss"
             MissingFunds()
             FailSound()
         else:
-            Big Msg(Event Player, `{0} {1} {2}`("Go", "Kill", "Boss"))
+            Big Msg(Event Player, `Go Kill Boss`)
             FailSound()
 
 %SaveInput(name, value, pos)
-    Rule "Save Input " name
-        Event_Team(Team 1)
+    Rule "Save Input " + name
+        Each(Team 1)
         Conditions
             Distance Between(Event Player, pos) <= 1.25
             Event Player.interacting
@@ -592,23 +579,23 @@ SaveInput("Right", 3, save_pos + x_offset)
     Destroy In-World Text(pvar save_code_effect)
     Set Hero(Event Player, hero_)
     Wait(0.5s)
-    Big Msg(Event Player, `{0} {1} {2}`("You", "Unlocked", Hero Icon String(hero_)))
+    Big Msg(Event Player, `You Unlocked {}`(Hero Icon String(hero_)))
     SuccessSound()
     Wait(0.25)
     pvar save_code_effect = Last Text Id
 
 Rule "Buy Prestige Item"
-    Event_Team(Team 1)
+    Each(Team 1)
     ShopCondition(soldier_temp_pos)
     Actions
         if pvar credits >= 1:
             pvar credits -= 1
             UnlockHero(Hero(Soldier: 76))
         else:
-            Big Msg(Event Player, `{0} {1} {2}`("Defeat", "Final", "Boss"))
+            Big Msg(Event Player, `Defeat Final Boss`)
 
 Rule "Check Save Code"
-    Event_Team(Team 1)
+    Each(Team 1)
     Conditions
         Count Of(pvar save_code) == 5
     Actions
@@ -635,18 +622,18 @@ Rule "Check Save Code"
             Big Msg(Event Player, "Hacked")
             // You Unlocked Hidden Save 2
         else:
-            Big Msg(Event Player, `{0} {1}`("Unknown", "Save"))
+            Big Msg(Event Player, `Unknown Save`)
         pvar save_code = []
 
 Rule "Prestige Confirm"
-    Event_Team(Team 1)
+    Each(Team 1)
     Conditions
         Distance Between(Event Player, prestige_pos) <= 1.5
     Actions
-        Msg(Event Player, `{0} {1} {2}`("Start", `{0}?`("Over"), `({0})`("Jump")))
+        Msg(Event Player, `Start Over? (Jump)`)
 
 Rule "Prestige"
-    Event_Team(Team 1)
+    Each(Team 1)
     Conditions
         Distance Between(Event Player, prestige_pos) <= 1.5
         Event Player.jumping
@@ -655,18 +642,18 @@ Rule "Prestige"
             ResetPlayer()
             pvar credits += 1
             Set Slow Motion(10)
-            Big Msg(Everyone, `{0} {1} {2}`(Event Player, "Started", "Over"))
+            Big Msg(Everyone, `{} Started Over`(Event Player))
             Wait(1.25s)
             Set Slow Motion(100)
             Warp(Event Player, player_spawns[0], boss_spawns[0])
-            Msg(Event Player, `{0} {1}`(pvar credits, "Credits"))
+            Msg(Event Player, `{} Credits`(pvar credits))
             SuccessSound()
         else:
-            Big Msg(Event Player, `{0} {1} {2}`("Defeat", "Final", "Boss"))
+            Big Msg(Event Player, `Defeat Final Boss`)
             
 
 Rule "Money Bonus (Ability 2 / E)"
-    Event_Team(Team 1)
+    Each(Team 1)
     Conditions
         Is Using Ability 2(Event Player)
     Actions
@@ -674,12 +661,12 @@ Rule "Money Bonus (Ability 2 / E)"
             pvar money_cd = 45
             pvar gain = (5000 ^ (1 + pvar cur_boss / 15)) * pvar money_multiplier
             pvar money += pvar gain
-            Msg(Event Player, `{0} {1}`(`{0} + {1}`("", pvar gain), `{0}!`("Money")))
+            Msg(Event Player, `{} + {} Money!`("", pvar gain))
         else:
-            Msg(Event Player, `{0} {1}`("Cooldown", `{0} sec`(pvar money_cd)))
+            Msg(Event Player, `Cooldown: {} sec`(pvar money_cd))
 
 Rule "Damage Bonus (Ability 1 / Shift)"
-    Event_Team(Team 1)
+    Each(Team 1)
     Conditions
         Is Using Ability 1(Event Player)
     Actions
@@ -687,14 +674,14 @@ Rule "Damage Bonus (Ability 1 / Shift)"
             pvar damage_cd = 60
             pvar damage_gain = pvar damage_scale / 2
             Set Damage Dealt(Event Player, pvar damage_scale + pvar damage_gain)
-            Msg(Event Player, `{0} {1} {2}`(`{0}%`(50), "More", `{0} {1}`("Damage", `({0})`(`{0} sec`(5)))))
+            Msg(Event Player, `{}% More Damage ({} sec)`(50, 5))
             Wait(5s)
             Set Damage Dealt(Event Player, pvar damage_scale - pvar damage_gain)
         else:
-            Msg(Event Player, `{0} {1}`("Cooldown", `{0} sec`(pvar damage_cd)))
+            Msg(Event Player, `Cooldown: {} sec`(pvar damage_cd))
 
 Rule "Money/Damage Cooldowns"
-    Event_Team(Team 1)
+    Each(Team 1)
     Conditions
         (pvar damage_cd > 0) or (pvar money_cd > 0)
     Actions
@@ -706,13 +693,13 @@ Rule "Money/Damage Cooldowns"
         Loop If Condition Is True
 
 Rule "Secret 1" // Flight after jumping by statue
-    Event_Team(Team 1)
+    Each(Team 1)
 
-Rule "Secret 2" // Grandma giving passive income every 5s
-    Event_Team(Team 2)
+Rule "Secret 2" // Grandma giving passive income every 5s?
+    Each(Team 1)
 
 Disabled Rule "Coordinate Viewer"
-    Event_Team(Team 1)
+    Each(Team 1)
     Conditions
         Has Spawned(Event Player)
         Event Player.moving
@@ -739,7 +726,7 @@ Disabled Rule "Coordinate Viewer"
             Reevaluation: Visible To And String
 
 Disabled Rule "Cheats"
-    Event_Team(Team 1)
+    Each(Team 1)
     Conditions
         Event Player.jumping
     Actions

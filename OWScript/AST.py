@@ -376,6 +376,9 @@ class Constant(AST):
     def __repr__(self):
         return self.name
 
+    def halt(self):
+        return Raw(code='Apply Impulse({}, Down, Multiply(0.001, 0.001), To World, Cancel Contrary Motion)'.format(self.name.title()))
+
 class BinaryOp(AST):
     def __init__(self, left, op, right):
         self.left = left

@@ -145,6 +145,25 @@
 Rule "Initialize Constants"
     Global()
     Actions
+        /* Define Player Variables */
+        pvar location = 0
+        pvar cur_boss = 0
+        pvar bosses_killed = 0
+        pvar money = 0
+        pvar damage_scale = 1
+        pvar damage_scale_cost = 5
+        pvar reload_speed = 2.0
+        pvar reload_speed_cost = 15
+        pvar money_multiplier = 1
+        pvar money_multiplier_cost = 10
+        pvar hp = 10
+        pvar hp_cost = 100
+        pvar defense = 100
+        pvar defense_cost = 25
+        pvar ability1 = False
+        pvar ability2 = False
+        pvar money_cd = 0
+        pvar damage_cd = 0
         /* Global Variables */
         shop_pos = <2.500, 3.500, 75>
         player_spawns = [<-40, -1.5, 145.5>, <-29, 8, 56>, <-77.5, 1.5, 65.5>, <-50.5, 1.5, 117>, <43.5, 3.5, 73.5>, <-115, 1.5, 112.5>]

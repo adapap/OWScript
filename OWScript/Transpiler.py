@@ -173,9 +173,10 @@ class Transpiler:
         try:
             assert len(node.args) == len(node.children)
         except AssertionError:
-            raise Errors.SyntaxError('\'{}\' expected {} arguments ({}), received {}'.format(
-                name, len(node.args), ', '.join(map(lambda arg: arg.__name__, node.args)), len(node.children))
-            , pos=node._pos)
+            if name != 'Wait':
+                raise Errors.SyntaxError('\'{}\' expected {} arguments ({}), received {}'.format(
+                    name, len(node.args), ', '.join(map(lambda arg: arg.__name__, node.args)), len(node.children)),
+                    pos=node._pos)
         for index, types in enumerate(zip(node.args, node.children)):
             arg, child = types
             if arg is None:
@@ -374,8 +375,8 @@ class Transpiler:
             return self.visit(var, scope)
         elif type(var.value) == String:
             return var.value.value
-        # else:
-        #     return self.visit(var.value, scope)
+        else:
+            return self.visit(var.value, scope)
         code = 'Value In Array(Global Variable(A), {})'.format(var.index)
         return code
 
@@ -441,7 +442,10 @@ class Transpiler:
                 if not var:
                     raise Errors.NameError('{}\'{}\' is undefined'.format('pvar ' if type(node.parent) == PlayerVar else '', node.parent.name[5:]), pos=node.parent._pos)
                 try:
-                    item = var.value[index]
+                    if type(var) == Variable:
+                        item = var.value[index]
+                    elif type(var) == Array:
+                        item = var[index]
                 except IndexError:
                     item = Number(value='0')
                 return self.visit(item, scope)
@@ -452,7 +456,8 @@ class Transpiler:
                 index = int(scope.get(node.index.name).value)
                 item = scope.get(node.parent.name).value[index]
                 return self.visit(item, scope)
-            except:
+            except Exception as er:
+                #print('DEBUG - item:', er)
                 return 'Value In Array(' + self.visit(node.parent, scope) + ', ' + self.visit(node.index, scope) + ')'
 
     def visitAttribute(self, node, scope):
@@ -466,11 +471,15 @@ class Transpiler:
 
     def visitCall(self, node, scope):
         parent = node.parent
-        base_name = self.base_node(node).name
-        base_node = scope.get(base_name)
+        base_node = self.base_node(node)
+        if type(base_node) == GlobalVar:
+            base_node = scope.get(base_node.name)
         lines = []
         if type(parent) == Attribute:
-            method = getattr(base_node.value, parent.name)
+            if type(base_node) == Variable:
+                method = getattr(base_node.value, parent.name)
+            else:
+                method = getattr(base_node, parent.name)
             try:
                 result = method(*node.args)
             except TypeError:

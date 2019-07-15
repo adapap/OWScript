@@ -448,11 +448,13 @@ class Parser:
         return node
 
     def arglist(self):
-        """arglist : expr (, expr)*"""
+        """arglist : expr (, NEWLINE* expr)*"""
         node = Block()
         node.children.append(self.expr())
         while self.curtype == 'COMMA':
             self.eat('COMMA')
+            while self.curtype == 'NEWLINE':
+                self.eat('NEWLINE')
             node.children.append(self.expr())
         return node.children
 

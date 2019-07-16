@@ -356,7 +356,7 @@ class Transpiler:
         }.get(node.op)
         try:
             code += '(' + self.visit(node.left, scope) + ', ' + self.visit(node.right, scope) + ')'
-        except RecursionError:
+        except RecursionError as ex:
             pass
         return code
 
@@ -378,8 +378,6 @@ class Transpiler:
             return self.visit(var, scope)
         elif type(var.value) == String:
             return var.value.value
-        else:
-            return self.visit(var.value, scope)
         code = 'Value In Array(Global Variable(A), {})'.format(var.index)
         return code
 

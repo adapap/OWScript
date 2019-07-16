@@ -157,10 +157,11 @@ class Transpiler:
                 if result:
                     result = result.rstrip(';\n').split(';\n')
                     for x in result:
-                        child = self.tabs + x
-                        if node.name.upper() == 'CONDITIONS':
-                            child += ' == True'
-                        self.curblock.append(child)
+                        if x:
+                            child = self.tabs + x
+                            if node.name.upper() == 'CONDITIONS':
+                                child += ' == True'
+                            self.curblock.append(child)
             self.resolve_skips()
             code += ';\n'.join(self.curblock)
         self.indent_level -= 1
@@ -300,9 +301,11 @@ class Transpiler:
                 assert type(array) == Array
                 lines = []
                 for elem in array.elements:
-                    scope = Scope(name='for', parent=scope)
-                    scope.assign('{}'.format(pointer.name), value=elem)
-                    lines.append(';\n'.join(self.visit_children(node.body, scope)))
+                    for_scope = Scope(name='for', parent=scope)
+                    for_scope.assign('{}'.format(pointer.name), value=elem)
+                    result = self.visit_children(node.body, for_scope)
+                    if result:
+                        lines.append(';\n'.join(result))
                 code += ';\n'.join(lines)
             except AssertionError:
                 raise Errors.SyntaxError('Function call did not return an array', pos=iterable._pos)
@@ -449,15 +452,16 @@ class Transpiler:
                 except IndexError:
                     item = Number(value='0')
                 return self.visit(item, scope)
-            except ValueError:
-                pass
+            except ValueError as ex:
+                print('DEBUG - Item Error 01:', ex)
         else:
             try:
+                print(node.index, scope, node.parent.name)
                 index = int(scope.get(node.index.name).value)
                 item = scope.get(node.parent.name).value[index]
                 return self.visit(item, scope)
             except Exception as er:
-                #print('DEBUG - item:', er)
+                print('DEBUG - Item Error 02:', er)
                 return 'Value In Array(' + self.visit(node.parent, scope) + ', ' + self.visit(node.index, scope) + ')'
 
     def visitAttribute(self, node, scope):
@@ -481,8 +485,9 @@ class Transpiler:
             else:
                 method = getattr(base_node, parent.name)
             try:
-                result = method(*node.args)
-            except TypeError:
+                self.scope = scope
+                result = method(self, *node.args)
+            except TypeError as ex:
                 raise Errors.InvalidParameter("'{}' method received invalid arguments".format(parent.name), pos=parent._pos)
             if result:
                 lines.append(self.visit(result, scope))

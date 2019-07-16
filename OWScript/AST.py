@@ -422,7 +422,9 @@ class Array(AST):
     def __init__(self, elements=None):
         self.elements = elements or []
 
-    def append(self, elem):
+    def append(self, tp, elem):
+        if type(elem) == GlobalVar:
+            elem = tp.scope.get(elem.name).value
         self.elements.append(elem)
 
     def index(self, elem):

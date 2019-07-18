@@ -15,6 +15,7 @@ class Importer:
                 importFile = importSplit[1].replace('\'', '') + '.owpy'
                 f = open(os.path.join(path, importFile))
                 importText = f.read()
-                lines[i] = importText
+                importer = self.__class__(f, importText)
+                lines[i] = importer.run()
 
         return '\n'.join(lines)

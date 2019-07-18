@@ -57,6 +57,7 @@ if __name__ == '__main__':
         text = f.read()
     try:
         if args.enable_imports:
+            print('WARNING! By enabling imports, you\'re opting into a feature that\'s experimental. If you experience any issues, please report them on the GitHub.')
             importer = Importer(f, text)
             text = importer.run()
 

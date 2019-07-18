@@ -10,6 +10,7 @@ Setup
 - `-m | --min` Optional: minifies the output by stripping whitespace
 - `-s | --save [FILE]` Optional: saves to the target output file instead of stdout
 - `-c | --copy` Optional: copies code to clipboard (must have *pyperclip* installed: `pip install pyperclip`)
+- `--enable-imports` Optional: Enables the experimental import functionality.
 
 ## Syntax Highlighting
 In the `Syntax/` folder, you can find the raw Iro code which I used to generate a Sublime Text file with modifications. You can directly import the `OWScript.sublime-syntax` file by putting it in your ST3 `User` folder.
@@ -30,6 +31,7 @@ Documentation
 * [Functions](#functions)
 * [Loops](#loops)
 * [Attributes / Methods](#attributes--methods)
+* [Imports](#imports)
 
 **Data Types & Structures**
 * [Variables](#variables)
@@ -287,3 +289,38 @@ scores.append(123) // Method
 |Sin|Sine From Degrees|
 |Sinr|Sine From Radians|
 |Torbjorn|Torbjörn|
+
+## Imports
+OWScript allows bigger scripts and scripts that use common funcitonality to be broken up into modules and imported into a base file. All the "imported" files are directly copied into the base script to be transpiled to workshop code.
+
+To use this experimental feature, add the `--enable-imports` flag to the command and it will search your script for imports. This is recursive and allows for importing modules within modules. The modules you're importing **must** have the `.owpy` file ending to be properly imported or it will not be able to find the the module.
+
+You can import a file by using the `#import 'filename'`
+
+### Example
+File: `lib/functions.owpy`
+```
+%CreateEffect(pos, type, color)
+    Create Effect
+        Visible_To: Everyone
+        Type: type
+        Color: color
+        Position: pos
+        Radius: 1.5
+        Reevaluation: Visible To
+```
+
+File `src/setup.owpy`
+```
+Rule "Setup Effects"
+    Event
+        On Global
+    Actions
+        CreateEffect(<0,0,0>, Ring, Red)
+```
+
+File: `src/game.owpy`
+```
+#import 'lib/functions'
+#import 'src/setup'
+```

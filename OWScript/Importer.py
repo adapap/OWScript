@@ -12,7 +12,7 @@ class Importer:
         for i, line in enumerate(lines):
             if '#import ' in line:
                 importSplit = line.split(' ')
-                importFile = importSplit[1].replace('\'', '') + '.owpy'
+                importFile = importSplit[1].replace('\'', '').replace('\"', '') + '.owpy'
                 f = open(os.path.join(path, importFile))
                 importText = f.read()
                 importer = self.__class__(f, importText)

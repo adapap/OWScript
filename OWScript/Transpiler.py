@@ -1,7 +1,7 @@
 import re
 from collections import defaultdict
 from itertools import chain, count
-from string import capwords
+from string import capwords, ascii_uppercase as letters
 
 try:
     from . import Errors
@@ -86,11 +86,14 @@ class Transpiler:
         self.tree = tree
         self.indent_size = indent_size
         self.indent_level = 0
-        # Reserved:
+        # Reserved Global Indices
         # 0: Map ID
         self.global_reserved = 1
         self.global_index = count(self.global_reserved)
         self.player_index = count()
+        self.global_varconst = iter(letters[1:])
+        self.player_varconst = iter(letters[1:])
+        self.varconsts = {}
         self.curblock = []
 
     @property
@@ -181,9 +184,30 @@ class Transpiler:
                 raise Errors.SyntaxError('\'{}\' expected {} arguments ({}), received {}'.format(
                     name, len(node.args), ', '.join(map(lambda arg: arg.__name__, node.args)), len(node.children)),
                     pos=node._pos)
-        for index, types in enumerate(zip(node.args, node.children)):
+            else:
+                pass #wait shorthand
+        for index, types in enumerate(zip(node.args, node.children[:])):
             arg, child = types
             if arg is None:
+                continue
+            elif arg == Variable:
+                try:
+                    assert type(child) in (GlobalVar, PlayerVar)
+                    if child.name not in self.varconsts:
+                        constgen = self.global_varconst if type(child) == GlobalVar else self.player_varconst
+                        try:
+                            varconst = next(constgen)
+                            self.varconsts[child.name] = Raw(code=varconst)
+                            if type(child) == GlobalVar:
+                                code = 'Set Global Variable({}, {});\n'.format(varconst, self.visit(child, scope)) + code
+                            else:
+                                code = 'Set Player Variable({}, {}, {});\n'.format(self.visit(child.player, varconst, self.visit(child, scope))) + code
+                        except StopIteration:
+                            raise Errors.InvalidParameter('Exceeded maximum number of chase variables (25) for this type.', pos=child._pos)
+                    node.children[index] = self.varconsts[child.name]
+                except AssertionError:
+                    raise Errors.InvalidParameter('Expected variable in chase variable expression, received {}'.format(
+                        child.__class__.__name__), pos=child._pos)
                 continue
             extends = arg._extends if hasattr(arg, '_extends') else []
             values = list(flatten(arg.get_values()))

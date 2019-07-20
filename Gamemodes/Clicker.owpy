@@ -595,13 +595,13 @@ SaveInput("Left", 2, save_pos - x_offset)
 SaveInput("Right", 3, save_pos + x_offset)
 
 %UnlockHero(hero_)
+    pvar save_code_effect = Last Text Id
     Destroy In-World Text(pvar save_code_effect)
     Set Hero(Event Player, hero_)
     Wait(0.5s)
     Big Msg(Event Player, `You Unlocked {}`(Hero Icon String(hero_)))
     SuccessSound()
     Wait(0.25)
-    pvar save_code_effect = Last Text Id
 
 Rule "Buy Prestige Item"
     Each(Team 1)
@@ -624,19 +624,19 @@ Rule "Check Save Code"
         // 3: Right
         if pvar save_code == [0, 0, 0, 0, 0]:
             UnlockHero(Hero(McCree))
-            CodeText(Event Player, "Up", "Up", "Up", "Up", "Up", save_pos + Up * 1.25, 2)
+            CodeText(Event Player, ["Up", "Up", "Up", "Up", "Up"], save_pos + Up * 1.25, 2)
         elif pvar save_code == [3, 1, 2, 3, 2]:
             UnlockHero(Hero(Soldier: 76))
-            CodeText(Event Player, "Right", "Down", "Left", "Right", "Left", save_pos + Up * 1.25, 2)
+            CodeText(Event Player, ["Right", "Down", "Left", "Right", "Left"], save_pos + Up * 1.25, 2)
         elif pvar save_code == [0, 2, 2, 1, 3]:
             UnlockHero(Hero(Ashe))
-            CodeText(Event Player, "Up", "Left", "Left", "Down", "Right", save_pos + Up * 1.25, 2)
+            CodeText(Event Player, ["Up", "Left", "Left", "Down", "Right"], save_pos + Up * 1.25, 2)
         elif pvar save_code == [2, 3, 2, 0, 0]:
             UnlockHero(Hero(Genji))
-            CodeText(Event Player, "Left", "Right", "Left", "Up", "Up", save_pos + Up * 1.25, 2)
+            CodeText(Event Player, ["Left", "Right", "Left", "Up", "Up"], save_pos + Up * 1.25, 2)
         elif pvar save_code == [1, 1, 3, 1, 2]:
             UnlockHero(Hero(Hanzo))
-            CodeText(Event Player, "Down", "Down", "Right", "Down", "Left", save_pos + Up * 1.25, 2)
+            CodeText(Event Player, ["Down", "Down", "Right", "Down", "Left"], save_pos + Up * 1.25, 2)
         elif pvar save_code == [2, 0, 1, 0, 3]: // Secrets
             Big Msg(Event Player, "Hacked")
             // You Unlocked Hidden Save 2

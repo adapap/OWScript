@@ -376,7 +376,7 @@ class Constant(AST):
     def __repr__(self):
         return self.name
 
-    def halt(self):
+    def halt(self, tp):
         return Raw(code='Apply Impulse({}, Down, Multiply(0.001, 0.001), To World, Cancel Contrary Motion)'.format(self.name.title()))
 
 class BinaryOp(AST):
@@ -423,8 +423,7 @@ class Array(AST):
         self.elements = elements or []
 
     def append(self, tp, elem):
-        if type(elem) == GlobalVar:
-            elem = tp.scope.get(elem.name).value
+        elem = Raw(code=tp.visit(elem, tp.scope))
         self.elements.append(elem)
 
     def index(self, elem):

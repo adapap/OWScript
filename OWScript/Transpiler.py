@@ -54,12 +54,14 @@ class Builtin:
         return array
 
     def ceil(tp, n):
-        node = OWID(name='Round To Integer')
+        node = OWID(name='Round To Integer', args=(Number, Any))
+        node._pos = n._pos
         node.children.extend([n, OWID(name='Up')])
         return node
 
     def floor(tp, n):
-        node = OWID(name='Round To Integer')
+        node = OWID(name='Round To Integer', args=(Number, Any))
+        node._pos = n._pos
         node.children.extend([n, OWID(name='Down')])
         return node
 
@@ -139,6 +141,7 @@ class Transpiler:
 
     def visitFunction(self, node, scope):
         scope.assign('gvar_' + node.name, node)
+        node.closure = scope
         return ''
 
     def visitBlock(self, node, scope):
@@ -378,7 +381,10 @@ class Transpiler:
             return self.visit(var, scope)
         elif type(var.value) == String:
             return var.value.value
-        code = 'Value In Array(Global Variable(A), {})'.format(var.index)
+        if var.index != None:
+            code = 'Value In Array(Global Variable(A), {})'.format(var.index)
+        else:
+            code = '{}'.format(var.value)
         return code
 
     def visitPlayerVar(self, node, scope):
@@ -454,12 +460,11 @@ class Transpiler:
                 print('DEBUG - Item Error 01:', ex)
         else:
             try:
-                print(node.index, scope, node.parent.name)
                 index = int(scope.get(node.index.name).value)
                 item = scope.get(node.parent.name).value[index]
                 return self.visit(item, scope)
             except Exception as er:
-                print('DEBUG - Item Error 02:', er)
+                #print('DEBUG - Item Error 02:', er)
                 return 'Value In Array(' + self.visit(node.parent, scope) + ', ' + self.visit(node.index, scope) + ')'
 
     def visitAttribute(self, node, scope):
@@ -480,12 +485,15 @@ class Transpiler:
         if type(parent) == Attribute:
             if type(base_node) == Variable:
                 method = getattr(base_node.value, parent.name)
+            elif type(base_node) in (GlobalVar, PlayerVar):
+                method = getattr(scope.get(base_node.name).value, parent.name)
             else:
                 method = getattr(base_node, parent.name)
             try:
                 self.scope = scope
                 result = method(self, *node.args)
             except TypeError as ex:
+                print('Invalid method arguments:', ex)
                 raise Errors.InvalidParameter("'{}' method received invalid arguments".format(parent.name), pos=parent._pos)
             if result:
                 lines.append(self.visit(result, scope))
@@ -493,7 +501,7 @@ class Transpiler:
         elif type(parent) in (GlobalVar, PlayerVar):
             func_name = parent.name[5:]
         else:
-            print('DEBUG - called by:', type(parent))
+            print('DEBUG - Call Origin:', type(parent))
         if not base_node:
             raise Errors.NameError('Undefined function \'{}\''.format(base_name[5:]), pos=parent._pos)
         func = base_node if type(base_node) != Variable else base_node.value

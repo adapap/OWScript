@@ -2,14 +2,10 @@ import re
 from collections import deque
 from functools import partial
 
-try:
-    from . import Errors
-    from .AST import *
-    from .Tokens import ALIASES
-    from .Workshop import *
-except ImportError:
-    import Errors
-    from AST import *
+from . import Errors
+from .AST import *
+from .Tokens import ALIASES
+from .Workshop import *
 
 class Parser:
     def __init__(self, tokens):
@@ -105,11 +101,13 @@ class Parser:
         return node
 
     def stmt(self):
-        """stmt : (funcdef | ruledef | line)"""
+        """stmt : (funcdef | ruledef | importdef | line)"""
         if self.curvalue == '%':
             return self.funcdef()
         elif self.curtype in ('DISABLED', 'RULE'):
             return self.ruledef()
+        elif self.curtype == 'IMPORT':
+            return self.importdef()
         else:
             return self.line()
 
@@ -205,6 +203,16 @@ class Parser:
         else:
             line = self.line()
             node.children.append(line)
+        return node
+
+    def importdef(self):
+        """importdef : #import STRING"""
+        self.eat('IMPORT')
+        path = self.curvalue.strip('\'').strip('"').replace('/', '\\').rstrip('.owpy')
+        pos = self.curpos
+        self.eat('STRING')
+        node = Import(path=path)
+        node._pos = pos
         return node
 
     def line(self):

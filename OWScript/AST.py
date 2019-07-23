@@ -94,6 +94,13 @@ class Raw(AST):
     def __repr__(self):
         return '<Raw {}>'.format(len(self.code))
 
+class Import(AST):
+    def __init__(self, path):
+        self.path = path
+
+    def __repr__(self):
+        return '#import {}'.format(self.path)
+
 # Workshop Types
 class WorkshopType(AST):
     @classmethod

@@ -1,6 +1,5 @@
 #import 'lib2/child2.owpy'
 
-%debug_msg(text)
+%debug_func(text)
     Msg(Everyone, text)
-
-nested(Lucio)
+    nested(Lucio)

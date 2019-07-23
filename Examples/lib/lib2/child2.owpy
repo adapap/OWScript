@@ -1,2 +1,2 @@
 %nested(hero_)
-    Set Hero(hero_)
+    Set Hero(Event Player, hero_)

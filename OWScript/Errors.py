@@ -16,6 +16,9 @@ class LexError(OWSError):
 class ParseError(OWSError):
     pass
 
+class ImportError(OWSError):
+    pass
+
 class SyntaxError(OWSError):
     pass
 

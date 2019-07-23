@@ -1,12 +1,8 @@
 import functools
 import re
 
-try:
-    from . import Errors
-    from .Tokens import Token, Tokens
-except ImportError:
-    import Errors
-    from Tokens import Token, Tokens
+from . import Errors
+from .Tokens import Token, Tokens
 
 class Lexer:
     IGNORE = ('WHITESPACE', 'SEMI', 'COMMENT', 'ANNOTATION')

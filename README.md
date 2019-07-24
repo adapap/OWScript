@@ -14,6 +14,11 @@ Setup
 ## Syntax Highlighting
 In the `Syntax/` folder, you can find the raw Iro code which I used to generate a Sublime Text file with modifications. You can directly import the `OWScript.sublime-syntax` file by putting it in your ST3 `User` folder.
 
+Projects
+========
+- **Cookie Clicker** [![Discord Shield](https://discordapp.com/api/guilds/572937743114436619/widget.png?style=shield "Made by @adapap")](https://discord.gg/5Nst8g5)
+- [**Upgrade Shop**](https://github.com/overwatchworkshop/upgrade-shop)
+
 Documentation
 =============
 *See example code in the `Examples/` folder.*
@@ -147,7 +152,7 @@ Vector
 ```
 
 ## Time
-Time can be represented in *ms*, *s*, or *min*.
+Time can be represented in *ms*, *s*, or *min* as a shorthand for the number value.
 ```
 Wait(1s + 500ms)
 Wait
@@ -290,7 +295,7 @@ scores.append(123) // Method
 |Torbjorn|Torbjörn|
 
 ## Imports
-OWScript allows bigger scripts and scripts that use common funcitonality to be broken up into modules and imported into a base file. All the "imported" files are directly copied into the base script to be transpiled to workshop code.
+OWScript allows bigger scripts and scripts that use common funcitonality to be broken up into modules and imported into a base file. All the "imported" files are evaluated into a parse tree, which is transpiled to workshop code by the base file.
 
 You can import a file by using the `#import 'filepath'`. If the file is in a folder, put the relative path to the file as shown in the examples below:
 

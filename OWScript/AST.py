@@ -468,6 +468,11 @@ class PlayerVar(Data):
         super().__init__(name)
         self.player = player or Constant(name='Event Player')
 
+class VarType:
+    # Compares whether a value is a GlobalVar or PlayerVar
+    def __eq__(self, other):
+        return other in (GlobalVar, PlayerVar)
+
 class If(AST):
     def __init__(self, cond, true_block, false_block=None):
         self.cond = cond

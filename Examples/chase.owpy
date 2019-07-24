@@ -1,0 +1,9 @@
+Rule "Chase Test"
+    Actions
+        pvar chase_var = 100
+        Chase Global Variable At Rate
+            Variable: pvar chase_var
+            Destination: 0
+            Rate: -1
+            Reevaluation: Destination And Rate
+        Set Move Speed(Event Player, pvar chase_var)

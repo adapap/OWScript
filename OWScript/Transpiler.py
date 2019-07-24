@@ -246,11 +246,11 @@ class Transpiler:
                         constgen = self.global_varconst if type(child) == GlobalVar else self.player_varconst
                         try:
                             varconst = next(constgen)
-                            self.varconsts[child.name] = Raw(code=varconst)
                             if type(child) == GlobalVar:
                                 code = 'Set Global Variable({}, {});\n'.format(varconst, self.visit(child, scope)) + code
                             else:
-                                code = 'Set Player Variable({}, {}, {});\n'.format(self.visit(child.player, varconst, self.visit(child, scope))) + code
+                                code = 'Set Player Variable({}, {}, {});\n'.format(self.visit(child.player, scope), varconst, self.visit(child, scope)) + code
+                            self.varconsts[child.name] = Raw(code=varconst)
                         except StopIteration:
                             raise Errors.InvalidParameter('Exceeded maximum number of chase variables (25) for this type.', pos=child._pos)
                     node.children[index] = self.varconsts[child.name]
@@ -447,6 +447,9 @@ class Transpiler:
 
     def visitGlobalVar(self, node, scope):
         name = node.name
+        if name in self.varconsts:
+            varconst = self.visit(self.varconsts.get(name), scope)
+            return 'Global Variable({})'.format(varconst)
         var = scope.get(name)
         if not var:
             raise Errors.NameError('\'{}\' is undefined'.format(node.name[5:]), pos=node._pos)
@@ -462,6 +465,10 @@ class Transpiler:
 
     def visitPlayerVar(self, node, scope):
         name = node.name
+        player = self.visit(node.player, scope)
+        if name in self.varconsts:
+            varconst = self.visit(self.varconsts.get(name), scope)
+            return 'Player Variable({}, {})'.format(player, varconst)
         var = scope.get(name)
         if not var:
             raise Errors.NameError('pvar \'{}\' is undefined'.format(node.name[5:]), pos=node._pos)
@@ -469,7 +476,7 @@ class Transpiler:
             return self.visit(var, scope)
         elif type(var.value) == String:
             return var.value.value
-        code = 'Value In Array(Player Variable({}, A), {})'.format(self.visit(node.player, scope), var.index)
+        code = 'Value In Array(Player Variable({}, A), {})'.format(player, var.index)
         return code
 
     def visitString(self, node, scope):

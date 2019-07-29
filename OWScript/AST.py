@@ -468,17 +468,23 @@ class GlobalVar(AST):
         self.letter = letter
         self.index = index
 
+    def __repr__(self):
+        return 'Global.{}[{}]'.format(self.letter, self.index)
+
 class PlayerVar(AST):
     def __init__(self, letter, index=None, player=None):
         self.letter = letter
         self.index = index
         self.player = player or Constant(name='Event Player')
 
+    def __repr__(self):
+        return 'Player@{}.{}[{}]'.format(self.player, self.letter, self.index)
+
 class Var(AST):
     GLOBAL = 0
     PLAYER = 1
     INTERNAL = 2
-    STRING = 3
+    BUILTIN = 3
     CONST = 4
 
     def __init__(self, name, type_, value=None, data=None, player=None):
@@ -490,7 +496,7 @@ class Var(AST):
 
     @property
     def _type(self):
-        return {0: 'GLOBAL', 1: 'PLAYER', 2: 'INTERNAL', 3: 'STRING', 4: 'CONST'}.get(self.type)
+        return {0: 'GLOBAL', 1: 'PLAYER', 2: 'INTERNAL', 3: 'BUILTIN', 4: 'CONST'}.get(self.type)
 
     def __repr__(self):
         if self.value or self.data:

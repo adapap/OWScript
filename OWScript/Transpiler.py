@@ -55,13 +55,13 @@ class Builtin:
     def ceil(tp, n):
         node = OWID(name='Round To Integer', args=(Number, Any))
         node._pos = n._pos
-        node.children.extend([n, OWID(name='Up')])
+        node.children.extend([n, Constant(name='Up')])
         return node
 
     def floor(tp, n):
         node = OWID(name='Round To Integer', args=(Number, Any))
         node._pos = n._pos
-        node.children.extend([n, OWID(name='Down')])
+        node.children.extend([n, Constant(name='Down')])
         return node
 
     def get_map(tp):
@@ -257,19 +257,24 @@ class Transpiler:
                 continue
             elif arg == Variable:
                 try:
-                    assert type(child) == VarType()
-                    if child.name not in self.varconsts:
-                        constgen = self.global_varconst if type(child) == GlobalVar else self.player_varconst
+                    assert type(child) == Var
+                    var = scope.get(child.name)
+                    self.logger.debug('chase var:', var)
+                    if not var:
+                        raise Errors.SyntaxError('{} is undefined'.format(child.name), pos=child._pos)
+                    if var.data.letter == 'A':
+                        letters = self.global_letters if var.type == Var.GLOBAL else self.player_letters
                         try:
-                            varconst = next(constgen)
-                            if type(child) == GlobalVar:
-                                code = 'Set Global Variable({}, {});\n'.format(varconst, self.visit(child, scope)) + code
-                            else:
-                                code = 'Set Player Variable({}, {}, {});\n'.format(self.visit(child.player, scope), varconst, self.visit(child, scope)) + code
-                            self.varconsts[child.name] = Raw(code=varconst)
+                            letter = next(letters)
+                            var.data.letter = letter
+                            var.data.index = None
+                            if var.type == Var.GLOBAL:
+                                code = 'Set Global Variable({}, {});\n'.format(letter, self.visit(var.value, scope)) + code
+                            elif var.type == Var.PLAYER:
+                                code = 'Set Player Variable({}, {}, {});\n'.format(self.visit(var.data.player, scope), letter, self.visit(var.value, scope)) + code
                         except StopIteration:
                             raise Errors.InvalidParameter('Exceeded maximum number of chase variables (25) for this type.', pos=child._pos)
-                    node.children[index] = self.varconsts[child.name]
+                    node.children[index] = var
                 except AssertionError:
                     raise Errors.InvalidParameter('Expected variable in chase variable expression, received {}'.format(
                         child.__class__.__name__), pos=child._pos)
@@ -328,13 +333,16 @@ class Transpiler:
             name = parent.name
             var = scope.get(name)
             try:
+                assert type(var.value) == Array
                 index = int(self.visit(node.left.index, scope))
                 var.value[index] = value
+            except AssertionError:
+                raise Errors.SyntaxError('Cannot assign to \'{}\'using indices (value is not an array)'.format(name), pos=node._pos)
             except ValueError:
                 raise Errors.NotImplementedError('Array assignment only supports literal integer indices', pos=node._pos)
             scope.assign(name=name, var=var)
         else:
-            raise Errors.NotImplementedError('Assign to \'{}\' not implemented'.format(type(node.left).__name__), pos=node._pos)
+            raise Errors.NotImplementedError('Cannot assign value to {}'.format(type(node.left).__name__), pos=node._pos)
         var = scope.get(name)
         data = var.data
         if var.type == Var.GLOBAL:
@@ -382,12 +390,17 @@ class Transpiler:
         code = ''
         pointer = node.pointer
         iterable = node.iterable
-        if type(iterable) == VarType() and type(scope.get(iterable.name).value) == Array:
+        if type(iterable) == Var:
             lines = []
             array = scope.get(iterable.name).value
-            for elem in scope.get(iterable.name).value.elements:
+            try:
+                assert type(array) == Array
+            except AssertionError:
+                raise Errors.SyntaxError('{} is not iterable'.format(iterable.name), pos=iterable._pos)
+            for elem in array.elements:
                 scope = Scope(name='for', parent=scope)
-                scope.assign('{}'.format(pointer.name), value=elem)
+                var = Var(name=pointer.name, type_=Var.INTERNAL, value=elem)
+                scope.assign(pointer.name, var)
                 lines.append(';\n'.join(self.visit_children(node.body, scope)))
             code += ';\n'.join(lines)
         elif type(iterable) == Call:
@@ -400,7 +413,8 @@ class Transpiler:
                 lines = []
                 for elem in array.elements:
                     for_scope = Scope(name='for', parent=scope)
-                    for_scope.assign('{}'.format(pointer.name), value=elem)
+                    var = Var(name=pointer.name, type_=Var.INTERNAL, value=elem)
+                    for_scope.assign(pointer.name, var)
                     result = self.visit_children(node.body, for_scope)
                     if result:
                         lines.append(';\n'.join(result))
@@ -413,7 +427,9 @@ class Transpiler:
             for_scope = Scope(name='for', parent=scope)
             value = Number(value='0')
             index = next(self.global_index)
-            for_scope.assign('{}'.format(pointer.name), value=value, index=index)
+            pointer_var = GlobalVar(letter='A', index=index)
+            var = Var(name=pointer.name, type_=Var.GLOBAL, value=value, data=pointer_var)
+            for_scope.assign(pointer.name, var)
             reset_pointer = 'Set Global Variable At Index(A, {}, 0);\n'.format(index)
             code += reset_pointer
             skip_code = '//FOR STARTSkip If(Compare(Count Of({}), ==, {}), {})'.format(self.visit(iterable, for_scope), self.visit(pointer, for_scope), '{}')
@@ -472,16 +488,26 @@ class Transpiler:
     def visitVar(self, node, scope):
         """Internal variable object detailing its type, value, data (used for player/global variables), and player (for player variables)."""
         var = scope.get(node.name)
+        if not var:
+            raise Errors.NameError('\'{}\' is undefined'.format(node.name), pos=node._pos)
         code = ''
         if var.type == Var.GLOBAL:
-            code += 'Value In Array(Global Variable({}), {})'.format(var.data.letter, var.data.index)
+            if var.data.index is not None:
+                code += 'Value In Array(Global Variable({}), {})'.format(var.data.letter, var.data.index)
+            else:
+                code += 'Global Variable({})'.format(var.data.letter)
         elif var.type == Var.PLAYER:
             player = self.visit(var.data.player, scope)
-            code += 'Value In Array(Player Variable({}, {}), {})'.format(player, var.data.letter, var.data.index)
+            if var.data.index is not None:
+                code += 'Value In Array(Player Variable({}, {}), {})'.format(player, var.data.letter, var.data.index)
+            else:
+                code += 'Player Variable({}, {})'.format(player, var.data.letter)
         elif var.type == Var.CONST:
             code += self.visit(var.value, scope)
+        elif var.type == Var.INTERNAL:
+            code += self.visit(var.value, scope)
         else:
-            raise Errors.NotImplementedError('visit Var of type {} not implemented'.format(var.type), pos=node._pos)
+            raise Errors.NotImplementedError('visit Var of type {} not implemented'.format(var._type), pos=node._pos)
         return code
 
     # def visitGlobalVar(self, node, scope):
@@ -584,12 +610,13 @@ class Transpiler:
             except AssertionError:
                 raise Errors.SyntaxError('Cannot get item from non-array type {}'.format(type(var.value)), pos=node.parent._pos)
         else:
+            self.logger.debug(node.index, type(node.index))
             try:
                 index = int(scope.get(node.index.name).value)
                 item = scope.get(node.parent.name).value[index]
                 return self.visit(item, scope)
-            except ValueError:
-                self.logger.warn('Assuming item is workshop compatible')
+            except (ValueError, TypeError, AttributeError):
+                self.logger.info('Assuming item {} of array {} is workshop compatible'.format(node.index, node.parent))
                 array = self.visit(node.parent, scope)
                 index = self.visit(node.index, scope)
                 return 'Value In Array({}, {})'.format(array, index)
@@ -608,16 +635,10 @@ class Transpiler:
         """Calls are either made to built-in functions or user-defined functions. Their arguments must be evaluated beforehand."""
         parent = node.parent
         base_node = self.base_node(node)
-        if type(base_node) == GlobalVar:
-            base_node = scope.get(base_node.name)
+        var = scope.get(base_node.name)
         lines = []
         if type(parent) == Attribute:
-            if type(base_node) == Variable:
-                method = getattr(base_node.value, parent.name)
-            elif type(base_node) == VarType():
-                method = getattr(scope.get(base_node.name).value, parent.name)
-            else:
-                method = getattr(base_node, parent.name)
+            method = getattr(var.value, parent.name)
             try:
                 self.scope = scope
                 result = method(self, *node.args)
@@ -627,14 +648,13 @@ class Transpiler:
             if result:
                 lines.append(self.visit(result, scope))
             return ';\n'.join(lines)
-        elif type(parent) == VarType():
-            func_name = parent.name[5:]
-        else:
-            print('DEBUG - Call Origin:', type(parent))
-        if not base_node:
+        elif type(parent) is not Var:
+            self.logger.debug('Called by parent of type {}', type(parent))
+        if not var:
             raise Errors.NameError('Undefined function \'{}\''.format(func_name), pos=parent._pos)
-        func = base_node if type(base_node) != Variable else base_node.value
-        if type(func) == Function:
+        func = var.value
+        self.logger.debug('Function type:', func, var)
+        if var.type != Var.BUILTIN:
             # Assert arity
             try:
                 assert len(func.params) == len(node.args)
@@ -649,7 +669,7 @@ class Transpiler:
                     lines.append(self.visit(child, scope=scope))
                 except Errors.ReturnError as ex:
                     lines.append(self.visit(ex.value, scope=scope))
-        else:
+        elif var.type == Var.BUILTIN:
             try:
                 self.scope = scope
                 result = func(*([self] + node.args))
@@ -680,6 +700,8 @@ class Transpiler:
     def run(self):
         """Evaluates the parse tree from the parser into workshop code."""
         global_scope = Scope(name='global')
-        global_scope.namespace.update(Builtin.__annotations__)
+        for func_name, func in Builtin.__annotations__.items():
+            var = Var(name=func_name, type_=Var.BUILTIN, value=func)
+            global_scope.assign(func_name, var)
         code = self.visit(self.tree, scope=global_scope)
         return code

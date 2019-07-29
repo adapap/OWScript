@@ -175,11 +175,13 @@ class Transpiler:
         if not os.path.exists(path):
             raise Errors.ImportError('File {} could not be found'.format(node.path), pos=node._pos)
         try:
-            if not path not in self.imports:
+            if path not in self.imports:
                 self.imports.add(path)
-                return Importer.import_file(path)
+                result = Importer.import_file(path)
             else:
                 self.logger.info('Skipping duplicate import {}'.format(path))
+                result = Script()
+            return result
         except Exception as ex:
             raise Errors.ImportError('Failed to import \'{}\' due to the following error:\n{}'.format(node.path, ex), pos=node._pos)
     def visitRule(self, node, scope):

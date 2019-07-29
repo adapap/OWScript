@@ -205,7 +205,7 @@ class Parser:
     def importdef(self):
         """importdef : #import STRING"""
         self.eat('IMPORT')
-        path = self.curvalue.strip('\'').strip('"').replace('/', '\\').rstrip('.owpy')
+        path = self.curvalue.strip('\'').strip('"').replace('/', '\\').replace('.owpy', '')
         pos = self.curpos
         self.eat('STRING')
         node = Import(path=path)

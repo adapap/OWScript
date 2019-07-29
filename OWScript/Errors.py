@@ -1,4 +1,24 @@
+import sys
 TEXT = None
+
+class Logger:
+    INFO = 1
+    WARN = 2
+    DEBUG = 3
+    def __init__(self, log_level=WARN):
+        self.log_level = log_level
+
+    def info(self, *msg):
+        if self.log_level >= Logger.INFO:
+            sys.stderr.write('[INFO] {}\n'.format(' '.join(map(str, msg))))
+
+    def warn(self, *msg):
+        if self.log_level >= Logger.WARN:
+            sys.stderr.write('[WARNING] {}\n'.format(' '.join(map(str, msg))))
+
+    def debug(self, *msg):
+        if self.log_level >= Logger.DEBUG:
+            sys.stderr.write('[DEBUG] {}\n'.format(' '.join(map(str, msg))))
 
 class OWSError(Exception):
     def __init__(self, msg, pos):

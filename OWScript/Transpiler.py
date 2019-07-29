@@ -1,22 +1,23 @@
 import os
 import re
-from collections import defaultdict
-from itertools import chain, count
-from string import capwords, ascii_uppercase as letters
+from itertools import count
+from string import ascii_uppercase as letters
 
 from . import Errors
 from . import Importer
 from .AST import *
-from .Workshop import Workshop
 
 def flatten(l):
+    """Helper method to convert a list of lists into a single list."""
     l = list(l)
     while l:
         while l and isinstance(l[0], list):
             l[0:1] = l[0]
-        if l: yield l.pop(0)
+        if l:
+            yield l.pop(0)
 
 class Scope:
+    """Keeps track of defined names in a scope context. Handles lookup and assignment."""
     def __init__(self, name, parent=None, namespace=None):
         self.name = name
         self.parent = parent
@@ -30,22 +31,21 @@ class Scope:
             keys.extend(self.parent.all_vars)
         return keys
 
-    def get(self, name, default=None):
-        value = self.namespace.get(name, default)
+    def get(self, name):
+        value = self.namespace.get(name)
         if value is not None:
-            if type(value) == GlobalVar and value.name == name:
-                return self.parent.get(name, default)
             return value
         if self.parent:
-            return self.parent.get(name, default)
+            return self.parent.get(name)
 
-    def assign(self, name, value, index=None):
-        self.namespace[name] = Variable(value=value, index=index)
+    def assign(self, name, var):
+        self.namespace[name] = var
 
     def __repr__(self):
         return f"<Scope '{self.name}'[{self.level}]>"
 
 class Builtin:
+    """The funcionality of built-in functions for OWScript."""
     def range(tp, *args):
         args = list(map(int, args))
         elements = list(map(Number, map(str, range(*args))))
@@ -81,20 +81,24 @@ class Builtin:
     get_map: get_map
 
 class Transpiler:
-    def __init__(self, tree, path, indent_size=3):
+    """Compiles a parse tree into a single string output via the `run` method."""
+    def __init__(self, tree, path, logger, indent_size=3):
         self.tree = tree
         self.path = path
+        self.logger = logger
         self.indent_size = indent_size
         self.indent_level = 0
         # Reserved Global Indices
         # 0: Map ID
         self.global_reserved = 1
+        # Generators to return the next available index (or variable letter for chase variables)
         self.global_index = count(self.global_reserved)
         self.player_index = count()
-        self.global_varconst = iter(letters[1:])
-        self.player_varconst = iter(letters[1:])
-        self.varconsts = {}
+        self.global_letters = iter(letters[1:])
+        self.player_letters = iter(letters[1:])
+
         self.curblock = []
+        # Keeps track of absolute import paths to avoid duplicate imports
         self.imports = set()
 
     @property
@@ -106,13 +110,13 @@ class Transpiler:
         return 'Wait(0.016, Ignore Condition)'
 
     def base_node(self, node):
-        while type(node) in (Attribute, Call, Item):
+        """Gets a node that can be evaluated in the current scope (e.g. not an item, property, or call)."""
+        while hasattr(node, 'parent'):
             node = node.parent
         return node
 
     def resolve_skips(self):
-        # Resolves for/while continue skips
-        cur_line = 0
+        """Resolves for/while* continue skips from placeholder text."""
         skips = []
         skip_to = []
         for line_no, line in enumerate(self.curblock):
@@ -128,6 +132,7 @@ class Transpiler:
             self.curblock[skip] = self.curblock[skip].format(jump)
 
     def resolve_import(self, node, scope):
+        """Extends the current parse tree by evaluating the given import path (recursively)."""
         children = self.visit(node, scope).children
         nodes = []
         for child in children:
@@ -141,17 +146,19 @@ class Transpiler:
                 nodes.append(child)
         return nodes
 
-    def resolve_name(self, node, scope):
-        if type(node) == VarType():
-            node = scope.get(node.name)
-            if type(node) == Variable:
-                return node.value
-        elif type(node) == BinaryOp:
-            node.left = self.resolve_name(node.left, scope)
-            node.right = self.resolve_name(node.right, scope)
-        return node
+    # def resolve_name(self, node, scope):
+    #     if type(node) == VarType():
+    #         node = scope.get(node.name)
+    #         if type(node) == Variable:
+    #             return node.value
+    #     elif type(node) == BinaryOp:
+    #         node.left = self.resolve_name(node.left, scope)
+    #         node.right = self.resolve_name(node.right, scope)
+    #     return node
 
     def visitScript(self, node, scope):
+        """Root node generates the final code output and resolves all imports."""
+        # Shameless plug + base code for `get_map` functionality
         code = r'rule("Generated by https://github.com/adapap/OWScript") { Event { Ongoing - Global; } Actions { Set Global Variable At Index(A, 0, Round To Integer(Add(Distance Between(Nearest Walkable Position(Vector(-500.000, 0, 0)), Nearest Walkable Position(Vector(500, 0, 0))), Distance Between(Nearest Walkable Position(Vector(0, 0, -500.000)), Nearest Walkable Position(Vector(0, 0, 500)))), Down)); }}' + '\n'
         while len(node.children) > 0:
             child = node.children[0]
@@ -163,6 +170,7 @@ class Transpiler:
         return code.rstrip('\n')
 
     def visitImport(self, node, scope):
+        """Handles `#import` tokens, duplicate imports, and invalid paths."""
         file_dir = os.path.dirname(self.path)
         path = os.path.join(file_dir, node.path) + '.owpy'
         try:
@@ -174,35 +182,41 @@ class Transpiler:
             self.imports.add(path)
             result = Importer.import_file(path)
         except AssertionError:
-            print('DEBUG - Skipping duplicate import {}'.format(path))
+            self.logger.info('Skipping duplicate import {}'.format(path))
         except Exception as ex:
             raise Errors.ImportError('Failed to import \'{}\' due to the following error:\n{}'.format(node.path, ex), pos=node._pos)
         return result
 
     def visitRule(self, node, scope):
+        """Creates a basic workshop rule."""
         code = ''
         if node.disabled:
             code += 'disabled '
         code += 'rule('
         code += '"' + ''.join(x if type(x) == str else self.visit(x, scope) for x in node.name) + '"'
+        self.indent_level += 1
         code += ') {\n' + '\n'.join(self.visit_children(node, scope)) + '}\n'
+        self.indent_level -= 1
         return code
 
     def visitRaw(self, node, scope):
+        """Returns an exact value for a string without further interpretation."""
         return node.code
 
     def visitFunction(self, node, scope):
-        scope.assign('gvar_' + node.name, node)
+        """Defines a user-created function."""
+        var = Var(name=node.name, data=node, type_=Var.INTERNAL)
+        scope.assign(node.name, var)
         node.closure = scope
         return ''
 
     def visitBlock(self, node, scope):
-        self.indent_level += 1
+        """Visits a collection of statements."""
         code = ''.join(self.visit_children(node, scope))
-        self.indent_level -= 1
         return code
 
     def visitRuleblock(self, node, scope):
+        """A rule category such as Events, Conditions, or Actions."""
         code = self.tabs + node.name + ' {\n'
         self.indent_level += 1
         for ruleblock in node.children:
@@ -214,6 +228,7 @@ class Transpiler:
                     for x in result:
                         if x:
                             child = self.tabs + x
+                            # Automatically compare any condition to true
                             if node.name.upper() == 'CONDITIONS':
                                 child += ' == True'
                             self.curblock.append(child)
@@ -224,17 +239,18 @@ class Transpiler:
         return code
 
     def visitOWID(self, node, scope):
+        """A workshop value that takes any number of parameters, such as `Set Facing(...)`."""
         name = node.name.title()
         code = name
         try:
             assert len(node.args) == len(node.children)
         except AssertionError:
-            if name != 'Wait':
+            if name == 'Wait' and len(node.args) == 1:
+                node.args.append(Constant(name='Ignore Condition'))
+            else:
                 raise Errors.SyntaxError('\'{}\' expected {} arguments ({}), received {}'.format(
                     name, len(node.args), ', '.join(map(lambda arg: arg.__name__, node.args)), len(node.children)),
                     pos=node._pos)
-            else:
-                pass #wait shorthand
         for index, types in enumerate(zip(node.args, node.children[:])):
             arg, child = types
             if arg is None:
@@ -258,23 +274,23 @@ class Transpiler:
                     raise Errors.InvalidParameter('Expected variable in chase variable expression, received {}'.format(
                         child.__class__.__name__), pos=child._pos)
                 continue
-            extends = arg._extends if hasattr(arg, '_extends') else []
             values = list(flatten(arg.get_values()))
             if 'ANY' in values:
                 continue
             value = self.visit(child, scope).upper()
             if value not in values:
                 raise Errors.InvalidParameter('\'{}\' expected type {} for argument {}, received {}'.format(
-                    name, arg.__name__, index + 1, child.__class__.__name__)
-                , pos=child._pos)
+                    name, arg.__name__, index + 1, child.__class__.__name__), pos=child._pos)
         children = [self.visit(child, scope) for child in node.children]
         code += '(' + ', '.join(children) + ')'
         return code
 
     def visitConstant(self, node, scope):
+        """A workshop value with no further parameters, such as `Event Player` or `Yellow`."""
         return node.name.title()
 
     def visitCompare(self, node, scope):
+        """Interprets a comparison expression."""
         if node.op.lower() == 'in':
             return 'Array Contains(' + self.visit(node.right, scope) + ', ' + self.visit(node.left, scope) + ')'
         elif node.op.lower() == 'not in':
@@ -282,6 +298,7 @@ class Transpiler:
         return 'Compare(' + self.visit(node.left, scope) + f', {node.op}, ' + self.visit(node.right, scope) + ')'
 
     def visitAssign(self, node, scope):
+        """Handles internal variable definition and assignment."""
         code = ''
         value = {
             '+=': BinaryOp(left=node.left, op='+', right=node.right),
@@ -291,21 +308,21 @@ class Transpiler:
             '^=': BinaryOp(left=node.left, op='^', right=node.right),
             '%=': BinaryOp(left=node.left, op='%', right=node.right)
         }.get(node.op, node.right)
-        # Configure value
-        if type(node.right) == OWID:
-            pass
         # Define variables
-        if type(node.left) == GlobalVar:
-            name = node.left.name
-            var = scope.get(name)
-            index = var.index if var else next(self.global_index)
-            scope.assign(name=name, value=value, index=index)
-        elif type(node.left) == PlayerVar:
-            name = node.left.name
-            var = scope.get(name)
-            index = var.index if var else next(self.player_index)
-            player = node.left.player
-            scope.assign(name=name, value=value, index=index)
+        if type(node.left) == Var:
+            var = node.left
+            name = var.name
+            cur_var = scope.get(name)
+            if not cur_var:
+                if var.type == Var.GLOBAL:
+                    data = GlobalVar(letter='A', index=next(self.global_index))
+                elif var.type == Var.PLAYER:
+                    data = PlayerVar(letter='A', index=next(self.player_index), player=var.player)
+                var.data = data
+            else:
+                var = cur_var
+            var.value = value
+            scope.assign(name=name, var=var)
         elif type(node.left) == Item:
             parent = node.left.parent
             name = parent.name
@@ -313,22 +330,22 @@ class Transpiler:
             try:
                 index = int(self.visit(node.left.index, scope))
                 var.value[index] = value
-                value = var.value
             except ValueError:
-                # create temp variable, adjust and rebuild array
-                # index = self.visit(node.left.index)
-                raise Errors.NotImplementedError('Array assignment only supports literal indices', pos=node._pos)
-            player = self.visit(parent.player, scope) if type(parent) == PlayerVar else None
-            scope.assign(name=name, value=value, index=index)
+                raise Errors.NotImplementedError('Array assignment only supports literal integer indices', pos=node._pos)
+            scope.assign(name=name, var=var)
         else:
             raise Errors.NotImplementedError('Assign to \'{}\' not implemented'.format(type(node.left).__name__), pos=node._pos)
-        if name.startswith('gvar_'):
-            code += 'Set Global Variable At Index(A, {}, {})'.format(index, self.visit(value, scope))
-        elif name.startswith('pvar_'):
-            code += 'Set Player Variable At Index({}, A, {}, {})'.format(self.visit(player, scope), index, self.visit(value, scope))
+        var = scope.get(name)
+        data = var.data
+        if var.type == Var.GLOBAL:
+            code += 'Set Global Variable At Index({}, {}, {})'.format(data.letter, data.index, self.visit(var.value, scope))
+        elif var.type == Var.PLAYER:
+            code += 'Set Player Variable At Index({}, {}, {}, {})'.format(self.visit(data.player, scope), data.letter, data.index, self.visit(var.value, scope))
         return code
 
     def visitIf(self, node, scope):
+        """If blocks contain a true and false block to evaluate. To simulate this in workshop, the false block
+        is skipped when the condition is true, and vice-versa."""
         cond = self.visit(node.cond, scope)
         skip_code = 'Skip If(Not({}), {});\n'
         skip_false = ''
@@ -348,6 +365,8 @@ class Transpiler:
         return code
 
     def visitWhile(self, node, scope):
+        """While loop is simulated by looping the action list while a condition is met.
+        Support for while loops is limited."""
         lines = len(node.body.children) + 2
         code = f'Skip If(Not({self.visit(node.cond, scope)}), {lines});\n'
         for line in node.body.children:
@@ -357,6 +376,9 @@ class Transpiler:
         return code
 
     def visitFor(self, node, scope):
+        """For loops store a pointer to each element in an iterable and loop the action list until the pointer
+        is at the end of the iterable (length of iterable). If the length is a known value (e.g. user-created array),
+        then loop unrolling is possible to reduce time and number of actions."""
         code = ''
         pointer = node.pointer
         iterable = node.iterable
@@ -370,7 +392,7 @@ class Transpiler:
             code += ';\n'.join(lines)
         elif type(iterable) == Call:
             func_name = self.base_node(iterable).name
-            func = scope.get(func_name)
+            func = scope.get(func_name).value
             try:
                 self.scope = scope
                 array = func(*([self] + iterable.args))
@@ -386,7 +408,7 @@ class Transpiler:
             except AssertionError:
                 raise Errors.SyntaxError('Function call did not return an array', pos=iterable._pos)
             except TypeError as ex:
-                print('DEBUG - typeerror', ex)
+                self.logger.debug('For loop TypeError:', ex)
         else:
             for_scope = Scope(name='for', parent=scope)
             value = Number(value='0')
@@ -405,6 +427,7 @@ class Transpiler:
         return code
 
     def visitBinaryOp(self, node, scope):
+        """A binary expression takes two operands and one operator (addition, expontentiation, etc)."""
         if type(node.left) == Number and type(node.right) == Number:
             func = {
                 '+': lambda a, b: a + b,
@@ -432,11 +455,12 @@ class Transpiler:
         }.get(node.op)
         try:
             code += '(' + self.visit(node.left, scope) + ', ' + self.visit(node.right, scope) + ')'
-        except RecursionError as ex:
-            pass
+        except RecursionError:
+            self.logger.debug('Recursion in BinaryOp from: {}'.format(node))
         return code
 
     def visitUnaryOp(self, node, scope):
+        """A unary expression takes a single operand and operator (e.g. negation)."""
         if node.op == '-':
             code = '-' + self.visit(node.right, scope)
         elif node.op == '+':
@@ -445,50 +469,68 @@ class Transpiler:
             code = 'Not(' + self.visit(node.right, scope) + ')'
         return code
 
-    def visitGlobalVar(self, node, scope):
-        name = node.name
-        if name in self.varconsts:
-            varconst = self.visit(self.varconsts.get(name), scope)
-            return 'Global Variable({})'.format(varconst)
-        var = scope.get(name)
-        if not var:
-            raise Errors.NameError('\'{}\' is undefined'.format(node.name[5:]), pos=node._pos)
-        elif type(var) != Variable:
-            return self.visit(var, scope)
-        elif type(var.value) == String:
-            return var.value.value
-        if var.index != None:
-            code = 'Value In Array(Global Variable(A), {})'.format(var.index)
+    def visitVar(self, node, scope):
+        """Internal variable object detailing its type, value, data (used for player/global variables), and player (for player variables)."""
+        var = scope.get(node.name)
+        code = ''
+        if var.type == Var.GLOBAL:
+            code += 'Value In Array(Global Variable({}), {})'.format(var.data.letter, var.data.index)
+        elif var.type == Var.PLAYER:
+            player = self.visit(var.data.player, scope)
+            code += 'Value In Array(Player Variable({}, {}), {})'.format(player, var.data.letter, var.data.index)
+        elif var.type == Var.CONST:
+            code += self.visit(var.value, scope)
         else:
-            code = '{}'.format(var.value)
+            raise Errors.NotImplementedError('visit Var of type {} not implemented'.format(var.type), pos=node._pos)
         return code
 
-    def visitPlayerVar(self, node, scope):
-        name = node.name
-        player = self.visit(node.player, scope)
-        if name in self.varconsts:
-            varconst = self.visit(self.varconsts.get(name), scope)
-            return 'Player Variable({}, {})'.format(player, varconst)
-        var = scope.get(name)
-        if not var:
-            raise Errors.NameError('pvar \'{}\' is undefined'.format(node.name[5:]), pos=node._pos)
-        elif type(var) != Variable:
-            return self.visit(var, scope)
-        elif type(var.value) == String:
-            return var.value.value
-        code = 'Value In Array(Player Variable({}, A), {})'.format(player, var.index)
-        return code
+    # def visitGlobalVar(self, node, scope):
+    #     name = node.name
+    #     if name in self.varconsts:
+    #         varconst = self.visit(self.varconsts.get(name), scope)
+    #         return 'Global Variable({})'.format(varconst)
+    #     var = scope.get(name)
+    #     if not var:
+    #         raise Errors.NameError('\'{}\' is undefined'.format(node.name[5:]), pos=node._pos)
+    #     elif type(var) != Variable:
+    #         return self.visit(var, scope)
+    #     elif type(var.value) == String:
+    #         return var.value.value
+    #     if var.index is not None:
+    #         code = 'Value In Array(Global Variable(A), {})'.format(var.index)
+    #     else:
+    #         code = '{}'.format(var.value)
+    #     return code
+
+    # def visitPlayerVar(self, node, scope):
+    #     name = node.name
+    #     player = self.visit(node.player, scope)
+    #     if name in self.varconsts:
+    #         varconst = self.visit(self.varconsts.get(name), scope)
+    #         return 'Player Variable({}, {})'.format(player, varconst)
+    #     var = scope.get(name)
+    #     if not var:
+    #         raise Errors.NameError('pvar \'{}\' is undefined'.format(node.name[5:]), pos=node._pos)
+    #     elif type(var) != Variable:
+    #         return self.visit(var, scope)
+    #     elif type(var.value) == String:
+    #         return var.value.value
+    #     code = 'Value In Array(Player Variable({}, A), {})'.format(player, var.index)
+    #     return code
 
     def visitString(self, node, scope):
+        """A string has three children which can be strings, but each one defaults to null."""
         code = 'String("' + node.value.title() + '", '
         children = ', '.join(self.visit(child, scope) for child in node.children)
         code += children + ')'
         return code
 
     def visitNumber(self, node, scope):
+        """A numeric constant is represented by the value itself in the workshop."""
         return node.value
 
     def visitTime(self, node, scope):
+        """Shorthand for writing time values instead of doing integer arithmetic."""
         time = node.value
         if time.endswith('ms'):
             time = float(time.rstrip('ms')) / 1000
@@ -499,12 +541,14 @@ class Transpiler:
         return str(round(time, 3))
 
     def visitVector(self, node, scope):
+        """Convenient way to represent vector values."""
         code = 'Vector('
         components = ', '.join(self.visit(x, scope) for x in node.children)
         code += components + ')'
         return code
 
     def visitArray(self, node, scope):
+        """Arrays in OWScript can take any value, including strings and constants such as heroes."""
         if not node.elements:
             return 'Empty Array'
         else:
@@ -522,32 +566,36 @@ class Transpiler:
         return code
 
     def visitItem(self, node, scope):
-        if type(node.index) == Number and type(node.parent) == VarType():
+        """An item is accessing an element of an array."""
+        # Try to access an array element by interpreting the number?
+        if type(node.index) == Number and type(node.parent) == Var:
+            var = scope.get(node.parent.name)
+            if not var:
+                raise Errors.NameError('\'{}\' is undefined'.format(node.parent.name), pos=node.parent._pos)
             try:
                 index = int(node.index.value)
-                var = scope.get(node.parent.name)
-                if not var:
-                    raise Errors.NameError('{}\'{}\' is undefined'.format('pvar ' if type(node.parent) == PlayerVar else '', node.parent.name[5:]), pos=node.parent._pos)
-                try:
-                    if type(var) == Variable:
-                        item = var.value[index]
-                    elif type(var) == Array:
-                        item = var[index]
-                except IndexError:
+                array = var.value
+                assert type(array) == Array
+                if not 0 <= index < len(array):
                     item = Number(value='0')
+                else:
+                    item = var.value[index]
                 return self.visit(item, scope)
-            except ValueError as ex:
-                print('DEBUG - Item Error 01:', ex)
+            except AssertionError:
+                raise Errors.SyntaxError('Cannot get item from non-array type {}'.format(type(var.value)), pos=node.parent._pos)
         else:
             try:
                 index = int(scope.get(node.index.name).value)
                 item = scope.get(node.parent.name).value[index]
                 return self.visit(item, scope)
-            except Exception as er:
-                #print('DEBUG - Item Error 02:', er)
-                return 'Value In Array(' + self.visit(node.parent, scope) + ', ' + self.visit(node.index, scope) + ')'
+            except ValueError:
+                self.logger.warn('Assuming item is workshop compatible')
+                array = self.visit(node.parent, scope)
+                index = self.visit(node.index, scope)
+                return 'Value In Array({}, {})'.format(array, index)
 
     def visitAttribute(self, node, scope):
+        """Attributes are properties accessed using the dot operator."""
         attr = node.name.lower()
         try:
             attribute = getattr(node.parent, attr)
@@ -557,6 +605,7 @@ class Transpiler:
         return code
 
     def visitCall(self, node, scope):
+        """Calls are either made to built-in functions or user-defined functions. Their arguments must be evaluated beforehand."""
         parent = node.parent
         base_node = self.base_node(node)
         if type(base_node) == GlobalVar:
@@ -610,23 +659,27 @@ class Transpiler:
         return ';\n'.join(lines)
 
     def visitReturn(self, node, scope):
+        """Return statements break out of functions early."""
         if node.value is not None:
             raise Errors.ReturnError(value=node.value)
         return ''
 
     def visit(self, node, scope):
+        """Finds the relevant transpiler method for the current node."""
         method_name = 'visit' + type(node).__name__
         visitor = getattr(self, method_name)
         return visitor(node, scope)
 
     def visit_children(self, node, scope):
+        """Convenience function to visit all children of a node."""
         lines = []
         for child in node.children:
             lines.append(self.visit(child, scope))
         return lines
 
     def run(self):
+        """Evaluates the parse tree from the parser into workshop code."""
         global_scope = Scope(name='global')
-        global_scope.namespace.update({'gvar_' + name: func for name, func in Builtin.__annotations__.items()})
+        global_scope.namespace.update(Builtin.__annotations__)
         code = self.visit(self.tree, scope=global_scope)
         return code

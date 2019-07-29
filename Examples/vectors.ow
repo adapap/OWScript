@@ -1,9 +1,0 @@
-rule("Variables & Vectors") {
-	actions {
-		Set Global Variable(A, Empty Array)
-		Modify Global Variable(A, Append To Array, Vector(1, 2, 3))
-		Modify Global Variable(A, Append To Array, Vector(1, 2, 3))
-		Set Player Variable(A, Empty Array)
-		Modify Player Variable(A, Append To Array, Vector(1, 2, 3))
-	}
-}

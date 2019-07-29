@@ -1,5 +1,4 @@
 import re
-from collections import deque
 from functools import partial
 
 from . import Errors
@@ -11,7 +10,6 @@ class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
         self.pos = 0
-        self.call_stack = deque(maxlen=5)
 
     @property
     def curtoken(self):
@@ -27,7 +25,6 @@ class Parser:
     def curpos(self):
         """Returns the tuple (line, column) of the current token position."""
         return self.curtoken.line, self.curtoken.column
-    
 
     @property
     def curvalue(self):
@@ -40,7 +37,7 @@ class Parser:
             return self.tokens[self.pos + n]
         except IndexError:
             print('Cannot peek further than token length')
-    
+
     def eat(self, *tokens):
         """Consumes a token and moves on to the next one."""
         if len(tokens) > 1:
@@ -161,7 +158,7 @@ class Parser:
             if self.curtype == 'STRING':
                 name.append(self.curvalue.replace('"', ''))
             elif self.curtype == 'NAME':
-                var = GlobalVar(name='gvar_' + self.curvalue)
+                var = Var(self.curvalue, type_=Var.STRING)
                 var._pos = self.curpos
                 name.append(var)
             else:
@@ -216,7 +213,7 @@ class Parser:
         return node
 
     def line(self):
-        """line : 
+        """line :
                 ( if_stmt
                 | while_stmt
                 | for_stmt
@@ -408,7 +405,7 @@ class Parser:
         pos = self.curpos
         if self.curtype == 'OWID':
             name = self.curvalue.upper()
-            for key, aliases in ALIASES.items():
+            for aliases in ALIASES.values():
                 name = aliases.get(name, name)
             self.eat('OWID')
             maps = ['BLACK FOREST', 'BLIZZARD WORLD', 'BUSAN', 'CASTILLO', 'CHÂTEAU GUILLARD', 'DORADO', 'ECOPOINT: ANTARCTICA', 'EICHENWALDE', 'HANAMURA', 'HAVANA', 'HOLLYWOOD', 'HORIZON LUNAR COLONY', 'ILIOS', 'JUNKERTOWN', "KING'S ROW", 'LIJIANG TOWER', 'NECROPOLIS', 'NEPAL', 'NUMBANI', 'OASIS', 'PARIS', 'PETRA', 'RIALTO', 'ROUTE 66', 'TEMPLE OF ANUBIS', 'VOLSKAYA INDUSTRIES', 'WATCHPOINT: GIBRALTAR', 'AYUTTHAYA', 'BUSAN DOWNTOWN', 'BUSAN SANCTUARY', 'ILIOS LIGHTHOUSE', 'ILIOS RUINS', 'ILIOS WELL', 'LIJIANG CONTROL CENTER', 'LIJIANG GARDEN', 'LIJIANG NIGHT MARKET', 'NEPAL SANCTUM', 'NEPAL SHRINE', 'NEPAL VILLAGE', 'OASIS CITY CENTER', 'OASIS GARDENS', 'OASIS UNIVERSITY']
@@ -419,7 +416,7 @@ class Parser:
                 args = self.args()
                 if args:
                     node.children.extend(args)
-        elif self.curtype in ('GVAR', 'PVAR', 'NAME'):
+        elif self.curtype in ('GVAR', 'PVAR', 'CONST', 'NAME'):
             node = self.variable()
         elif self.curvalue == '<':
             node = self.vector()
@@ -469,28 +466,26 @@ class Parser:
     def variable(self):
         """variable : GVAR NAME
                     | PVAR (@ primary)? NAME
+                    | CONST NAME
                     | NAME"""
         pos = self.curpos
         try:
-            if self.curtype == 'GVAR':
-                self.eat('GVAR')
-                name = self.curvalue
-                self.eat('NAME')
-                node = GlobalVar(name='gvar_' + name)
+            if self.curtype in ('GVAR', 'NAME'):
+                if self.curtype == 'GVAR':
+                    self.eat('GVAR')
+                node = Var(name=self.curvalue, type_=Var.GLOBAL)
             elif self.curtype == 'PVAR':
                 self.eat('PVAR')
-                name = self.curvalue
-                self.eat('NAME')
-                node = PlayerVar(name='pvar_' + name)
-                if self.curvalue == '@':
-                    self.eat('AT')
-                    node.player = self.primary()
-            elif self.curtype == 'NAME':
-                name = self.curvalue
-                self.eat('NAME')
-                node = GlobalVar(name='gvar_' + name)
+                node = Var(name=self.curvalue, type_=Var.PLAYER)
+            elif self.curtype == 'CONST':
+                self.eat('CONST')
+                node = Var(name=self.curvalue, type_=Var.CONST)
+            self.eat('NAME')
+            if self.curvalue == '@':
+                self.eat('AT')
+                node.player = self.primary()
         except Errors.ParseError:
-            raise Errors.SyntaxError('Invalid variable')
+            raise Errors.SyntaxError('Invalid variable syntax', pos=pos)
         node._pos = pos
         return node
 

@@ -1,4 +1,3 @@
-import re
 class Token:
     """Stores token information such as data and line number."""
     def __init__(self, type, value, line, column):

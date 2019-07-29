@@ -3,7 +3,7 @@ class AST:
     def __init__(self):
         self.children = []
 
-    @property 
+    @property
     def format_children(self):
         return ', '.join(map(repr, self.children))
 
@@ -22,10 +22,6 @@ class AST:
     @property
     def moving(self):
         return 'Compare(Speed Of({}), >, 0)'
-
-    @property
-    def jumping(self):
-        return 'Is In Air({})'
 
     @property
     def facing(self):
@@ -67,11 +63,6 @@ class AST:
     def rmb(self):
         return 'Is Button Held({}, Secondary Fire)'
 
-    @property
-    def moving(self):
-        return 'Compare(Speed Of({}), >, 0)'
-
-
     def string(self, indent=0):
         string = ''
         if not self.__class__ == Block:
@@ -110,7 +101,7 @@ class WorkshopType(AST):
     def __repr__(self):
         try:
             return self.__name__
-        except:
+        except AttributeError:
             return self.__class__.__name__
 
 class Transformation(WorkshopType):
@@ -306,7 +297,7 @@ class Number(WorkshopType):
 class Vector(WorkshopType):
     _values = ['VELOCITY OF']
     _extends = [Any]
-    
+
 
 class Direction(WorkshopType):
     _values = ['DIRECTION TOWARDS', 'FACING DIRECTION OF', 'RAY CAST HIT NORMAL', 'VECTOR TOWARDS', 'LEFT', 'RIGHT', 'FORWARD', 'BACKWARD', 'UP', 'DOWN']
@@ -323,7 +314,7 @@ class BaseVector(WorkshopType):
 class Player(WorkshopType):
     _values = ['PLAYERS IN VIEW ANGLE', 'PLAYER CLOSEST TO RETICLE', 'ALL DEAD PLAYERS', 'ALL LIVING PLAYERS', 'ALL PLAYERS', 'ALL PLAYERS NOT ON OBJECTIVE', 'ALL PLAYERS ON OBJECTIVE', 'ATTACKER', 'CLOSEST PLAYER TO', 'EVENT PLAYER', 'FARTHEST PLAYER FROM', 'LAST CREATED ENTITY', 'NULL', 'PLAYER CARRYING FLAG', 'PLAYERS IN SLOT', 'PLAYERS ON HERO', 'PLAYERS WITHIN RADIUS', 'RAY CAST HIT PLAYER', 'VICTIM']
     _extends = [BaseVector]
-    
+
 
 class Team(WorkshopType):
     _values = ['CONTROL MODE SCORING TEAM', 'OPPOSITE TEAM OF', 'TEAM', 'TEAM OF']
@@ -444,7 +435,7 @@ class Array(AST):
 
     def __setitem__(self, index, item):
         while index > len(self) - 1:
-            self.append(Number(value='0'))
+            self.elements.append(Number(value='0'))
         self.elements.__setitem__(index, item)
 
     def __getitem__(self, index):
@@ -459,19 +450,52 @@ class Compare(BinaryOp):
 class Assign(BinaryOp):
     pass
 
-class GlobalVar(Data):
-    vartype = 'global'
+# class GlobalVar(Data):
+#     vartype = 'global'
 
-class PlayerVar(Data):
-    vartype = 'player'
-    def __init__(self, name, player=None):
-        super().__init__(name)
+# class PlayerVar(Data):
+#     vartype = 'player'
+#     def __init__(self, name, player=None):
+#         super().__init__(name)
+#         self.player = player or Constant(name='Event Player')
+# class VarType:
+#     # Compares whether a value is a GlobalVar or PlayerVar
+#     def __eq__(self, other):
+#         return other in (GlobalVar, PlayerVar)
+
+class GlobalVar(AST):
+    def __init__(self, letter, index=None):
+        self.letter = letter
+        self.index = index
+
+class PlayerVar(AST):
+    def __init__(self, letter, index=None, player=None):
+        self.letter = letter
+        self.index = index
         self.player = player or Constant(name='Event Player')
 
-class VarType:
-    # Compares whether a value is a GlobalVar or PlayerVar
-    def __eq__(self, other):
-        return other in (GlobalVar, PlayerVar)
+class Var(AST):
+    GLOBAL = 0
+    PLAYER = 1
+    INTERNAL = 2
+    STRING = 3
+    CONST = 4
+
+    def __init__(self, name, type_, value=None, data=None, player=None):
+        self.name = name
+        self.type = type_
+        self.value = value
+        self.data = data
+        self.player = player
+
+    @property
+    def _type(self):
+        return {0: 'GLOBAL', 1: 'PLAYER', 2: 'INTERNAL', 3: 'STRING', 4: 'CONST'}.get(self.type)
+
+    def __repr__(self):
+        if self.value or self.data:
+            return '<{}: type={}, value={}, data={}>'.format(self.name, self._type, self.value, self.data)
+        return '{}'.format(self.name)
 
 class If(AST):
     def __init__(self, cond, true_block, false_block=None):
@@ -486,7 +510,7 @@ class While(AST):
     def __init__(self, cond, body):
         self.cond = cond
         self.body = body
-    
+
     def __repr__(self):
         return 'while {}: {}'.format(self.cond, self.body)
 

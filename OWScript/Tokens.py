@@ -97,6 +97,7 @@ class Tokens:
     OR : r'OR\b'
     PVAR : r'PVAR\b'
     GVAR : r'GVAR\b'
+    CONST : r'CONST\b'
     DISABLED : r'DISABLED\b'
     RETURN : r'RETURN\b'
     RULE : r'RULE\b'

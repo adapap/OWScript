@@ -486,6 +486,7 @@ class Var(AST):
     INTERNAL = 2
     BUILTIN = 3
     CONST = 4
+    STRING = 5
 
     def __init__(self, name, type_, value=None, data=None, player=None):
         self.name = name
@@ -496,7 +497,7 @@ class Var(AST):
 
     @property
     def _type(self):
-        return {0: 'GLOBAL', 1: 'PLAYER', 2: 'INTERNAL', 3: 'BUILTIN', 4: 'CONST'}.get(self.type)
+        return {0: 'GLOBAL', 1: 'PLAYER', 2: 'INTERNAL', 3: 'BUILTIN', 4: 'CONST', 5: 'STRING'}.get(self.type)
 
     def __repr__(self):
         if self.value or self.data:

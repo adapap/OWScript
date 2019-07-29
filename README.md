@@ -99,20 +99,24 @@ y = Event Player in Players In Radius(<1, 2, 3>, 15)
 ```
 
 ## Variables
-There are 3 ways to manipulate variables:
+Variables are ways to reference values using a name. Their type is stored when they are defined.
 
-**Explicit Global Assignment**
+**Global Variables (default)**
 ```
-gvar varname = 1
+gvar hero_index = 1
+global_time = 60s // default type is global
 ```
-**Explicit Player Assignment**
+**Player Variables**
 ```
-pvar varname = 2
-pvar varname@Event Player = 3 // Event Player (default) is the player which the variable will be bound to
+pvar score = 2 // pvar is only needed when defining a variable
+pvar score@Event Player = 3 // Event Player (default) is the player which the variable will be bound to
+score += 1 // modifies the pvar score
 ```
-**Implicit Global Assignment**
+**Const**
 ```
-varname = 3
+const cost = 100
+/* const cannot be modified and directly outputs the value,
+rather than outputting Value In Array(...) */
 ```
 
 Using the technique from [@ItsDeltin](https://github.com/ItsDeltin), the limit to

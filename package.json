@@ -1,0 +1,40 @@
+{
+    "name": "owscript",
+    "displayName": "OWScript",
+    "description": "Syntax highlighting for OWScript, a Python-like programming language which compiles down into Overwatch workshop code. Made by [adapap](https://github.com/adapap/OWScript)",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.36.0"
+    },
+    "scripts": {
+        "build": "js-yaml syntaxes/owscript.tmLanguage.yaml > syntaxes/owscript.tmLanguage.json"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "owscript",
+                "aliases": [
+                    "OWScript",
+                    "owscript"
+                ],
+                "extensions": [
+                    ".owpy"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "owscript",
+                "scopeName": "source.owscript",
+                "path": "./syntaxes/owscript.tmLanguage.json"
+            }
+        ]
+    },
+    "devDependencies": {
+        "js-yaml": "^3.13.1"
+    }
+}

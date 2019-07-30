@@ -1,4 +1,1 @@
-__pycache__/
-.vscode/
-Test/
-temp.out
+node_modules/

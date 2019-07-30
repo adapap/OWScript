@@ -1,0 +1,19 @@
+rule "VSCode Syntax Test File"
+    Event
+        On Each Player
+        All
+        All
+    Conditions
+        Event Player.jumping == False
+        not 3 < 4 and 5 + 1
+    Actions
+        Msg
+            Everyone
+            "Yes"
+        Msg(Everyone, "yes")
+        const donotchange = 42
+        gvar pos = <10, 0, -5>
+        pvar data = [1, "Hello", Winston, <0, 0, 0>]
+        temp = []
+        for x in range(3):
+            temp.append(data[x])

@@ -1,9 +1,0 @@
-Rule "Multiple Conditions"
-    Event
-        On Global
-    Conditions
-        Distance Between
-            Event Player
-            shop_portal
-        <= 1.5
-        pvar location == -1

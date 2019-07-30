@@ -1,3 +1,0 @@
-Rule "Trigonometry In Vectors"
-    Actions
-        pvar vec1 = <sin(90), cos(90), 0>

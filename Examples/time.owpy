@@ -1,5 +1,0 @@
-Rule "Time Shorthands"
-    Actions
-        Wait(16ms)
-        Wait /* It takes a parameter, so indent if you please! */
-            0.35min

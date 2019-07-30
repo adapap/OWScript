@@ -1,7 +1,0 @@
-Rule "Constants for cleaner code!"
-    Event
-        On Each Player
-    Actions
-        const speed = 100
-        Set Move Speed(Event Player, speed)
-        // speed = 150 // const is immutable, so this causes an error

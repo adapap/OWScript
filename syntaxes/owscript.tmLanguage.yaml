@@ -148,7 +148,7 @@ repository:
     - name: keyword.operator.owscript
       match: "(?i)(==|\\<=|\\<|>=|>|!=|=|\\+|\\-|\\*|\\/|\\^|%)"
     - name: keyword.logic.owscript
-      match: "(?i)\\b(in|not|or|and)\\b"
+      match: "(?i)\\b(in|not|or|and|@)\\b"
     - name: variable.language.owscript
       match: "(?i)\\b(gvar|pvar|const)\\b"
   punctuation:

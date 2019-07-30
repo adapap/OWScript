@@ -68,7 +68,7 @@ repository:
   annotations:
     patterns:
     - name: comment.annotation.owscript
-      match: "^\\s*(\\b[_a-zA-Z][_a-zA-Z0-9]*\\:)"
+      match: "^\\s*(\\b[_a-zA-Z][_a-zA-Z0-9]*\\:)(?=.)"
   numbers:
     patterns:
     - include: "#time"
@@ -144,7 +144,7 @@ repository:
     - name: keyword.ruleblock.owscript
       match: "(?i)(EVENT|CONDITIONS|ACTIONS)\\b"
     - name: keyword.control.owscript
-      match: "(?i)\\b(if|while|for|return)\\b"
+      match: "(?i)\\b(if|elif|else|while|for|return)\\b"
     - name: keyword.operator.owscript
       match: "(?i)(==|\\<=|\\<|>=|>|!=|=|\\+|\\-|\\*|\\/|\\^|%)"
     - name: keyword.logic.owscript

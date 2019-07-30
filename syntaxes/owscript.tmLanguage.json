@@ -140,7 +140,7 @@
       "patterns": [
         {
           "name": "comment.annotation.owscript",
-          "match": "^\\s*(\\b[_a-zA-Z][_a-zA-Z0-9]*\\:)"
+          "match": "^\\s*(\\b[_a-zA-Z][_a-zA-Z0-9]*\\:)(?=.)"
         }
       ]
     },
@@ -278,7 +278,7 @@
         },
         {
           "name": "keyword.control.owscript",
-          "match": "(?i)\\b(if|while|for|return)\\b"
+          "match": "(?i)\\b(if|elif|else|while|for|return)\\b"
         },
         {
           "name": "keyword.operator.owscript",

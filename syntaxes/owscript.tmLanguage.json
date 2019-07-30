@@ -3,33 +3,68 @@
   "name": "OWScript",
   "patterns": [
     {
-      "include": "#keywords"
+      "include": "#main"
     },
     {
-      "include": "#strings"
+      "include": "#keywords"
     }
   ],
   "repository": {
+    "main": {
+      "patterns": [
+        {
+          "name": "meta.workshop.rule.owscript",
+          "begin": "(?i)\\b(RULE)\\b",
+          "end": "\n$",
+          "captures": {
+            "0": {
+              "name": "keyword.rule.owscript"
+            }
+          }
+        },
+        {
+          "include": "#rule"
+        }
+      ]
+    },
+    "rule": {
+      "patterns": [
+        {
+          "include": "#strings"
+        },
+        {
+          "name": "keyword.workshop.event.owscript",
+          "match": "(?i)\\b(EVENT)\\b"
+        },
+        {
+          "name": "keyword.workshop.conditions.owscript",
+          "match": "(?i)\\b(CONDITIONS)\\b"
+        },
+        {
+          "name": "keyword.workshop.actions.owscript",
+          "match": "(?i)\\b(ACTIONS)\\b"
+        }
+      ]
+    },
     "keywords": {
       "patterns": [
         {
           "name": "keyword.control.owscript",
           "match": "(?i)\\b(#import|if|while|for|return)\\b"
-        },
-        {
-          "name": "keyword.workshop.owscript",
-          "match": "(?i)\\b(RULE|EVENT|CONDITIONS|ACTIONS)\\b"
         }
       ]
     },
     "strings": {
-      "name": "string.quoted.double.owscript",
-      "begin": "\"",
-      "end": "\"",
       "patterns": [
         {
-          "name": "constant.character.escape.owscript",
-          "match": "\\\\."
+          "name": "string.quoted.double.owscript",
+          "begin": "\"",
+          "end": "\""
+        },
+        {
+          "name": "string.quoted.single.owscript",
+          "begin": "'",
+          "end": "'"
         }
       ]
     }

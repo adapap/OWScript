@@ -4,6 +4,7 @@ rule "VSCode Syntax Test File"
         All
         All
     Conditions
+    // line comment
         Event Player.jumping == False
         not 3 < 4 and 5 + 1
     Actions
@@ -11,9 +12,20 @@ rule "VSCode Syntax Test File"
             Everyone
             "Yes"
         Msg(Everyone, "yes")
+        Wait(2min + 30s)
+        /*
+            block comment
+        */
         const donotchange = 42
         gvar pos = <10, 0, -5>
         pvar data = [1, "Hello", Winston, <0, 0, 0>]
         temp = []
         for x in range(3):
             temp.append(data[x])
+
+%testfunc(player, loc)
+    Event
+        On Global
+    Actions
+        const map = get_map()
+

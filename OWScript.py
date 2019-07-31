@@ -31,9 +31,16 @@ def transpile(text, path, args):
     if args.min:
         code = re.sub(r'[\s\n]*', '', code)
     if not args.save:
+        if sys.stdout.encoding == None or sys.stdout.encoding != 'utf-8':
+            sys.stderr.write(
+                '[WARNING] Python encoding output not set to utf-8,'
+                'which might make unicode characters on the output incorrect.'
+                '\nConsider using `set PYTHONIOENCODING=utf_8` and running the command again.'
+            )
         sys.stdout.write(code)
     else:
-        with open(args.save, 'w') as f:
+        with open(args.save, 'wb') as f:
+            code = code.encode('utf-8')
             f.write(code)
     if args.copy:
         import pyperclip

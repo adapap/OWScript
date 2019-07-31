@@ -33,6 +33,9 @@ export function activate(context: vscode.ExtensionContext) {
 			if (await pathExists(config.path)) {
 				let result: any = await compileSource(command);
 				OWScriptDocument.output = result.stdout;
+				if (result.stderr) {
+					await vscode.window.showErrorMessage(result.stderr);
+				}
 				// Open the text document with the resulting compiled code
 				let uri = vscode.Uri.parse('owscript:' + basename(path) + ' - Workshop Code');
 				let doc = await vscode.workspace.openTextDocument(uri);

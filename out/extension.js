@@ -39,6 +39,9 @@ function activate(context) {
         if (yield pathExists(config.path)) {
             let result = yield compileSource(command);
             OWScriptDocument.output = result.stdout;
+            if (result.stderr) {
+                yield vscode.window.showErrorMessage(result.stderr);
+            }
             // Open the text document with the resulting compiled code
             let uri = vscode.Uri.parse('owscript:' + basename(path) + ' - Workshop Code');
             let doc = yield vscode.workspace.openTextDocument(uri);

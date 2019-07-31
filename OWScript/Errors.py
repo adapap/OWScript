@@ -21,7 +21,7 @@ class Logger:
             sys.stderr.write('[DEBUG] {}\n'.format(' '.join(map(str, msg))))
 
 class OWSError(Exception):
-    def __init__(self, msg, pos):
+    def __init__(self, msg, pos=None):
         global TEXT
         if pos:
             line, col = pos

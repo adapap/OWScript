@@ -33,7 +33,8 @@ def transpile(text, path, args):
     if not args.save:
         sys.stdout.write(code)
     else:
-        with open(args.save, 'w') as f:
+        with open(args.save, 'wb') as f:
+            code = code.encode('utf-8')
             f.write(code)
     if args.copy:
         import pyperclip

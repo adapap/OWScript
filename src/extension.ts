@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
-const fs = require('fs');
+import fs = require('fs');
+const basename = require('path').basename;
 const exec = require('child_process').exec;
 
 export function activate(context: vscode.ExtensionContext) {
@@ -15,32 +16,33 @@ export function activate(context: vscode.ExtensionContext) {
 			const config = vscode.workspace.getConfiguration('owscript');
 			const command = `cd ${config.path} & cat ${path} | python OWScript.py`;
 			// Check if the OWScript directory exists using fs.access
-			fs.access(config.path, async (err: any) => {
-				// Open error dialog if directory doesn't exist
-				if (err) {
-					let open = await vscode.window.showErrorMessage('Could not locate OWScript path.', 'Open Settings');
-					if (open == 'Open Settings') {
-						await vscode.commands.executeCommand('workbench.action.openSettings');
-					}
-				}
-				// Otherwise, run a shell command to compile the source
-				else {
-					console.log('Compiling source...');
-					exec(command, async (error: string, stdout: string, stderr: string) => {
-						if (error) {
-							console.warn(error);
-						}
-						await setOutput(stdout);
-					});
-				}
-			});
-			async function setOutput(str: string) {
-				OWScriptDocument.output = str;
-				console.log('Opening output document...');
+			function pathExists(path: string) {
+				return new Promise((res, rej) => {
+					fs.access(path, async (err: any) => {
+						err ? res(false) : res(true);
+					})
+				})
+			}
+			function compileSource(command: string) {
+				return new Promise((res, rej) => {
+					exec(command, async (err: string, stdout: string, stderr: string) => {
+						err ? rej(err) : res({stdout: stdout, stderr: stderr});
+					})
+				})
+			}
+			if (await pathExists(config.path)) {
+				let result: any = await compileSource(command);
+				OWScriptDocument.output = result.stdout;
 				// Open the text document with the resulting compiled code
-				let uri = vscode.Uri.parse("owscript:" + "Workshop Code");
+				let uri = vscode.Uri.parse('owscript:' + basename(path) + ' - Workshop Code');
 				let doc = await vscode.workspace.openTextDocument(uri);
 				await vscode.window.showTextDocument(doc, vscode.ViewColumn.Beside);
+			}
+			else {
+				let open = await vscode.window.showErrorMessage('Could not locate OWScript path.', 'Open Settings');
+				if (open == 'Open Settings') {
+					await vscode.commands.executeCommand('workbench.action.openSettings');
+				}
 			}
 		})
 	);
@@ -50,6 +52,10 @@ export function deactivate() {}
 
 class OWScriptDocument implements vscode.TextDocumentContentProvider {
 	public static output: string;
+
+	onDidChangeEmitter = new vscode.EventEmitter<vscode.Uri>();
+	onDidChange = this.onDidChangeEmitter.event;
+
 	provideTextDocumentContent(uri: vscode.Uri): string {
 		return OWScriptDocument.output;
 	}

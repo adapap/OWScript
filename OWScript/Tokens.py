@@ -78,6 +78,7 @@ class Tokens:
     POW : r'\^'
     MOD : r'%'
     AT : r'@'
+    QUERY : r'\?'
     COMMA : r','
     LPAREN : r'\('
     RPAREN : r'\)'

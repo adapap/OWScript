@@ -2,7 +2,7 @@
 	"name": "owscript",
 	"displayName": "OWScript",
 	"description": "Syntax highlighting, build tools, and more for OWScript, a Python-like programming language which compiles down into Overwatch workshop code.",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"repository": "https://github.com/adapap/OWScript",
 	"publisher": "adapap",
 	"engines": {

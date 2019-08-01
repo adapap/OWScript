@@ -82,7 +82,7 @@ class Builtin:
 
 class Transpiler:
     """Compiles a parse tree into a single string output via the `run` method."""
-    def __init__(self, tree, path, logger, indent_size=3):
+    def __init__(self, tree, path, logger, indent_size=4):
         self.tree = tree
         self.path = path
         self.logger = logger
@@ -271,13 +271,13 @@ class Transpiler:
                         raise Errors.InvalidParameter('Exceeded maximum number of chase variables (25) for this type.', pos=child._pos)
                 node.children[index] = var
                 continue
-            values = list(flatten(arg.get_values()))
+            values = list(map(lambda x: x.replace(',', ''), flatten(arg.get_values())))
             if 'ANY' in values:
                 continue
             value = self.visit(child, scope).upper()
             if value not in values:
-                raise Errors.InvalidParameter('\'{}\' expected type {} for argument {}, received {}'.format(
-                    name, arg.__name__, index + 1, child.__class__.__name__), pos=child._pos)
+                raise Errors.InvalidParameter('\'{}\' expected type {} for argument {}'.format(
+                    name, arg.__name__, index + 1), pos=child._pos)
         children = [self.visit(child, scope) for child in node.children]
         code += '(' + ', '.join(children) + ')'
         return code

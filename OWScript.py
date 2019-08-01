@@ -31,7 +31,8 @@ def transpile(text, path, args):
     if args.min:
         code = re.sub(r'[\s\n]*', '', code)
     if not args.save:
-        if sys.stdout.encoding == None or sys.stdout.encoding != 'utf-8':
+        if sys.stdout.encoding is None or sys.stdout.encoding != 'utf-8':
+            print(sys.stdout.encoding)
             sys.stderr.write(
                 '[WARNING] Python encoding output not set to utf-8,'
                 'which might make unicode characters on the output incorrect.'
@@ -72,4 +73,4 @@ if __name__ == '__main__':
     try:
         transpile(text, path=path, args=args)
     except Errors.OWSError as ex:
-        print('Error:', ex)
+        sys.stderr.write('Error: {}'.format(ex))

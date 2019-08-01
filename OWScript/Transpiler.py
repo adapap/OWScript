@@ -631,12 +631,12 @@ class Transpiler:
         elif type(parent) is not Var:
             self.logger.debug('Called by parent of type {}', type(parent))
         if not var:
-            raise Errors.NameError('Undefined function \'{}\''.format(func_name), pos=parent._pos)
+            raise Errors.NameError('Undefined function \'{}\''.format(parent.name), pos=parent._pos)
         func = var.value
         # Handle user-defined and built-in functions
         if var.type != Var.BUILTIN:
             if not len(func.params) == len(node.args):
-                raise Errors.InvalidParameter('\'{}\' expected {} arguments, received {}'.format(func_name, len(func.params), len(node.args)), pos=node._pos)
+                raise Errors.InvalidParameter('\'{}\' expected {} arguments, received {}'.format(parent.name, len(func.params), len(node.args)), pos=node._pos)
             # Resolve variables in call
             args = [self.resolve_name(arg, scope) for arg in node.args]
             scope = Scope(name=func.name, parent=scope)

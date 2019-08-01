@@ -1,9 +1,8 @@
-# Change Log
+## 0.1.2
+- Add separate message dialogs for info, warning, and errors
 
-All notable changes to the "owscript" extension will be documented in this file.
+## 0.1.1
+- Fix syntax highlighting for tokens with commas, slightly better compile support
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
-
+## 0.1.0
 - Initial release

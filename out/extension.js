@@ -40,7 +40,31 @@ function activate(context) {
             let result = yield compileSource(command);
             OWScriptDocument.output = result.stdout;
             if (result.stderr) {
-                yield vscode.window.showErrorMessage(result.stderr);
+                let infoMessages = [];
+                let warningMessages = [];
+                let errorMessages = [];
+                for (let msg of result.stderr.split('\n')) {
+                    if (msg.startsWith("[INFO]")) {
+                        infoMessages.push(msg);
+                    }
+                    else if (msg.startsWith("[WARNING]") || msg.startsWith("[DEBUG]")) {
+                        warningMessages.push(msg);
+                    }
+                    else {
+                        errorMessages.push(msg);
+                    }
+                }
+                if (infoMessages.length > 0) {
+                    yield vscode.window.showInformationMessage(infoMessages.join('\n'));
+                }
+                if (warningMessages.length > 0) {
+                    yield vscode.window.showWarningMessage(warningMessages.join('\n'));
+                }
+                if (errorMessages.length > 0) {
+                    yield vscode.window.showErrorMessage('Error while compiling ' + path + ' (see debug console)');
+                    console.error(errorMessages.join('\n'));
+                    // Focus error automatically?
+                }
             }
             // Open the text document with the resulting compiled code
             let uri = vscode.Uri.parse('owscript:' + basename(path) + ' - Workshop Code');

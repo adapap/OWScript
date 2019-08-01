@@ -1,7 +1,10 @@
-## 0.1.3
+## 0.2.1
+
+## 0.2.0
 - Improve aesthetics of error messages
 - Warnings no longer block output from showing up
 - Add clipboard support
+- Syntax highlighting for new feature
 
 ## 0.1.2
 - Add separate message dialogs for info, warning, and errors

@@ -70,23 +70,69 @@
           },
           "patterns": [
             {
-              "include": "#params"
+              "contentName": "meta.function.parameters.owscript",
+              "begin": "(\\()",
+              "end": "(\\))",
+              "beginCaptures": {
+                "0": {
+                  "name": "punctuation.parameters.begin.owscript"
+                }
+              },
+              "endCaptures": {
+                "0": {
+                  "name": "punctuation.parameters.end.owscript"
+                }
+              },
+              "patterns": [
+                {
+                  "include": "#optional-params"
+                },
+                {
+                  "include": "#params"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "optional-params": {
+      "patterns": [
+        {
+          "name": "meta.function.optional-param.owscript",
+          "begin": "([_a-zA-Z][_a-zA-Z0-9]*\\?)\\s*(=)",
+          "end": "(,|(?=\\)))",
+          "beginCaptures": {
+            "1": {
+              "name": "variable.parameter.optional.owscript"
+            },
+            "2": {
+              "name": "keyword.operator.assign.owscript"
+            }
+          },
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.separator.parameters.owscript"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#expr"
             }
           ]
         }
       ]
     },
     "params": {
-      "patterns": [
-        {
-          "name": "punctuation.separator.owscript",
-          "match": "(,)"
+      "match": "([_a-zA-Z][_a-zA-Z0-9]*)\\s*(,)?",
+      "captures": {
+        "1": {
+          "name": "variable.parameter.owscript"
         },
-        {
-          "name": "variable.parameter.owscript",
-          "match": "([_a-zA-Z][_a-zA-Z0-9]*)"
+        "2": {
+          "name": "punctuation.separator.parameters.owscript"
         }
-      ]
+      }
     },
     "expr": {
       "patterns": [
@@ -110,9 +156,6 @@
         },
         {
           "include": "#workshop"
-        },
-        {
-          "include": "#qual-name"
         },
         {
           "include": "#keywords"

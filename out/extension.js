@@ -10,8 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode = require("vscode");
 const fs = require("fs");
-const basename = require('path').basename;
-const exec = require('child_process').exec;
+const { copy } = require('copy-paste');
+const { basename } = require('path');
+const { exec } = require('child_process');
 function activate(context) {
     console.log('OWScript extension activated.');
     const scheme = 'owscript';
@@ -43,11 +44,12 @@ function activate(context) {
                 let infoMessages = [];
                 let warningMessages = [];
                 let errorMessages = [];
-                for (let msg of result.stderr.split('\n')) {
-                    if (msg.startsWith("[INFO]")) {
+                for (let rawMsg of result.stderr.split('\n')) {
+                    let msg = rawMsg.replace(/^\[.*\]\s*/g, '');
+                    if (rawMsg.startsWith("[INFO]")) {
                         infoMessages.push(msg);
                     }
-                    else if (msg.startsWith("[WARNING]") || msg.startsWith("[DEBUG]")) {
+                    else if (rawMsg.startsWith("[WARNING]") || rawMsg.startsWith("[DEBUG]")) {
                         warningMessages.push(msg);
                     }
                     else {
@@ -55,21 +57,28 @@ function activate(context) {
                     }
                 }
                 if (infoMessages.length > 0) {
-                    yield vscode.window.showInformationMessage(infoMessages.join('\n'));
+                    vscode.window.showInformationMessage(infoMessages.join('\n'));
                 }
                 if (warningMessages.length > 0) {
-                    yield vscode.window.showWarningMessage(warningMessages.join('\n'));
+                    vscode.window.showWarningMessage(warningMessages.join('\n'));
                 }
                 if (errorMessages.length > 0) {
-                    yield vscode.window.showErrorMessage('Error while compiling ' + path + ' (see debug console)');
+                    vscode.window.showErrorMessage('Error while compiling ' + path + ' (see debug console)');
                     console.error(errorMessages.join('\n'));
                     // Focus error automatically?
                 }
             }
-            // Open the text document with the resulting compiled code
-            let uri = vscode.Uri.parse('owscript:' + basename(path) + ' - Workshop Code');
-            let doc = yield vscode.workspace.openTextDocument(uri);
-            yield vscode.window.showTextDocument(doc, vscode.ViewColumn.Beside);
+            if (result.stdout != '') {
+                // Open the text document with the resulting compiled code
+                let uri = vscode.Uri.parse('owscript:' + basename(path) + ' - Workshop Code');
+                let doc = yield vscode.workspace.openTextDocument(uri);
+                vscode.window.showTextDocument(doc, vscode.ViewColumn.Beside);
+                // Copy output
+                if (config.clipboard == true) {
+                    copy(OWScriptDocument.output, () => { });
+                    vscode.window.showInformationMessage('Code copied to clipboard.');
+                }
+            }
         }
         else {
             let open = yield vscode.window.showErrorMessage('Could not locate OWScript path.', 'Open Settings');

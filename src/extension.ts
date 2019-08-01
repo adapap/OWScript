@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import fs = require('fs');
-const basename = require('path').basename;
-const exec = require('child_process').exec;
+const { copy } = require('copy-paste');
+const { basename } = require('path');
+const { exec } = require('child_process');
 
 export function activate(context: vscode.ExtensionContext) {
 	console.log('OWScript extension activated.')
@@ -37,11 +38,12 @@ export function activate(context: vscode.ExtensionContext) {
 					let infoMessages = [];
 					let warningMessages = [];
 					let errorMessages = [];
-					for (let msg of result.stderr.split('\n')) {
-						if (msg.startsWith("[INFO]")) {
+					for (let rawMsg of result.stderr.split('\n')) {
+						let msg = rawMsg.replace(/^\[.*\]\s*/g, '')
+						if (rawMsg.startsWith("[INFO]")) {
 							infoMessages.push(msg);
 						}
-						else if (msg.startsWith("[WARNING]") || msg.startsWith("[DEBUG]")) {
+						else if (rawMsg.startsWith("[WARNING]") || rawMsg.startsWith("[DEBUG]")) {
 							warningMessages.push(msg);
 						}
 						else {
@@ -49,21 +51,28 @@ export function activate(context: vscode.ExtensionContext) {
 						}
 					}
 					if (infoMessages.length > 0) {
-						await vscode.window.showInformationMessage(infoMessages.join('\n'));
+						vscode.window.showInformationMessage(infoMessages.join('\n'));
 					}
 					if (warningMessages.length > 0) {
-						await vscode.window.showWarningMessage(warningMessages.join('\n'));
+						vscode.window.showWarningMessage(warningMessages.join('\n'));
 					}
 					if (errorMessages.length > 0) {
-						await vscode.window.showErrorMessage('Error while compiling ' + path + ' (see debug console)');
+						vscode.window.showErrorMessage('Error while compiling ' + path + ' (see debug console)');
 						console.error(errorMessages.join('\n'));
 						// Focus error automatically?
 					}
 				}
-				// Open the text document with the resulting compiled code
-				let uri = vscode.Uri.parse('owscript:' + basename(path) + ' - Workshop Code');
-				let doc = await vscode.workspace.openTextDocument(uri);
-				await vscode.window.showTextDocument(doc, vscode.ViewColumn.Beside);
+				if (result.stdout != '') {
+					// Open the text document with the resulting compiled code
+					let uri = vscode.Uri.parse('owscript:' + basename(path) + ' - Workshop Code');
+					let doc = await vscode.workspace.openTextDocument(uri);
+					vscode.window.showTextDocument(doc, vscode.ViewColumn.Beside);
+					// Copy output
+					if (config.clipboard == true) {
+						copy(OWScriptDocument.output, () => {});
+						vscode.window.showInformationMessage('Code copied to clipboard.');
+					}
+				}
 			}
 			else {
 				let open = await vscode.window.showErrorMessage('Could not locate OWScript path.', 'Open Settings');

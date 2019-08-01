@@ -25,7 +25,7 @@ class OWSError(Exception):
         global TEXT
         if pos:
             line, col = pos
-            text = '\n' + TEXT.split('\n')[line - 1]
+            text = '\n' + TEXT.split('\n')[line - 1].replace('\t', ' ' * 4)
             char = '\n' + ' ' * (col - 1) + '^\n'
             msg = 'Line {}'.format(line) + text + char + msg
         super().__init__(msg)

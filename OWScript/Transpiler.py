@@ -149,7 +149,10 @@ class Transpiler:
 
     def resolve_name(self, node, scope):
         if type(node) == Var:
-            node = scope.get(node.name).value
+            var = scope.get(node.name)
+            if not var:
+                raise Errors.NameError('\'{}\' is undefined'.format(node.name), pos=node._pos)
+            node = var.value
         elif type(node) == BinaryOp:
             node.left = self.resolve_name(node.left, scope)
             node.right = self.resolve_name(node.right, scope)
@@ -314,7 +317,11 @@ class Transpiler:
                 if var.type == Var.GLOBAL:
                     var.data = GlobalVar(letter='A', index=next(self.global_index))
                 elif var.type == Var.PLAYER:
-                    var.data = PlayerVar(letter='A', index=next(self.player_index), player=var.player)
+                    player = self.resolve_name(var.player, scope)
+                    var.data = PlayerVar(letter='A', index=next(self.player_index), player=player)
+            elif var.type != Var.GLOBAL and cur_var.type != var.type:
+                self.logger.warn('Ignoring type reassign for \'{}\' (Line {}:{})'.format(var.name, *var._pos))
+                var = cur_var
             elif cur_var.type != Var.CONST:
                 var = cur_var
             else:
@@ -493,6 +500,8 @@ class Transpiler:
             else:
                 code += 'Global Variable({})'.format(var.data.letter)
         elif var.type == Var.PLAYER:
+            if node.player is not None:
+                var.data.player = node.player
             player = self.visit(var.data.player, scope)
             if var.data.index is not None:
                 code += 'Value In Array(Player Variable({}, {}), {})'.format(player, var.data.letter, var.data.index)

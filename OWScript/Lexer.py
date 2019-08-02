@@ -40,7 +40,7 @@ class Lexer:
                     if token.type == 'NEWLINE':
                         token.value = r'\n'
                         self.tokens.append(token)
-                        self.line += len(match.group(0))
+                        self.line += match.group(0).count('\n')
                         match = whitespace_pattern.match(self.text, self.pos)
                         self.column = len(match.group(0).replace('\t', ' ' * 4)) + 1 if match else 1
                         spaces = self.column - 1

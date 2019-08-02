@@ -202,7 +202,6 @@ class Parser:
             self.eat('NEWLINE', 'INDENT')
             while self.curtype != 'DEDENT':
                 line = self.line()
-                self.in_compare_expr = type(line) == Compare
                 if line is not None:
                     node.children.append(line)
             self.eat('DEDENT')

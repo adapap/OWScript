@@ -425,8 +425,8 @@ class Parser:
                 args = self.args()
                 if args:
                     node.children.extend(args)
-                elif node.name == 'STRING':
-                    node = Constant(name='String')
+                else:
+                    node = Constant(name=node.name)
         elif self.curtype in ('GVAR', 'PVAR', 'CONST', 'NAME'):
             node = self.variable()
         elif self.curvalue == '<':

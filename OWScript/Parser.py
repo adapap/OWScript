@@ -515,8 +515,12 @@ class Parser:
         """array : [ arglist? ]"""
         node = Array()
         self.eat('LBRACK')
+        if self.curtype == 'NEWLINE':
+            self.eat('NEWLINE', 'INDENT')
         if self.curtype != 'RBRACK':
             node.elements.extend(self.arglist())
+        if self.curtype == 'NEWLINE':
+            self.eat('NEWLINE', 'DEDENT')
         self.eat('RBRACK')
         return node
 

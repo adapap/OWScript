@@ -590,11 +590,6 @@ class Transpiler:
             except (ValueError, TypeError, AttributeError):
                 array = self.visit(node.parent, scope)
                 index = self.visit(node.index, scope)
-                if type(array) != OWID:
-                    index_name = node.index.name
-                    if type(node.index) == OWID:
-                        index_name = index_name.title()
-                    self.logger.info('Assuming {}[{}] is workshop compatible'.format(node.parent, index_name))
                 return 'Value In Array({}, {})'.format(array, index)
 
     def visitAttribute(self, node, scope):

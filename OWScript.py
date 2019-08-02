@@ -33,9 +33,9 @@ def transpile(text, path, args):
     if not args.save:
         if sys.stdout.encoding is None or sys.stdout.encoding != 'utf-8':
             sys.stderr.write(
-                '[WARNING] Python encoding output not set to utf-8, '
-                'which might make unicode characters on the output incorrect. '
-                'Consider using `set PYTHONIOENCODING=utf_8` and running the command again.'
+                f'[WARNING] Python encoding output set to {sys.stdout.encoding} (not utf-8), '
+                'unicode characters on the output will be interpreted as ascii.'
+                '\nConsider using `set PYTHONIOENCODING=utf_8` and running the command again.'
             )
         sys.stdout.write(code)
     else:
@@ -64,8 +64,8 @@ if __name__ == '__main__':
     if args.input:
         file_input = args.input[0]
         path = os.path.abspath(file_input)
-        with open(path) as f:
-            text = f.read()
+        with open(path, 'rb') as f:
+            text = f.read().decode('utf-8')
     else:
         text = sys.stdin.read()
         path = os.getcwd()

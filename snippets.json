@@ -1,0 +1,7 @@
+{
+    "rule": {
+        "scope": "owscript",
+        "prefix": "Rule",
+        "body": "Rule \"$1\"\n\tEvent\n\t\t${2|On Global,On Each Player\nTeam: All\nPlayer: All,Player Earned Elimination\nTeam: All\nPlayer: All,Player Dealt Final Blow\nTeam: All\nPlayer: All,Player Died\nTeam: All\nPlayer: All,Player Dealt Damage\nTeam: All\nPlayer: All,Player Took Damage\nTeam: All\nPlayer: All,Player Dealt Healing\nTeam: All\nPlayer: All,Player Received Healing\nTeam: All\nPlayer: All,Player Joined Match\nTeam: All\nPlayer: All,Player Left Match\nTeam: All\nPlayer: All|}\n\tConditions\n\t\t$3\n\tActions\n\t\t$4"
+    }
+}

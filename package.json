@@ -2,19 +2,21 @@
 	"name": "owscript",
 	"displayName": "OWScript",
 	"description": "Syntax highlighting, build tools, and more for OWScript, a Python-like programming language which compiles down into Overwatch workshop code.",
-	"version": "0.2.2",
+    "version": "0.2.2",
+    "keywords": ["overwatch", "workshop", "compile"],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/adapap/OWScript"
+		"url": "https://github.com/adapap/OWScript.git"
 	},
 	"publisher": "adapap",
 	"license": "MIT",
-    "icon": "Assets/OWScriptIcon.png",
+	"icon": "assets/OWScriptIcon.png",
 	"engines": {
 		"vscode": "^1.36.0"
 	},
 	"categories": [
-		"Programming Languages"
+        "Programming Languages",
+        "Snippets"
 	],
 	"activationEvents": [
 		"onLanguage:owscript"
@@ -39,8 +41,13 @@
 				},
 				"owscript.clipboard": {
 					"type": "boolean",
-					"default": false,
+					"default": true,
 					"description": "Copy Workshop Code to clipboard automatically."
+				},
+				"owscript.compileOnSave": {
+					"type": "boolean",
+					"default": false,
+					"description": "Automatically recompile code when a .owpy file is saved."
 				}
 			}
 		},
@@ -52,7 +59,11 @@
 					"group": "OWScript"
 				}
 			]
-		},
+        },
+        "snippets": [{
+            "language": "owscript",
+            "path": "./snippets.json"
+        }],
 		"languages": [
 			{
 				"id": "owscript",

@@ -7,10 +7,11 @@ This extension provides utilities for [OWScript](https://github.com/adapap/OWScr
 - Clipboard support
 - Error logging
 
-![Sample Compile](Assets/compile.gif)
+![Demo](assets/infection.gif)
 
-Configure copy to clipboard with the following configuration:
+## Configuration Settings
 * `owscript.clipboard`: copies the output to your clipboard
-* WIP: `owscript.saveReload`: recompiles the code when the file is saved
+* `owscript.compileOnSave`: recompiles the code when the file is saved
+* `owscript.path`: the path to your local OWScript directory
 
 [Extension Source](https://github.com/adapap/OWScript/tree/extension)

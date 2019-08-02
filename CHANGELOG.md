@@ -1,3 +1,10 @@
+## 0.3.0
+- New demo in readme
+- Rule snippet
+- Auto compile on save, fix recompile not working
+- Error messages shown in an output channel
+- Other fixes with messages/warnings/errors
+
 ## 0.2.2
 - Add extension icon
 - More message dialog fixes

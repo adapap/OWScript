@@ -39,7 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
 					let warningMessages = [];
 					let errorMessages = [];
 					for (let rawMsg of result.stderr.split('\n')) {
-						let msg = rawMsg.replace(/^\[.*\]\s*/g, '')
+						let msg = rawMsg.replace(/^\[[A-Z]*?\]\s*/g, '')
 						if (rawMsg.startsWith("[INFO]")) {
 							infoMessages.push(msg);
 						}

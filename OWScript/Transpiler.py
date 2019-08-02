@@ -624,7 +624,7 @@ class Transpiler:
         elif type(parent) is not Var:
             self.logger.debug('Called by parent of type {}', type(parent))
         if not var:
-            raise Errors.NameError('Undefined function \'{}\''.format(func_name), pos=parent._pos)
+            raise Errors.NameError('Undefined function \'{}\''.format(parent.name), pos=parent._pos)
         func = var.value
         # Handle user-defined and built-in functions
         if var.type != Var.BUILTIN:

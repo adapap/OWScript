@@ -217,6 +217,8 @@ class Transpiler:
 
     def visitRuleblock(self, node, scope):
         """A rule category such as Events, Conditions, or Actions."""
+        if not node.children:
+            return self.tabs + node.name + '{}\n'
         code = self.tabs + node.name + ' {\n'
         self.indent_level += 1
         for ruleblock in node.children:

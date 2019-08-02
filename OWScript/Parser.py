@@ -190,7 +190,10 @@ class Parser:
         while self.curtype == 'RULEBLOCK':
             ruleblock = Ruleblock(name=self.curvalue)
             self.eat('RULEBLOCK')
-            ruleblock.children.append(self.block())
+            if self.peek(1).type == 'INDENT':
+                ruleblock.children.append(self.block())
+            else:
+                self.eat('NEWLINE')
             node.children.append(ruleblock)
         return node
 

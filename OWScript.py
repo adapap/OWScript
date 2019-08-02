@@ -31,11 +31,11 @@ def transpile(text, path, args):
     if args.min:
         code = re.sub(r'[\s\n]*', '', code)
     if not args.save:
-        if sys.stdout.encoding is None or sys.stdout.encoding != 'utf-8':
+        if sys.stdout.encoding.strip() != 'utf-8':
             sys.stderr.write(
                 f'[WARNING] Python encoding output set to {sys.stdout.encoding} (not utf-8), '
-                'unicode characters on the output will be interpreted as ascii.'
-                '\nConsider using `set PYTHONIOENCODING=utf_8` and running the command again.'
+                'unicode characters on the output will be interpreted as ascii. '
+                'Consider using `set PYTHONIOENCODING=utf_8` and running the command again.'
             )
         sys.stdout.write(code)
     else:

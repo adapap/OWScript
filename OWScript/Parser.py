@@ -160,10 +160,8 @@ class Parser:
         if disabled:
             self.eat('DISABLED')
         self.eat('RULE')
-        name = [self.curvalue.replace('"', '')]
-        self.eat(self.curtype)
-        while self.curtype == 'PLUS':
-            self.eat('PLUS')
+        name = []
+        while self.curtype != 'NEWLINE':
             if self.curtype == 'STRING':
                 name.append(self.curvalue.replace('"', ''))
             elif self.curtype == 'NAME':
@@ -173,6 +171,8 @@ class Parser:
             else:
                 raise Errors.ParseError('Unexpected token \'{}\' in rule name'.format(self.curvalue), pos=self.curpos)
             self.eat(self.curtype)
+            if self.curtype == 'PLUS':
+                self.eat('PLUS')
         node = Rule(name=name, disabled=disabled)
         self.eat('NEWLINE', 'INDENT')
         while self.curtype != 'DEDENT':

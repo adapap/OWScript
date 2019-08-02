@@ -39,9 +39,13 @@ def transpile(text, path, args):
             )
         sys.stdout.write(code)
     else:
-        with open(args.save, 'wb') as f:
-            code = code.encode('utf-8')
-            f.write(code)
+        try:
+            with open(args.save, 'wb') as f:
+                code = code.encode('utf-8')
+                f.write(code)
+        except FileNotFoundError:
+            raise Errors.FileNotFoundError('Output directory not found.')
+            sys.exit(Errors.ExitCode.OutputNotFound)
     if args.copy:
         import pyperclip
         pyperclip.copy(code)
@@ -64,8 +68,12 @@ if __name__ == '__main__':
     if args.input:
         file_input = args.input[0]
         path = os.path.abspath(file_input)
-        with open(path, 'rb') as f:
-            text = f.read().decode('utf-8')
+        try:
+            with open(path, 'rb') as f:
+                text = f.read().decode('utf-8')
+        except FileNotFoundError:
+            raise Errors.FileNotFoundError('Input file not found.')
+            sys.exit(Errors.ExitCode.InputNotFound)
     else:
         text = sys.stdin.read()
         path = os.getcwd()
@@ -73,3 +81,4 @@ if __name__ == '__main__':
         transpile(text, path=path, args=args)
     except Errors.OWSError as ex:
         sys.stderr.write('Error: {}'.format(ex))
+        sys.exit(Errors.ExitCode.CompileError)

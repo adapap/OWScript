@@ -1,6 +1,11 @@
 import sys
 TEXT = None
 
+class ExitCode:
+    CompileError = 1
+    InputNotFound = 2
+    OutputNotFound = 3
+
 class Logger:
     INFO = 1
     WARN = 2
@@ -52,6 +57,9 @@ class NameError(SyntaxError):
     pass
 
 class AttributeError(SyntaxError):
+    pass
+
+class FileNotFoundError(OWSError):
     pass
 
 class NotImplementedError(OWSError):

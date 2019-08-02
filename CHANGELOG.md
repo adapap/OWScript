@@ -1,4 +1,6 @@
-## 0.2.1
+## 0.2.2
+- Add extension icon
+- More message dialog fixes
 
 ## 0.2.0
 - Improve aesthetics of error messages

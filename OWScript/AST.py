@@ -536,8 +536,25 @@ class Function(AST):
         self.name = name
         self.params = params
 
+    @property
+    def arity(self):
+        return len(self.params)
+
+    @property
+    def min_arity(self):
+        return len([p for p in self.params if not p.optional])
+
     def __repr__(self):
         return '%{}({}): {}'.format(self.name, ', '.join(map(repr, self.params)), self.format_children)
+
+class Parameter(AST):
+    def __init__(self, name, optional=False, default=None):
+        self.name = name
+        self.optional = optional
+        self.default = None or Constant(name='Null')
+
+    def __repr__(self):
+        return 'param {}{}'.format(self.name, '?=' + repr(self.default) if self.default else '')
 
 class Return(AST):
     def __init__(self, value):

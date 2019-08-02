@@ -183,11 +183,10 @@ total = costs[0] + costs[1] + costs[2]
 ```
 
 ## Functions
-Functions allow you to write a block of code once and reuse it many times. They can be used to generate HUDs like a macro or used as a rule factory. All functions must be defined before they are called, and they must be defined at the top level scope (same as where rules are defined):
+Functions allow you to write a block of code once and reuse it many times. They can be used to generate HUDs like a macro or used as a rule factory. All functions must be defined before they are called, and they must be defined at the top level scope (same as where rules are defined). Parameters can be optional, denoted by `?`, which sets the value to `Null` when omitted. Alternatively, specify a default value e.g. `pos?=Event Player.pos`.
 
 *Note: Functions can access global-scope variables; however, the global scope cannot access variables defined locally in functions*
 
-**Input**
 ```
 %event_func
     Event
@@ -198,31 +197,13 @@ Functions allow you to write a block of code once and reuse it many times. They 
     Rule name_
         event_func()
         c = a + b
+%say(text, who?=Everyone) // optional parameter, default to Everyone
+    Msg(who, text)
 Rule "Function Demo"
     event_func()
+    Actions
+        say("Thanks!")
 add_rule(1, 5, "Add Two")
-```
-**Output**
-```
-rule("Function Demo") {
-   Event {
-      Ongoing - Each Player;
-      All;
-      All;
-   }
-}
-
-rule("Add Two") {
-   Event {
-      Ongoing - Each Player;
-      All;
-      All;
-   }
-
-   Actions {
-      Set Global Variable At Index(A, 1, Add(1, 5));
-   }
-}
 ```
 **Builtin Functions**
 

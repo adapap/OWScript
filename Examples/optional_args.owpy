@@ -1,0 +1,14 @@
+%CreateEffect(pos, type?=Ring, color?=White)
+    Create Effect
+        Visible_To: Everyone
+        Type: type
+        Color: color
+        Position: pos
+        Radius: 1.5
+        Reevaluation: Visible To
+
+Rule "Optional/Default Arguments"
+    Event
+        On Global
+    Actions
+        CreateEffect(<0,0,0>)

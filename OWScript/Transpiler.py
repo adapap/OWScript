@@ -590,11 +590,6 @@ class Transpiler:
             except (ValueError, TypeError, AttributeError):
                 array = self.visit(node.parent, scope)
                 index = self.visit(node.index, scope)
-                if type(array) != OWID:
-                    index_name = node.index.name
-                    if type(node.index) == OWID:
-                        index_name = index_name.title()
-                    self.logger.info('Assuming {}[{}] is workshop compatible'.format(node.parent, index_name))
                 return 'Value In Array({}, {})'.format(array, index)
 
     def visitAttribute(self, node, scope):
@@ -635,10 +630,12 @@ class Transpiler:
         func = var.value
         # Handle user-defined and built-in functions
         if var.type != Var.BUILTIN:
-            if not len(func.params) == len(node.args):
-                raise Errors.InvalidParameter('\'{}\' expected {} arguments, received {}'.format(parent.name, len(func.params), len(node.args)), pos=node._pos)
+            if not func.arity >= len(node.args) >= func.min_arity:
+                raise Errors.InvalidParameter('\'{}\' expected {} or more arguments, received {}'.format(func.name, func.min_arity, len(node.args)), pos=node._pos)
+            # Extend default args
+            default_args = [p.default for p in func.params[len(node.args):]]
             # Resolve variables in call
-            args = [self.resolve_name(arg, scope) for arg in node.args]
+            args = [self.resolve_name(arg, scope) for arg in node.args + default_args]
             scope = Scope(name=func.name, parent=scope)
             for param, arg in zip(func.params, args):
                 var = Var(name=param.name, type_=Var.INTERNAL, value=arg)

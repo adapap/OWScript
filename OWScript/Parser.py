@@ -124,10 +124,19 @@ class Parser:
     def params(self):
         """params : (expr ( , expr)*)"""
         self.eat('LPAREN')
-        params = [self.expr()]
-        while self.curtype == 'COMMA':
-            self.eat('COMMA')
-            params.append(self.expr())
+        params = []
+        while self.curtype != 'RPAREN':
+            param = Parameter(name=self.curvalue)
+            self.eat('NAME')
+            if self.curtype == 'QUERY':
+                param.optional = True
+                self.eat('QUERY')
+                if self.curvalue == '=':
+                    self.eat('ASSIGN')
+                    param.default = self.expr()
+            params.append(param)
+            if self.curtype == 'COMMA':
+                self.eat('COMMA')
         self.eat('RPAREN')
         return params
 

@@ -18,6 +18,8 @@ repository:
         0:
           name: keyword.import.owscript
       end: "\n$"
+      patterns:
+      - include: "#strings"
   rule:
     patterns:
     - name: meta.rule.owscript

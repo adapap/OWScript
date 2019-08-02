@@ -500,9 +500,7 @@ class Transpiler:
             else:
                 code += 'Global Variable({})'.format(var.data.letter)
         elif var.type == Var.PLAYER:
-            if node.player is not None:
-                var.data.player = node.player
-            player = self.visit(var.data.player, scope)
+            player = self.visit(var.data.player if node.player is None else node.player, scope)
             if var.data.index is not None:
                 code += 'Value In Array(Player Variable({}, {}), {})'.format(player, var.data.letter, var.data.index)
             else:

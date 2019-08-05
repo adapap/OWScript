@@ -87,6 +87,7 @@ class Tokens:
     STRING : r'("[^\\\r\n\f]*?"|\'[^\\\r\n\f]*?\')'
     F_STRING : r'(`[^\\\r\n\f]*?`)'
     IMPORT : r'#IMPORT\b'
+    CLASS : r'CLASS\b'
     IF : r'IF\b'
     ELIF : r'ELIF\b'
     ELSE : r'ELSE\b'

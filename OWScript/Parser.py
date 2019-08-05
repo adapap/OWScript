@@ -98,13 +98,15 @@ class Parser:
         return node
 
     def stmt(self):
-        """stmt : (funcdef | ruledef | importdef | line)"""
+        """stmt : (funcdef | ruledef | importdef | classdef | line)"""
         if self.curvalue == '%':
             return self.funcdef()
         elif self.curtype in ('DISABLED', 'RULE'):
             return self.ruledef()
         elif self.curtype == 'IMPORT':
             return self.importdef()
+        elif self.curtype == 'CLASS':
+            return self.classdef()
         else:
             return self.line()
 
@@ -141,7 +143,7 @@ class Parser:
         return params
 
     def funcbody(self):
-        """funcbody : NEWLINE INDENT (ruledef | ruleblock | block | primary)+ DEDENT"""
+        """funcbody : NEWLINE INDENT (ruledef | ruleblock | block)+ DEDENT"""
         self.eat('NEWLINE', 'INDENT')
         body = []
         while self.curtype != 'DEDENT':
@@ -222,6 +224,27 @@ class Parser:
         node = Import(path=path)
         node._pos = pos
         return node
+    
+    def classdef(self):
+        """classdef : class NAME : classbody"""
+        self.eat('CLASS')
+        name = self.curvalue
+        self.eat('NAME')
+        self.eat('COLON')
+        body = self.classbody()
+        return Class(name=name, body=body)
+    
+    def classbody(self):
+        """classbody : line | funcdef"""
+        self.eat('NEWLINE', 'INDENT')
+        body = []
+        while self.curtype != 'DEDENT':
+            if self.curtype == 'MOD':
+                body.append(self.funcdef())
+            else:
+                body.append(self.line())
+        self.eat('DEDENT')
+        return body
 
     def line(self):
         """line :

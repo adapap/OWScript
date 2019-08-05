@@ -7,7 +7,7 @@ This extension provides utilities for [OWScript](https://github.com/adapap/OWScr
 - Clipboard support
 - Error logging
 
-![Demo](assets/infection.gif)
+![Demo](https://github.com/adapap/OWScript/tree/extension/assets/infection.gif)
 
 ## Configuration Settings
 * `owscript.clipboard`: copies the output to your clipboard

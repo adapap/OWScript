@@ -10,6 +10,7 @@ repository:
     - include: "#import"
     - include: "#rule"
     - include: "#function"
+    - include: "#class"
   import:
     patterns:
     - name: meta.import.owscript
@@ -52,6 +53,19 @@ repository:
         patterns:
         - include: "#optional-params"
         - include: "#params"
+  class:
+    patterns:
+    - name: meta.class.owscript
+      begin: "(?i)(CLASS)\\b\\s*([_a-zA-Z][_a-zA-Z0-9]*)"
+      end: "(:)\n$"
+      beginCaptures:
+        1:
+          name: keyword.class.owscript
+        2:
+          name: entity.name.function.owscript
+      endCaptures:
+        0:
+          name: punctuation.class.begin.owscript
   optional-params:
     patterns:
     - name: meta.function.optional-param.owscript
@@ -178,7 +192,7 @@ repository:
     - name: keyword.logic.owscript
       match: "(?i)\\b(in|not|or|and|@)\\b"
     - name: variable.language.owscript
-      match: "(?i)\\b(gvar|pvar|const)\\b"
+      match: "(?i)\\b(gvar|pvar|const|this)\\b"
   punctuation:
     patterns:
     - name: punctuation.separator.owscript

@@ -5,7 +5,7 @@ from .Parser import Parser
 def import_file(path):
     error_text = Errors.TEXT
     with open(path) as f:
-        text = f.read()
+        text = f.read() + '\n'
     try:
         Errors.TEXT = text
         lexer = Lexer(text=text)

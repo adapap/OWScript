@@ -181,6 +181,7 @@ class Transpiler:
             if path not in self.imports:
                 self.imports.add(path)
                 result = Importer.import_file(path)
+                print(result)
             else:
                 self.logger.info('Skipping duplicate import {}'.format(path))
                 result = Script()

@@ -478,7 +478,7 @@ class Parser:
 
     def variable(self):
         """variable : GVAR NAME
-                    | PVAR (@ primary)? NAME
+                    | PVAR NAME (@ primary)?
                     | CONST NAME
                     | NAME"""
         pos = self.curpos

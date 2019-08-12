@@ -278,9 +278,11 @@ class Transpiler:
                 node.children[index] = Raw(code=var.data.letter)
                 continue
             values = list(map(lambda x: x.replace(',', ''), flatten(arg.get_values())))
+            value = self.visit(child, scope).upper()
+            if value in HeroConstant._values and name != 'Hero':
+                node.children[index] = Constant(name='Hero({})'.format(value.title()))
             if 'ANY' in values:
                 continue
-            value = self.visit(child, scope).upper()
             if value not in values:
                 raise Errors.InvalidParameter('\'{}\' expected type {} for argument {}'.format(
                     name, arg.__name__, index + 1), pos=child._pos)

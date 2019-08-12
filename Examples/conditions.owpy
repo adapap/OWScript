@@ -4,6 +4,6 @@ Rule "Multiple Conditions"
     Conditions
         Distance Between
             Event Player
-            shop_portal
+            <10, 20, 30>
         <= 1.5
-        pvar location == -1
+        123 < 456

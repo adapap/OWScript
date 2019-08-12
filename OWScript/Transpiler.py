@@ -270,9 +270,9 @@ class Transpiler:
                         var.data.letter = letter
                         var.data.index = None
                         if var.type == Var.GLOBAL:
-                            code = 'Set Global Variable({}, {});\n'.format(letter, self.visit(var.value, scope)) + code
+                            code = 'Set Global Variable({}, {});\n'.format(letter, self.visit(var, scope)) + code
                         elif var.type == Var.PLAYER:
-                            code = 'Set Player Variable({}, {}, {});\n'.format(self.visit(var.data.player, scope), letter, self.visit(var.value, scope)) + code
+                            code = 'Set Player Variable({}, {}, {});\n'.format(self.visit(var.data.player, scope), letter, self.visit(var, scope)) + code
                     except StopIteration:
                         raise Errors.InvalidParameter('Exceeded maximum number of chase variables (25) for this type.', pos=child._pos)
                 node.children[index] = Raw(code=var.data.letter)

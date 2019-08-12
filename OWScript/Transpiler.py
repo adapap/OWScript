@@ -275,7 +275,7 @@ class Transpiler:
                             code = 'Set Player Variable({}, {}, {});\n'.format(self.visit(var.data.player, scope), letter, self.visit(var.value, scope)) + code
                     except StopIteration:
                         raise Errors.InvalidParameter('Exceeded maximum number of chase variables (25) for this type.', pos=child._pos)
-                node.children[index] = var
+                node.children[index] = Raw(code=var.data.letter)
                 continue
             values = list(map(lambda x: x.replace(',', ''), flatten(arg.get_values())))
             if 'ANY' in values:

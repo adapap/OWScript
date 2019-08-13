@@ -219,9 +219,10 @@ class Transpiler:
     def visitRuleblock(self, node, scope):
         """A rule category such as Events, Conditions, or Actions."""
         if not node.children:
-            return self.tabs + node.name + '{}\n'
+            return self.tabs + node.name + ' {}\n'
         code = self.tabs + node.name + ' {\n'
         self.indent_level += 1
+        block = ''
         for ruleblock in node.children:
             self.curblock = []
             for line in ruleblock.children:
@@ -236,7 +237,11 @@ class Transpiler:
                                 child += ' == True'
                             self.curblock.append(child)
             self.resolve_skips()
-            code += ';\n'.join(self.curblock)
+            block += ';\n'.join([x for x in self.curblock if x != ''])
+        if not block:
+            self.indent_level -= 1
+            return self.tabs + node.name + ' {}\n'
+        code += block
         self.indent_level -= 1
         code += ';\n' + self.tabs + '}\n'
         return code
@@ -331,6 +336,8 @@ class Transpiler:
                 var = cur_var
             else:
                 raise Errors.SyntaxError('Cannot assign to const \'{}\''.format(var.name), pos=node._pos)
+            if var.type != Var.PLAYER and var.player is not None:
+                raise Errors.SyntaxError('Cannot target player for non-player variable \'{}\''.format(var.name), pos=node._pos)
             var.value = value
             scope.assign(name=name, var=var)
         elif type(node.left) == Item:
@@ -498,6 +505,8 @@ class Transpiler:
             raise Errors.NameError('\'{}\' is undefined'.format(node.name), pos=node._pos)
         elif node.type == Var.STRING:
             var.type = Var.STRING
+        if node.type != Var.GLOBAL and var.type != node.type:
+            self.logger.warn('Ignoring type reassign for \'{}\' (Line {}:{})'.format(node.name, *node._pos))
         code = ''
         if var.type == Var.GLOBAL:
             if var.data.index is not None:
@@ -581,12 +590,12 @@ class Transpiler:
                 if not 0 <= index < len(array):
                     return self.visit(Number(value='0'), scope)
                 else:
-                    if var.type == Var.CONST:
-                        return self.visit(var.value[index], scope)
-                    elif var.type == Var.GLOBAL:
+                    if var.type == Var.GLOBAL:
                         return 'Value In Array(Value In Array(Global Variable({})), {}, {})'.format(var.data.letter, var.data.index, index)
                     elif var.type == Var.PLAYER:
                         return 'Value In Array(Value In Array(Player Variable({}, {})), {}, {})'.format(var.data.player, var.data.letter, var.data.index, index)
+                    else:
+                        return self.visit(var.value[index], scope)
             except AssertionError:
                 raise Errors.SyntaxError('Cannot get item from non-array type {}'.format(type(var.value)), pos=node.parent._pos)
         else:

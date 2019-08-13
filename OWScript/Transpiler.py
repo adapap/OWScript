@@ -579,10 +579,14 @@ class Transpiler:
                 array = var.value
                 assert type(array) == Array
                 if not 0 <= index < len(array):
-                    item = Number(value='0')
+                    return self.visit(Number(value='0'), scope)
                 else:
-                    item = var.value[index]
-                return self.visit(item, scope)
+                    if var.type == Var.CONST:
+                        return self.visit(var.value[index], scope)
+                    elif var.type == Var.GLOBAL:
+                        return 'Value In Array(Value In Array(Global Variable({})), {}, {})'.format(var.data.letter, var.data.index, index)
+                    elif var.type == Var.PLAYER:
+                        return 'Value In Array(Value In Array(Player Variable({}, {})), {}, {})'.format(var.data.player, var.data.letter, var.data.index, index)
             except AssertionError:
                 raise Errors.SyntaxError('Cannot get item from non-array type {}'.format(type(var.value)), pos=node.parent._pos)
         else:

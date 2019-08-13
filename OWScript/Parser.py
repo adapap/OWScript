@@ -478,7 +478,7 @@ class Parser:
 
     def variable(self):
         """variable : GVAR NAME
-                    | PVAR (@ primary)? NAME
+                    | PVAR NAME (@ atom)?
                     | CONST NAME
                     | NAME"""
         pos = self.curpos
@@ -496,7 +496,7 @@ class Parser:
             self.eat('NAME')
             if self.curvalue == '@':
                 self.eat('AT')
-                node.player = self.primary()
+                node.player = self.atom()
         except Errors.ParseError:
             raise Errors.SyntaxError('Invalid variable syntax', pos=pos)
         node._pos = pos

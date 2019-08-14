@@ -11,10 +11,13 @@ Setup
 - `-s | --save [FILE]` Optional: saves to the target output file instead of stdout
 - `-c | --copy` Optional: copies code to clipboard (must have *pyperclip* installed: `pip install pyperclip`)
 
+**NPM Integration** by @MatthewSH
+[OWScript NPM Package](https://www.npmjs.com/package/owscript)
+
 ## Syntax Highlighting
 
 **Visual Studio Code**
-Download the **OWScript** extension from the marketplace (experimental).
+Download the latest [OWScript extension](https://marketplace.visualstudio.com/items?itemName=adapap.owscript) from the marketplace.
 
 **Sublime Text 3**
 In the `Syntax/` folder, you can find the raw Iro code which I used to generate a Sublime Text file with modifications. You can directly import the `OWScript.sublime-syntax` file by putting it in your ST3 `User` folder.

@@ -488,7 +488,7 @@ class Var(AST):
     CONST = 4
     STRING = 5
 
-    def __init__(self, name, type_, value=None, data=None, player=None):
+    def __init__(self, name, type_, value=None, data=None, player=None, chase=False):
         self.name = name
         self.type = type_
         self.value = value

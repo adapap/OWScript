@@ -10,6 +10,7 @@ class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
         self.pos = 0
+        self.chase_vars = set()
 
     @property
     def curtoken(self):
@@ -95,6 +96,7 @@ class Parser:
                 self.eat('NEWLINE')
             else:
                 node.children.append(self.stmt())
+        node.chase_vars = self.chase_vars
         return node
 
     def stmt(self):
@@ -429,6 +431,10 @@ class Parser:
                     node.children.extend(args)
                 else:
                     node = Constant(name=node.name)
+            if "CHASE" in name:
+                for child in node.children:
+                    if type(child) == Var:
+                        self.chase_vars.add(child.name)
         elif self.curtype in ('GVAR', 'PVAR', 'CONST', 'NAME'):
             node = self.variable()
         elif self.curvalue == '<':

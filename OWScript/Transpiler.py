@@ -602,7 +602,8 @@ class Transpiler:
                     if var.type == Var.GLOBAL:
                         return 'Value In Array(Value In Array(Global Variable({})), {}, {})'.format(var.data.letter, var.data.index, index)
                     elif var.type == Var.PLAYER:
-                        return 'Value In Array(Value In Array(Player Variable({}, {})), {}, {})'.format(var.data.player, var.data.letter, var.data.index, index)
+                        player = self.visit(var.data.player if node.parent.player is None else node.parent.player, scope)
+                        return 'Value In Array(Value In Array(Player Variable({}, {})), {}, {})'.format(player, var.data.letter, var.data.index, index)
                     else:
                         return self.visit(var.value[index], scope)
             except AssertionError:

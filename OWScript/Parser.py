@@ -11,6 +11,7 @@ class Parser:
         self.tokens = tokens
         self.pos = 0
         self.chase_vars = set()
+        self.map_rule = False
 
     @property
     def curtoken(self):
@@ -110,6 +111,7 @@ class Parser:
             else:
                 node.children.append(self.stmt())
         node.chase_vars = self.chase_vars
+        node.map_rule = self.map_rule
         return node
 
     def stmt(self):
@@ -502,6 +504,8 @@ class Parser:
                     | NAME"""
         pos = self.curpos
         try:
+            if self.curvalue == 'get_map':
+                self.map_rule = True
             if self.curtype in ('GVAR', 'NAME'):
                 if self.curtype == 'GVAR':
                     self.eat('GVAR')

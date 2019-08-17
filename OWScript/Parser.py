@@ -509,14 +509,14 @@ class Parser:
         return node
 
     def vector(self):
-        """vector : < expr , expr , expr >"""
+        """vector : < term , term , term >"""
         node = Vector()
         self.eat('COMPARE')
-        node.children.append(self.expr())
+        node.children.append(self.term())
         self.eat('COMMA')
-        node.children.append(self.expr())
+        node.children.append(self.term())
         self.eat('COMMA')
-        node.children.append(self.expr())
+        node.children.append(self.term())
         self.eat('COMPARE')
         return node
 

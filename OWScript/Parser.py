@@ -60,14 +60,27 @@ class Parser:
             node = String(value='{0}')
             node.children = [formats[0]] + [null] * 2
             return node
-        elif string == ' ':
+        elif string == '':
             node = String(value='')
             node.children = [null] * 3
             return node
+        else:
+            match = re.match(r'^ $| (?: +)$', string)
+            if match:
+                empty_string = String(value='')
+                empty_string.children = [null] * 3
+
+                node = String(value='{0} {1}')
+                node.children = [
+                    empty_string if len(match.group(0)) == 1 else self.parse_string(string[1:], formats, _pos),
+                    empty_string,
+                    null
+                ]
+                return node
         for group in StringConstant.sorted_values:
             for pattern in group:
                 patt = re.sub(r'([^a-zA-Z0-9_\s{}])', r'\\\1', pattern)
-                patt = re.sub(r'{\d}', r'(.+?)', patt) + '$'
+                patt = re.sub(r'{\d}', r'(.*?)', patt) + '$'
                 match = re.match(patt, string, re.I)
                 if match and not match.group(0) == '':
                     groups = match.groups()

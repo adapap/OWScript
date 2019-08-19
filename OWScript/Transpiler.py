@@ -1,5 +1,6 @@
 import os
 import re
+from collections import defaultdict
 from itertools import count
 from string import ascii_uppercase as letters
 
@@ -96,6 +97,7 @@ class Transpiler:
         self.global_index = count(self.global_reserved)
         self.player_index = count()
         self.chase_vars = set()
+        self.letters = defaultdict(lambda x: 'A')
         self.global_letters = iter(letters[1:])
         self.player_letters = iter(letters[1:])
 
@@ -177,7 +179,6 @@ class Transpiler:
             else:
                 code += self.visit(child, scope)
                 node.children = node.children[1:]
-        print(self.chase_vars)
         return code.rstrip('\n')
 
     def visitImport(self, node, scope):
@@ -277,18 +278,6 @@ class Transpiler:
                 var = scope.get(child.name)
                 if not var:
                     raise Errors.NameError('\'{}\' is undefined'.format(child.name), pos=node._pos)
-                if var.data.letter == 'A':
-                    letters = self.global_letters if var.type == Var.GLOBAL else self.player_letters
-                    try:
-                        letter = next(letters)
-                        var.data.letter = letter
-                        var.data.index = None
-                        if var.type == Var.GLOBAL:
-                            code = 'Set Global Variable({}, {});\n'.format(letter, self.visit(var, scope)) + code
-                        elif var.type == Var.PLAYER:
-                            code = 'Set Player Variable({}, {}, {});\n'.format(self.visit(var.data.player, scope), letter, self.visit(var, scope)) + code
-                    except StopIteration:
-                        raise Errors.InvalidParameter('Exceeded maximum number of chase variables (25) for this type.', pos=child._pos)
                 node.children[index] = Raw(code=var.data.letter)
                 continue
             values = list(map(lambda x: x.replace(',', ''), flatten(arg.get_values())))
@@ -333,11 +322,32 @@ class Transpiler:
             name = var.name
             cur_var = scope.get(name)
             if not cur_var:
+                letter = 'A'
                 if var.type == Var.GLOBAL:
-                    var.data = GlobalVar(letter='A', index=next(self.global_index))
+                    if name in self.chase_vars:
+                        if name not in self.letters:
+                            try:
+                                self.letters[name] = next(self.global_letters)
+                            except StopIteration:
+                                raise Errors.InvalidParameter('Exceeded maximum number of chase variables (25) for this type.', pos=child._pos)
+                        letter = self.letters[name]
+                        index = None
+                    else:
+                        index = next(self.global_index)
+                    var.data = GlobalVar(letter=letter, index=index)
                 elif var.type == Var.PLAYER:
+                    if name in self.chase_vars:
+                        if name not in self.letters:
+                            try:
+                                self.letters[name] = next(self.player_letters)
+                            except StopIteration:
+                                raise Errors.InvalidParameter('Exceeded maximum number of chase variables (25) for this type.', pos=child._pos)
+                        letter = self.letters[name]
+                        index = None
+                    else:
+                        index = next(self.global_index)
                     player = self.resolve_name(var.player, scope)
-                    var.data = PlayerVar(letter='A', index=next(self.player_index), player=player)
+                    var.data = PlayerVar(letter=letter, index=index, player=player)
             elif var.type != Var.GLOBAL and cur_var.type != var.type:
                 self.logger.warn('Ignoring type reassign for \'{}\' (Line {}:{})'.format(var.name, *var._pos))
                 var = cur_var

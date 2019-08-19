@@ -6,6 +6,7 @@ const { basename } = require('path');
 const { exec } = require('child_process');
 
 export function activate(context: vscode.ExtensionContext) {
+    // tslint:disable-next-line: semicolon
     console.log('OWScript extension activated.')
     const config = vscode.workspace.getConfiguration('owscript');
     const channel = vscode.window.createOutputChannel('OWScript');
@@ -16,7 +17,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerTextEditorCommand('owscript.compile', async (editor) => {
             channel.clear()
             const path = editor.document.uri.fsPath;
-            const command = `set PYTHONIOENCODING=utf-8&cat "${path}" | python OWScript.py`;
+            const command = `set PYTHONIOENCODING=utf-8&python OWScript.py "${path}"`;
             // Check if the OWScript directory exists using fs.access
             function pathExists(path: string) {
                 return new Promise((res, rej) => {
@@ -46,6 +47,7 @@ export function activate(context: vscode.ExtensionContext) {
                     let warningMessages = [];
                     let errorMessages = [];
                     for (let rawMsg of result.stderr.split('\n')) {
+                        // tslint:disable-next-line: semicolon
                         let msg = rawMsg.replace(/^\[[A-Z]*?\]\s*/g, '')
                         if (rawMsg.startsWith("[INFO]")) {
                             infoMessages.push(msg);
@@ -64,7 +66,6 @@ export function activate(context: vscode.ExtensionContext) {
                         vscode.window.showWarningMessage(warningMessages.join('\n'));
                     }
                     if (errorMessages.length > 0) {
-                        vscode.window.showErrorMessage('Error while compiling ' + basename(path));
                         channel.append(errorMessages.join('\n'));
                         channel.show();
                         // Focus error automatically?
@@ -93,7 +94,7 @@ export function activate(context: vscode.ExtensionContext) {
         })
     );
 
-    vscode.workspace.onDidSaveTextDocument(async doc => {
+    vscode.workspace.onDidSaveTextDocument(async (doc: { languageId: string; isUntitled: any; }) => {
         if (doc.languageId == 'owscript' && !doc.isUntitled && config.compileOnSave == true) {
             await vscode.commands.executeCommand('owscript.compile');
         }

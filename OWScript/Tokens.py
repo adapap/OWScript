@@ -65,7 +65,7 @@ CONST.sort(key=len, reverse=True)
 
 class Tokens:
     """Mapping of token names to regular expressions."""
-    COMMENT : r'(\/\*(.|[\n])*?\*\/\n*?|\/\/[^\n]*\n*?)'
+    COMMENT : r'\s*(\/\*(.|[\n])*?\*\/\n*?|\/\/[^\n]*\n*?)'
     COMPARE : r'(>=|<=|==|!=|>|<)'
     ASSIGN : r'(=|\+=|-=|\*=|\/=|^=|%=)'
     TIME : r'([0-9]+(\.[0-9]+)?)(ms|s|min)'

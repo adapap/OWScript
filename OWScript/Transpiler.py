@@ -177,6 +177,7 @@ class Transpiler:
             else:
                 code += self.visit(child, scope)
                 node.children = node.children[1:]
+        print(self.chase_vars)
         return code.rstrip('\n')
 
     def visitImport(self, node, scope):

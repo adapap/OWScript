@@ -15,6 +15,7 @@ const { copy } = require('copy-paste');
 const { basename } = require('path');
 const { exec } = require('child_process');
 function activate(context) {
+    // tslint:disable-next-line: semicolon
     console.log('OWScript extension activated.');
     const config = vscode.workspace.getConfiguration('owscript');
     const channel = vscode.window.createOutputChannel('OWScript');
@@ -23,7 +24,7 @@ function activate(context) {
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('owscript.compile', (editor) => __awaiter(this, void 0, void 0, function* () {
         channel.clear();
         const path = editor.document.uri.fsPath;
-        const command = `set PYTHONIOENCODING=utf-8&cat "${path}" | python OWScript.py`;
+        const command = `set PYTHONIOENCODING=utf-8&python OWScript.py "${path}"`;
         // Check if the OWScript directory exists using fs.access
         function pathExists(path) {
             return new Promise((res, rej) => {
@@ -49,6 +50,7 @@ function activate(context) {
                 let warningMessages = [];
                 let errorMessages = [];
                 for (let rawMsg of result.stderr.split('\n')) {
+                    // tslint:disable-next-line: semicolon
                     let msg = rawMsg.replace(/^\[[A-Z]*?\]\s*/g, '');
                     if (rawMsg.startsWith("[INFO]")) {
                         infoMessages.push(msg);
@@ -67,7 +69,6 @@ function activate(context) {
                     vscode.window.showWarningMessage(warningMessages.join('\n'));
                 }
                 if (errorMessages.length > 0) {
-                    vscode.window.showErrorMessage('Error while compiling ' + basename(path));
                     channel.append(errorMessages.join('\n'));
                     channel.show();
                     // Focus error automatically?

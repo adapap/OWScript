@@ -487,6 +487,9 @@ class Var(AST):
     BUILTIN = 3
     CONST = 4
     STRING = 5
+    CLASS = 6
+    OBJECT = 7
+    METHOD = 8
 
     def __init__(self, name, type_, value=None, data=None, player=None, chase=False):
         self.name = name
@@ -497,7 +500,17 @@ class Var(AST):
 
     @property
     def _type(self):
-        return {0: 'GLOBAL', 1: 'PLAYER', 2: 'INTERNAL', 3: 'BUILTIN', 4: 'CONST', 5: 'STRING'}.get(self.type)
+        return {
+            0: 'GLOBAL',
+            1: 'PLAYER',
+            2: 'INTERNAL',
+            3: 'BUILTIN',
+            4: 'CONST',
+            5: 'STRING',
+            6: 'CLASS',
+            7: 'OBJECT',
+            8: 'METHOD'
+        }.get(self.type)
 
     def __repr__(self):
         if self.value or self.data:
@@ -535,6 +548,7 @@ class Function(AST):
         super().__init__()
         self.name = name
         self.params = params
+        self.closure = None
 
     @property
     def arity(self):
@@ -555,6 +569,26 @@ class Parameter(AST):
 
     def __repr__(self):
         return 'param {}{}'.format(self.name, '?=' + repr(self.default) if self.default else '')
+
+class Class(AST):
+    def __init__(self, name, body):
+        self.name = name
+        self.body = body
+        self.closure = None
+
+    def __repr__(self):
+        return 'class {}'.format(self.name)
+
+class Object(AST):
+    def __init__(self, type_):
+        self.type = type_
+        self.env = {}
+    
+    def __getattr__(self, attr):
+        return self.env.get(attr)
+    
+    def __repr__(self):
+        return '<obj {}>'.format(self.type.name)
 
 class Return(AST):
     def __init__(self, value):

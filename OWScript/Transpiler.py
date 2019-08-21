@@ -161,6 +161,9 @@ class Transpiler:
         elif type(node) == BinaryOp:
             node.left = self.resolve_name(node.left, scope)
             node.right = self.resolve_name(node.right, scope)
+        elif type(node) == Attribute and type(node.parent) == Var:
+            node.parent = scope.get(node.parent.name).value
+            node = self.resolve_name(getattr(node.parent, node.name), node.parent.env)
         return node
 
     def visitScript(self, node, scope):
@@ -217,8 +220,14 @@ class Transpiler:
     def visitFunction(self, node, scope):
         """Defines a user-created function."""
         var = Var(name=node.name, value=node, type_=Var.INTERNAL)
-        scope.assign(node.name, var)
         node.closure = scope
+        scope.assign(node.name, var)
+        return ''
+    
+    def visitClass(self, node, scope):
+        var = Var(name=node.name, value=node, type_=Var.CLASS)
+        node.closure = scope
+        scope.assign(node.name, var)
         return ''
 
     def visitBlock(self, node, scope):
@@ -229,8 +238,9 @@ class Transpiler:
     def visitRuleblock(self, node, scope):
         """A rule category such as Events, Conditions, or Actions."""
         if not node.children:
-            return self.tabs + node.name + ' {}\n'
-        code = self.tabs + node.name + ' {\n'
+            return self.tabs + node.name + '{}\n'
+        code = self.tabs + node.name + ' {'
+        block = ''
         self.indent_level += 1
         block = ''
         for ruleblock in node.children:
@@ -247,11 +257,11 @@ class Transpiler:
                                 child += ' == True'
                             self.curblock.append(child)
             self.resolve_skips()
-            block += ';\n'.join([x for x in self.curblock if x != ''])
-        if not block:
-            self.indent_level -= 1
-            return self.tabs + node.name + ' {}\n'
-        code += block
+            block += ';\n'.join(self.curblock)
+        if block:
+            code += '\n' + block
+        else:
+            return code + '}\n'
         self.indent_level -= 1
         code += ';\n' + self.tabs + '}\n'
         return code
@@ -372,10 +382,29 @@ class Transpiler:
             except ValueError:
                 raise Errors.NotImplementedError('Array assignment only supports literal integer indices', pos=node._pos)
             scope.assign(name=name, var=var)
+        elif type(node.left) == Attribute:
+            if type(node.left.parent) == Object:
+                obj = node.left.parent
+            else:
+                obj = scope.get(node.left.parent.name).value
+            if not type(obj) == Object:
+                raise Errors.SyntaxError('Cannot assign value to attributes')
+            resolved = self.resolve_name(value, scope)
+            var = Var(name=node.left.name, type_=Var.INTERNAL, value=resolved)
+            obj.env.assign(node.left.name, var)
+            return code
         else:
             raise Errors.NotImplementedError('Cannot assign value to {}'.format(type(node.left).__name__), pos=node._pos)
         var = scope.get(name)
         data = var.data
+        value = self.visit(var.value, scope)
+        if value == '':
+            return code
+        elif type(value) == Object:
+            var.type = Var.OBJECT
+            var.value = value
+            scope.assign(name=name, var=var)
+            return code
         if var.type == Var.GLOBAL:
             if data.index is not None:
                 code += 'Set Global Variable At Index({}, {}, {})'.format(data.letter, data.index, self.visit(var.value, scope))
@@ -550,6 +579,10 @@ class Transpiler:
             code += self.visit(var.value, scope)
         elif var.type == Var.STRING:
             code += var.value.value
+        elif var.type == Var.CLASS:
+            raise Errors.SyntaxError('Cannot assign to class/object literal', pos=node._pos)
+        elif var.type == Var.OBJECT:
+            return var.value
         else:
             raise Errors.NotImplementedError('Unexpected Var type {}'.format(var._type), pos=node._pos)
         return code
@@ -637,11 +670,21 @@ class Transpiler:
     def visitAttribute(self, node, scope):
         """Attributes are properties accessed using the dot operator."""
         attr = node.name.lower()
+        if type(node.parent) == Var:
+            parent = scope.get(node.parent.name).value
+        else:
+            parent = node.parent
         try:
-            attribute = getattr(node.parent, attr)
+            attribute = getattr(parent, attr)
         except AttributeError:
-            raise Errors.AttributeError('\'{}\' has no attribute \'{}\''.format(node.parent.name.title(), attr), pos=node._pos)
-        code = attribute.format(self.visit(node.parent, scope))
+            name = node.parent.name
+            if type(parent) != Object:
+                name = parent.name.title()
+            raise Errors.AttributeError('\'{}\' has no attribute \'{}\''.format(name, attr), pos=node._pos)
+        if type(parent) == Object:
+            code = self.visit(attribute, parent.env)
+        else:
+            code = attribute.format(self.visit(parent, scope))
         return code
 
     def visitCall(self, node, scope):
@@ -651,7 +694,7 @@ class Transpiler:
         var = scope.get(base_node.name)
         lines = []
         # Handle method (attribute access followed by a call)
-        if type(parent) == Attribute:
+        if type(parent) == Attribute and not var.type == Var.OBJECT:
             if var is not None:
                 method = getattr(var.value, parent.name)
             else:
@@ -670,8 +713,37 @@ class Transpiler:
         if not var:
             raise Errors.NameError('Undefined function \'{}\''.format(parent.name), pos=parent._pos)
         func = var.value
+        if type(func) == Var:
+            func = func.value
+        elif type(func) == Object:
+            obj = var.value
+            func = obj.env.get(parent.name).value
+            obj_var = Var(name=obj.name, type_=Var.OBJECT, value=obj)
+            scope.assign('this', obj_var)
         # Handle user-defined and built-in functions
-        if var.type != Var.BUILTIN:
+        if var.type == Var.CLASS:
+            class_ = var.value
+            obj = Object(type_=class_)
+            scope = Scope(name=var.name, parent=scope)
+            for child in class_.body:
+                if type(child) == Assign:
+                    left = child.left
+                    if not (type(left) == Var and left.type == Var.GLOBAL):
+                        raise Errors.SyntaxError('Invalid variable for class assignment', pos=var._pos)
+                    var = Var(name=child.left.name, type_=Var.INTERNAL, value=child.right)
+                    scope.assign(left.name, var)
+                elif type(child) == Function:
+                    var = Var(name=child.name, type_=Var.METHOD, value=child)
+                    scope.assign(var.name, var)
+            obj.env = scope
+            init = obj.env.get('init').value
+            if init is not None:
+                obj_var = Var(name=obj.name, type_=Var.OBJECT, value=obj)
+                scope.assign('this', obj_var)
+                init_call = Call(args=node.args, parent=init)
+                self.visit(init_call, scope)
+            return obj
+        elif var.type != Var.BUILTIN:
             if not func.arity >= len(node.args) >= func.min_arity:
                 raise Errors.InvalidParameter('\'{}\' expected {} or more arguments, received {}'.format(func.name, func.min_arity, len(node.args)), pos=node._pos)
             # Extend default args
@@ -684,9 +756,13 @@ class Transpiler:
                 scope.assign(param.name, var)
             for child in func.children:
                 try:
-                    lines.append(self.visit(child, scope=scope))
+                    result = self.visit(child, scope=scope)
+                    if result:
+                        lines.append(result)
                 except Errors.ReturnError as ex:
-                    lines.append(self.visit(ex.value, scope=scope))
+                    result = self.visit(ex.value, scope=scope)
+                    if result:
+                        lines.append(result)
         elif var.type == Var.BUILTIN:
             try:
                 self.scope = scope

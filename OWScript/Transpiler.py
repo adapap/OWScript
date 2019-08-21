@@ -358,7 +358,10 @@ class Transpiler:
                 raise Errors.NotImplementedError('Array assignment only supports literal integer indices', pos=node._pos)
             scope.assign(name=name, var=var)
         elif type(node.left) == Attribute:
-            obj = scope.get(node.left.parent.name).value
+            if type(node.left.parent) == Object:
+                obj = node.left.parent
+            else:
+                obj = scope.get(node.left.parent.name).value
             if not type(obj) == Object:
                 raise Errors.SyntaxError('Cannot assign value to attributes')
             resolved = self.resolve_name(value, scope)
@@ -653,7 +656,7 @@ class Transpiler:
         var = scope.get(base_node.name)
         lines = []
         # Handle method (attribute access followed by a call)
-        if type(parent) == Attribute:
+        if type(parent) == Attribute and not var.type == Var.OBJECT:
             if var is not None:
                 method = getattr(var.value, parent.name)
             else:
@@ -674,21 +677,33 @@ class Transpiler:
         func = var.value
         if type(func) == Var:
             func = func.value
+        elif type(func) == Object:
+            obj = var.value
+            func = obj.env.get(parent.name).value
+            obj_var = Var(name=obj.name, type_=Var.OBJECT, value=obj)
+            scope.assign('this', obj_var)
         # Handle user-defined and built-in functions
         if var.type == Var.CLASS:
             class_ = var.value
             obj = Object(type_=class_)
             scope = Scope(name=var.name, parent=scope)
-            for node in class_.body:
-                if type(node) == Assign:
-                    left = node.left
+            for child in class_.body:
+                if type(child) == Assign:
+                    left = child.left
                     if not (type(left) == Var and left.type == Var.GLOBAL):
                         raise Errors.SyntaxError('Invalid variable for class assignment', pos=var._pos)
-                    var = Var(name=node.left.name, type_=Var.INTERNAL, value=node.right)
+                    var = Var(name=child.left.name, type_=Var.INTERNAL, value=child.right)
                     scope.assign(left.name, var)
-                elif type(node) == Function:
-                    pass
+                elif type(child) == Function:
+                    var = Var(name=child.name, type_=Var.METHOD, value=child)
+                    scope.assign(var.name, var)
             obj.env = scope
+            init = obj.env.get('init').value
+            if init is not None:
+                obj_var = Var(name=obj.name, type_=Var.OBJECT, value=obj)
+                scope.assign('this', obj_var)
+                init_call = Call(args=node.args, parent=init)
+                self.visit(init_call, scope)
             return obj
         elif var.type != Var.BUILTIN:
             if not func.arity >= len(node.args) >= func.min_arity:
@@ -703,9 +718,13 @@ class Transpiler:
                 scope.assign(param.name, var)
             for child in func.children:
                 try:
-                    lines.append(self.visit(child, scope=scope))
+                    result = self.visit(child, scope=scope)
+                    if result:
+                        lines.append(result)
                 except Errors.ReturnError as ex:
-                    lines.append(self.visit(ex.value, scope=scope))
+                    result = self.visit(ex.value, scope=scope)
+                    if result:
+                        lines.append(result)
         elif var.type == Var.BUILTIN:
             try:
                 self.scope = scope

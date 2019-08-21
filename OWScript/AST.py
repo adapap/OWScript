@@ -489,6 +489,7 @@ class Var(AST):
     STRING = 5
     CLASS = 6
     OBJECT = 7
+    METHOD = 8
 
     def __init__(self, name, type_, value=None, data=None, player=None):
         self.name = name
@@ -507,7 +508,8 @@ class Var(AST):
             4: 'CONST',
             5: 'STRING',
             6: 'CLASS',
-            7: 'OBJECT'
+            7: 'OBJECT',
+            8: 'METHOD'
         }.get(self.type)
 
     def __repr__(self):

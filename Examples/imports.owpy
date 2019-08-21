@@ -1,5 +1,0 @@
-#import "lib/child"
-
-Rule "Debug Import"
-    Actions
-        debug_func("Hello!")

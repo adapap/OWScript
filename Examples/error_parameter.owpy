@@ -1,5 +1,0 @@
-Rule "Wrong Parameter!"
-    Event
-        On Global
-    Actions
-        Set Facing(Event Player, Event Player.eyepos, "No")

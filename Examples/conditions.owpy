@@ -1,9 +1,0 @@
-Rule "Multiple Conditions"
-    Event
-        On Global
-    Conditions
-        Distance Between
-            Event Player
-            <10, 20, 30>
-        <= 1.5
-        123 < 456

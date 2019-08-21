@@ -1,6 +1,0 @@
-Rule "Variables"
-    Event
-        On Global
-
-    Actions
-        pvar h@Event Player = 1

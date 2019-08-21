@@ -1,6 +1,0 @@
-Rule "x in array?"
-    Event
-        On Global
-    Actions
-        a = Event Player in Everyone
-        b = 1 not in [1, 2, 3]

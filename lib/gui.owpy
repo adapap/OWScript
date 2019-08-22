@@ -1,0 +1,34 @@
+%GameText(text, pos, scale?=1.5, who?=Everyone)
+    World Text
+        Visible_To: who
+        Header: text
+        Position: pos
+        Scale: scale
+        Clipping: Clip Against Surfaces
+        Reevaluation: Visible To And String
+%CodeText(code, pos, scale?=1.0, who?=Event Player)
+    GameText(who, `Save: {} + {} + {} + {} + {}`(code[0], code[1], code[2], code[3], code[4]), pos, scale)
+%BigHud(loc, text, color?=White)
+    Hud
+        Visible_To: Event Player
+        Header: text
+        Subheader: Null
+        Text: Null
+        Location: loc
+        Sort_Order: 0
+        Header_Color: color
+        Subheader_Color: White
+        Text_Color: White
+        Reevaluation: Visible To And String
+%SmallHud(loc, text, color?=White)
+    Hud
+        Visible_To: Event Player
+        Header: Null
+        Subheader: Null
+        Text: text
+        Location: loc
+        Sort_Order: 999
+        Header_Color: White
+        Subheader_Color: White
+        Text_Color: color
+        Reevaluation: Visible To And String

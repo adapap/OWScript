@@ -194,7 +194,6 @@ class Transpiler:
             if path not in self.imports:
                 self.imports.add(path)
                 result = Importer.import_file(path)
-                print(result)
             else:
                 self.logger.info('Skipping duplicate import {}'.format(path))
                 result = Script()
@@ -736,11 +735,11 @@ class Transpiler:
                     var = Var(name=child.name, type_=Var.METHOD, value=child)
                     scope.assign(var.name, var)
             obj.env = scope
-            init = obj.env.get('init').value
+            init = obj.env.get('init')
             if init is not None:
                 obj_var = Var(name=obj.name, type_=Var.OBJECT, value=obj)
                 scope.assign('this', obj_var)
-                init_call = Call(args=node.args, parent=init)
+                init_call = Call(args=node.args, parent=init.value)
                 self.visit(init_call, scope)
             return obj
         elif var.type != Var.BUILTIN:

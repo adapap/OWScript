@@ -1,60 +1,6 @@
-%Global
-    Event
-        On Global
-%Each(team_)
-    Event
-        On Each Player
-        team_
-        All
-%GameText(who, text, pos, scale)
-    World Text
-        Visible_To: who
-        Header: text
-        Position: pos
-        Scale: scale
-        Clipping: Clip Against Surfaces
-        Reevaluation: Visible To And String
-%CodeText(who, code, pos, scale)
-    GameText(who, `Save: {} + {} + {} + {} + {}`(code[0], code[1], code[2], code[3], code[4]), pos, scale)
-%BigHud(loc, text, color)
-    Hud
-        Visible_To: Event Player
-        Header: text
-        Subheader: Null
-        Text: Null
-        Location: loc
-        Sort_Order: 0
-        Header_Color: color
-        Subheader_Color: White
-        Text_Color: White
-        Reevaluation: Visible To And String
-%SmallHud(loc, text, color)
-    Hud
-        Visible_To: Event Player
-        Header: Null
-        Subheader: Null
-        Text: text
-        Location: loc
-        Sort_Order: 999
-        Header_Color: White
-        Subheader_Color: White
-        Text_Color: color
-        Reevaluation: Visible To And String
-%Sound(type)
-    Play Effect
-        Visible_To: Event Player
-        Type: type
-        Color: White
-        Position: Event Player
-        Radius: 50
-%SuccessSound
-    Sound(Buff Explosion Sound)
-%FailSound
-    Sound(Debuff Impact Sound)
-%WooshSound
-    Sound(Ring Explosion Sound)
-%BoomSound
-    Sound(Explosion Sound)
+#import "lib/events"
+#import "lib/gui"
+
 %MissingFunds
     Big Msg(Event Player, `Go Find More Money`)
 %Warp(player, destination, facing)
@@ -75,7 +21,7 @@
         Position: pos
         Radius: 1.5
         Reevaluation: Visible To
-    GameText(Everyone, text, (pos + Up), 1.5)
+    GameText(Everyone, text, pos + Up, 1.5)
 %UpgradePortal(pos)
     Portal(pos, Good Aura, Yellow, "Upgrades")
 %ShopPortal(pos)

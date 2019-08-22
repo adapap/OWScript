@@ -1,0 +1,24 @@
+%Global
+    Event
+        On Global
+%EachPlayer(team_?=All)
+    Event
+        On Each Player
+        team_
+        All
+class Sound:
+    %PlaySound(type)
+        Play Effect
+            Visible_To: Event Player
+            Type: type
+            Color: White
+            Position: Event Player
+            Radius: 50
+    %Success()
+        this.PlaySound(Buff Explosion Sound)
+    %Fail
+        this.PlaySound(Debuff Impact Sound)
+    %Woosh
+        this.PlaySound(Ring Explosion Sound)
+    %Boom
+        this.PlaySound(Explosion Sound)

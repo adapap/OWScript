@@ -622,7 +622,7 @@ class Transpiler:
         else:
             elements = []
             for elem in node.elements:
-                if type(elem) in (String, Constant):
+                if type(elem) in (String, Constant, Var):
                     elements.append(Constant(name='Null'))
                 else:
                     elements.append(elem)
@@ -640,22 +640,20 @@ class Transpiler:
             var = scope.get(node.parent.name)
             if not var:
                 raise Errors.NameError('\'{}\' is undefined'.format(node.parent.name), pos=node.parent._pos)
-            try:
-                index = int(node.index.value)
-                array = var.value
-                assert type(array) == Array
-                if not 0 <= index < len(array):
-                    return self.visit(Number(value='0'), scope)
+            index = int(node.index.value)
+            array = var.value
+            if not type(array) == Array:
+                raise Errors.SyntaxError('Cannot get item from non-array \'{}\''.format(type(array).__name__), pos=node.parent._pos)
+            if not 0 <= index < len(array):
+                return self.visit(Number(value='0'), scope)
+            else:
+                if var.type == Var.GLOBAL:
+                    return 'Value In Array(Value In Array(Global Variable({})), {}, {})'.format(var.data.letter, var.data.index, index)
+                elif var.type == Var.PLAYER:
+                    player = self.visit(var.data.player if node.parent.player is None else node.parent.player, scope)
+                    return 'Value In Array(Value In Array(Player Variable({}, {})), {}, {})'.format(player, var.data.letter, var.data.index, index)
                 else:
-                    if var.type == Var.GLOBAL:
-                        return 'Value In Array(Value In Array(Global Variable({})), {}, {})'.format(var.data.letter, var.data.index, index)
-                    elif var.type == Var.PLAYER:
-                        player = self.visit(var.data.player if node.parent.player is None else node.parent.player, scope)
-                        return 'Value In Array(Value In Array(Player Variable({}, {})), {}, {})'.format(player, var.data.letter, var.data.index, index)
-                    else:
-                        return self.visit(var.value[index], scope)
-            except AssertionError:
-                raise Errors.SyntaxError('Cannot get item from non-array type {}'.format(type(var.value)), pos=node.parent._pos)
+                    return self.visit(var.value[index], scope)
         else:
             try:
                 index = int(scope.get(node.index.name).value)
@@ -673,6 +671,8 @@ class Transpiler:
             parent = scope.get(node.parent.name).value
         else:
             parent = node.parent
+        if type(parent) == Item:
+            raise Errors.NotImplementedError('Cannot access properties of array elements', pos=node._pos)
         try:
             attribute = getattr(parent, attr)
         except AttributeError:
@@ -691,9 +691,10 @@ class Transpiler:
         parent = node.parent
         base_node = self.base_node(node)
         var = scope.get(base_node.name)
+        is_object = type(var) == Var and var.type == Var.OBJECT
         lines = []
         # Handle method (attribute access followed by a call)
-        if type(parent) == Attribute and not var.type == Var.OBJECT:
+        if type(parent) == Attribute and not is_object:
             if var is not None:
                 method = getattr(var.value, parent.name)
             else:

@@ -1,0 +1,10 @@
+class A:
+    %init(b, c)
+        this.b = b
+        this.c = c
+        
+Rule "Object Test"
+    Actions
+        a = A(1, 2)
+        b = [a]
+        Msg(Everyone, b[0].b)

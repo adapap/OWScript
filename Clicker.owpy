@@ -62,7 +62,7 @@ Rule "Initialize Constants"
         shop_pos = <2.500, 3.500, 75>
         player_spawns = [<-40, -1.5, 145.5>, <-29, 8, 56>, <-77.5, 1.5, 65.5>, <-50.5, 1.5, 117>, <43.5, 3.5, 73.5>, <-115, 1.5, 112.5>]
         boss_spawns = [<-31.5, 0, 148>, <-22.5, 7.5, 66.5>, <-82.5, 1.5, 61>, <-59, 1, 104>, <53.5, 3.5, 72.5>, <-129, 2.5, 108.5>]
-        boss_heroes = [Hero(Roadhog), Hero(Soldier: 76), Hero(Mei), Hero(Lucio), Hero(Ana), Hero(Reaper)]
+        boss_heroes = [Roadhog, Soldier: 76, Mei, Lucio, Ana, Reaper]
         ability2_pos = <12.5, 2.5, 71>
         ability1_pos = <12.5, 2.5, 71 + 2.5>
         ability1_cost = 25000
@@ -121,7 +121,7 @@ Rule "Initialize Effects (Portals / Upgrades / Saves / Boundaries)"
         GameText(All Players(Team 1), `Unlock {}: {} Credit`(Hero(Soldier: 76), 1), soldier_temp_pos + Up * 0.5, 1.5)
         // Secrets
         secret2_pos = <31, 2.5, 49.5>
-        CodeText(Players In Radius(secret2_pos, 5, Team(All), Off), ["Left", "Up", "Down", "Up", "Right"], secret2_pos, 0.75)
+        CodeText(["Left", "Up", "Down", "Up", "Right"], secret2_pos, 0.75, Players In Radius(secret2_pos, 5, Team(All), Off))
 
 Rule "Initialize Player HUD Stats"
     EachPlayer(Team 1)
@@ -216,7 +216,7 @@ Rule "Teleport to Shop"
             <= 2.0
     Actions
         Warp(Event Player, shop_pos, upgr_pos)
-        WooshSound()
+        sound.Woosh()
         pvar location = -1
 
 Rule "Teleport from Shop"
@@ -231,7 +231,7 @@ Rule "Teleport from Shop"
         pvar location = pvar cur_boss
         Wait(0.1s)
         Warp(Event Player, player_spawns[pvar location], Closest Player To(Event Player, Team 2))
-        WooshSound()
+        sound.Woosh()
 
 Rule "Shop Boundary & Heal"
     EachPlayer(Team 1)
@@ -244,14 +244,14 @@ Rule "Shop Boundary & Heal"
             Skip If(Not((Event Player.pos.x <= -12) or (Event Player.pos.z <= 25)), 6)
             Warp(Event Player, shop_pos, upgr_pos)
             Msg(Event Player, `Avoid Going Here`)
-            FailSound()
+            sound.Fail()
 
 %BossBoundary(loc, hero_)
     if Event Player in All Players(Team 1):
         if pvar location == loc:
             Teleport(Event Player, player_spawns[pvar cur_boss])
             Msg(Event Player, `Avoid Going Here`)
-            FailSound()
+            sound.Fail()
     elif Event Player.hero == hero_:
         Teleport(Event Player, boss_spawns[Index(boss_heroes, hero_)])
 
@@ -305,11 +305,11 @@ Rule "Buy HP"
             pvar hp_cost = ceil(pvar hp_cost + upgrade_rates[0])
             pvar hp += 10
             Set Max Health(Event Player, pvar hp)
-            SuccessSound()
+            sound.Success()
             ShopAutobuy()
         else:
-            MissingFunds()
-            FailSound()
+            messager.messager.MissingFunds()
+            sound.Fail()
 
 Rule "Buy Damage %"
     EachPlayer(Team 1)
@@ -323,11 +323,11 @@ Rule "Buy Damage %"
             pvar damage_scale += 2
             Set Damage Dealt(Event Player, pvar damage_scale)
             pvar damage_scale_cost = ceil(pvar damage_scale_cost ^ upgrade_rates[1])
-            SuccessSound()
+            sound.Success()
             ShopAutobuy()
         else:
-            MissingFunds()
-            FailSound()
+            messager.MissingFunds()
+            sound.Fail()
 
 Rule "Buy Reload Speed"
     EachPlayer(Team 1)
@@ -337,11 +337,11 @@ Rule "Buy Reload Speed"
             pvar money -= pvar reload_speed_cost
             pvar reload_speed_cost = ceil(pvar reload_speed_cost ^ upgrade_rates[2])
             pvar reload_speed = max(pvar reload_speed * 0.95, 0)
-            SuccessSound()
+            sound.Success()
             ShopAutobuy()
         else:
-            MissingFunds()
-            FailSound()
+            messager.MissingFunds()
+            sound.Fail()
 
 Rule "Buy Money Multiplier"
     EachPlayer(Team 1)
@@ -351,11 +351,11 @@ Rule "Buy Money Multiplier"
             pvar money -= pvar money_multiplier_cost
             pvar money_multiplier_cost = ceil(pvar money_multiplier_cost ^ upgrade_rates[3])
             pvar money_multiplier += 0.075
-            SuccessSound()
+            sound.Success()
             ShopAutobuy()
         else:
-            MissingFunds()
-            FailSound()
+            messager.MissingFunds()
+            sound.Fail()
 
 Rule "Buy Defense"
     EachPlayer(Team 1)
@@ -366,14 +366,14 @@ Rule "Buy Defense"
             pvar defense_cost = ceil(pvar defense_cost ^ upgrade_rates[4])
             pvar defense = Max(pvar defense - 2, 5)
             Set Damage Received(Event Player, pvar defense)
-            SuccessSound()
+            sound.Success()
             ShopAutobuy()
         elif pvar defense == 5:
             Msg(Event Player, `Max Defend`)
-            FailSound()
+            sound.Fail()
         else:
-            MissingFunds()
-            FailSound()
+            messager.MissingFunds()
+            sound.Fail()
 
 Rule "Buy Ability 1"
     EachPlayer(Team 1)
@@ -383,12 +383,12 @@ Rule "Buy Ability 1"
             pvar money -= ability1_cost
             pvar ability1 = True
             Set Ability 1 Enabled(Event Player, True)
-            SuccessSound()
+            sound.Success()
         elif pvar ability1:
             Msg(Event Player, `You Bought Ability 1`)
-            FailSound()
+            sound.Fail()
         else:
-            MissingFunds()
+            messager.MissingFunds()
 
 Rule "Buy Ability 2"
     EachPlayer(Team 1)
@@ -398,12 +398,12 @@ Rule "Buy Ability 2"
             pvar money -= ability2_cost
             pvar ability2 = True
             Set Ability 2 Enabled(Event Player, True)
-            SuccessSound()
+            sound.Success()
         elif pvar ability2:
             Msg(Event Player, `You Bought Ability 2`)
-            FailSound()
+            sound.Fail()
         else:
-            MissingFunds()
+            messager.MissingFunds()
 
 Rule "Teleport Player to Start"
     EachPlayer(Team 1)
@@ -464,13 +464,13 @@ Rule "Next Boss"
             Wait(0.1s)
             Warp(Event Player, player_spawns[pvar cur_boss], boss_spawns[pvar cur_boss])
             pvar location = pvar cur_boss
-            WooshSound()
+            sound.Woosh()
         elif pvar money < next_boss_cost[pvar cur_boss]:
-            MissingFunds()
-            FailSound()
+            messager.MissingFunds()
+            sound.Fail()
         else:
             Big Msg(Event Player, `Go Kill Boss`)
-            FailSound()
+            sound.Fail()
 
 %SaveInput(name, value, pos)
     Rule "Save Input " + name
@@ -481,7 +481,7 @@ Rule "Next Boss"
         Actions
             Msg(Event Player, name)
             pvar save_code.append(value)
-            BoomSound()
+            sound.Boom()
 
 SaveInput("Up", 0, save_pos - z_offset)
 SaveInput("Down", 1, save_pos + z_offset)
@@ -494,7 +494,7 @@ SaveInput("Right", 3, save_pos + x_offset)
     Set Hero(Event Player, hero_)
     Wait(0.5s)
     Big Msg(Event Player, `You Unlocked {}`(Hero Icon String(hero_)))
-    SuccessSound()
+    sound.Success()
     Wait(0.25)
 
 Rule "Buy Prestige Item"
@@ -518,19 +518,19 @@ Rule "Check Save Code"
         // 3: Right
         if pvar save_code == [0, 0, 0, 0, 0]:
             UnlockHero(Hero(McCree))
-            CodeText(Event Player, ["Up", "Up", "Up", "Up", "Up"], save_pos + Up * 1.25, 2)
+            CodeText(["Up", "Up", "Up", "Up", "Up"], save_pos + Up * 1.25, 2)
         elif pvar save_code == [3, 1, 2, 3, 2]:
             UnlockHero(Hero(Soldier: 76))
-            CodeText(Event Player, ["Right", "Down", "Left", "Right", "Left"], save_pos + Up * 1.25, 2)
+            CodeText(["Right", "Down", "Left", "Right", "Left"], save_pos + Up * 1.25, 2)
         elif pvar save_code == [0, 2, 2, 1, 3]:
-            UnlockHero(Hero(Ashe))
-            CodeText(Event Player, ["Up", "Left", "Left", "Down", "Right"], save_pos + Up * 1.25, 2)
+            UnlockHero(Ashe)
+            CodeText(["Up", "Left", "Left", "Down", "Right"], save_pos + Up * 1.25, 2)
         elif pvar save_code == [2, 3, 2, 0, 0]:
-            UnlockHero(Hero(Genji))
-            CodeText(Event Player, ["Left", "Right", "Left", "Up", "Up"], save_pos + Up * 1.25, 2)
+            UnlockHero(Genji)
+            CodeText(["Left", "Right", "Left", "Up", "Up"], save_pos + Up * 1.25, 2)
         elif pvar save_code == [1, 1, 3, 1, 2]:
-            UnlockHero(Hero(Hanzo))
-            CodeText(Event Player, ["Down", "Down", "Right", "Down", "Left"], save_pos + Up * 1.25, 2)
+            UnlockHero(Hanzo)
+            CodeText(["Down", "Down", "Right", "Down", "Left"], save_pos + Up * 1.25, 2)
         elif pvar save_code == [2, 0, 1, 0, 3]: // Secrets
             Big Msg(Event Player, "Hacked")
             // You Unlocked Hidden Save 2
@@ -560,7 +560,7 @@ Rule "Prestige"
             Set Slow Motion(100)
             Warp(Event Player, player_spawns[0], boss_spawns[0])
             Msg(Event Player, `{} Credits`(pvar credits))
-            SuccessSound()
+            sound.Success()
         else:
             Big Msg(Event Player, `Defeat Final Boss`)
             

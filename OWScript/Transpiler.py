@@ -633,7 +633,7 @@ class Transpiler:
             code += 'Empty Array, ' + '), '.join(self.visit(elem, scope) for elem in elements) + ')'
         return code
 
-    def visitItem(self, node, scope):
+    def visitItem(self, node, scope, visit=True):
         """An item is accessing an element of an array."""
         # Try to access an array element by interpreting the number?
         if type(node.index) == Number and type(node.parent) == Var:
@@ -647,6 +647,8 @@ class Transpiler:
             if not 0 <= index < len(array):
                 return self.visit(Number(value='0'), scope)
             else:
+                if not visit:
+                    return var.value[index]
                 if var.type == Var.GLOBAL:
                     return 'Value In Array(Value In Array(Global Variable({})), {}, {})'.format(var.data.letter, var.data.index, index)
                 elif var.type == Var.PLAYER:
@@ -658,7 +660,7 @@ class Transpiler:
             try:
                 index = int(scope.get(node.index.name).value)
                 item = scope.get(node.parent.name).value[index]
-                return self.visit(item, scope)
+                return self.visit(item, scope) if visit else item
             except (ValueError, TypeError, AttributeError):
                 array = self.visit(node.parent, scope)
                 index = self.visit(node.index, scope)
@@ -672,7 +674,10 @@ class Transpiler:
         else:
             parent = node.parent
         if type(parent) == Item:
-            raise Errors.NotImplementedError('Cannot access properties of array elements', pos=node._pos)
+            item = self.visitItem(parent, scope, visit=False)
+            node.parent = item
+            result = self.visitAttribute(node, scope)
+            return result
         try:
             attribute = getattr(parent, attr)
         except AttributeError:

@@ -1,0 +1,45 @@
+%Portal(pos, type, color, text)
+    Create Effect
+        Visible_To: Everyone
+        Type: type
+        Color: color
+        Position: pos
+        Radius: 1.5
+        Reevaluation: Visible To
+    GameText(Everyone, text, pos + Up, 1.5)
+%UpgradePortal(pos)
+    Portal(pos, Good Aura, Yellow, "Upgrades")
+%ShopPortal(pos)
+    Portal(pos, Good Aura, Purple, `Current Boss`)
+%NextBossPortal(pos, text)
+    Portal(pos, Good Aura, Blue, text)
+%UpgradeEffect(pos, color)
+    Create Effect
+        Visible_To: Everyone
+        Type: Orb
+        Color: color
+        Position: pos
+        Radius: 1.5
+        Reevaluation: Visible To
+%UpgradeText(upg, cost_var)
+    GameText(Event Player, `{}: {}`(upgrade_names[upg], cost_var), upgrade_positions[upg] + Up * 0.5, 1.5)
+%SaveIcon(pos, icon, color)
+    Create Icon
+        Visible_To: Filter
+            Everyone
+            LOS
+                pos
+                Cur Elem
+                Barriers Do Not Block LOS
+        Position: pos
+        Icon: icon
+        Reevaluation: Visible To
+        Icon_Color: White
+        Show_When_Offscreen: False
+    Create Effect
+        Visible_To: Everyone
+        Type: Ring
+        Color: color
+        Position: pos
+        Radius: 1
+        Reevaluation: Visible To Position And Radius

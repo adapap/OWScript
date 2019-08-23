@@ -1,0 +1,31 @@
+class Sound:
+    %PlaySound(type)
+        Play Effect
+            Visible_To: Event Player
+            Type: type
+            Color: White
+            Position: Event Player
+            Radius: 50
+    %Success()
+        this.PlaySound(Buff Explosion Sound)
+    %Fail
+        this.PlaySound(Debuff Impact Sound)
+    %Woosh
+        this.PlaySound(Ring Explosion Sound)
+    %Boom
+        this.PlaySound(Explosion Sound)
+
+class Messager:
+    %MissingFunds()
+        Big Msg(Event Player, `Go Find More Money`)
+
+%Warp(player, destination, facing)
+    Teleport(player, destination)
+    Set Facing
+        Player: Event Player
+        Direction: Vector Towards
+            Start: Event Player
+            End: facing
+        Relative: To World
+    Wait(0.1s)
+    Event Player.halt()

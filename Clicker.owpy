@@ -1,68 +1,14 @@
+#import "lib/effects"
 #import "lib/events"
 #import "lib/gui"
+#import "lib/util"
 
-%MissingFunds
-    Big Msg(Event Player, `Go Find More Money`)
-%Warp(player, destination, facing)
-    Teleport(player, destination)
-    Set Facing
-        Player: Event Player
-        Direction: Vector Towards
-            Start: Event Player
-            End: facing
-        Relative: To World
-    Wait(0.1s)
-    Event Player.halt()
-%Portal(pos, type, color, text)
-    Create Effect
-        Visible_To: Everyone
-        Type: type
-        Color: color
-        Position: pos
-        Radius: 1.5
-        Reevaluation: Visible To
-    GameText(Everyone, text, pos + Up, 1.5)
-%UpgradePortal(pos)
-    Portal(pos, Good Aura, Yellow, "Upgrades")
-%ShopPortal(pos)
-    Portal(pos, Good Aura, Purple, `Current Boss`)
-%NextBossPortal(pos, text)
-    Portal(pos, Good Aura, Blue, text)
-%UpgradeEffect(pos, color)
-    Create Effect
-        Visible_To: Everyone
-        Type: Orb
-        Color: color
-        Position: pos
-        Radius: 1.5
-        Reevaluation: Visible To
-%UpgradeText(upg, cost_var)
-    GameText(Event Player, `{}: {}`(upgrade_names[upg], cost_var), upgrade_positions[upg] + Up * 0.5, 1.5)
-%SaveIcon(pos, icon, color)
-    Create Icon
-        Visible_To: Filter
-            Everyone
-            LOS
-                pos
-                Cur Elem
-                Barriers Do Not Block LOS
-        Position: pos
-        Icon: icon
-        Reevaluation: Visible To
-        Icon_Color: White
-        Show_When_Offscreen: False
-    Create Effect
-        Visible_To: Everyone
-        Type: Ring
-        Color: color
-        Position: pos
-        Radius: 1
-        Reevaluation: Visible To Position And Radius
 %SpawnBoss(boss)
     Teleport
         boss_player
         boss_spawns[Index(boss_heroes, boss)]
-%ResetPlayer
+
+%ResetPlayer()
     pvar location = 0
     pvar cur_boss = 0
     pvar bosses_killed = 0
@@ -91,6 +37,8 @@
 Rule "Initialize Constants"
     Global()
     Actions
+        sound = Sound()
+        messager = Messager()
         /* Define Player Variables */
         pvar location = 0
         pvar cur_boss = 0
@@ -122,7 +70,7 @@ Rule "Initialize Constants"
         Set Match Time(90min)
 
 Rule "Initialize Player Stats"
-    Each(Team 1)
+    EachPlayer(Team 1)
     Actions
         /* Player Variables */
         ResetPlayer()
@@ -176,7 +124,7 @@ Rule "Initialize Effects (Portals / Upgrades / Saves / Boundaries)"
         CodeText(Players In Radius(secret2_pos, 5, Team(All), Off), ["Left", "Up", "Down", "Up", "Right"], secret2_pos, 0.75)
 
 Rule "Initialize Player HUD Stats"
-    Each(Team 1)
+    EachPlayer(Team 1)
     Actions
         BigHud(Top, `Money: {}`(pvar money), White)
         SmallHud(Top, `{} Credits ({} / {} Boss Kills)`(pvar credits, pvar bosses_killed, 6), Purple)
@@ -249,7 +197,7 @@ Rule "Respawn Bosses"
         Teleport(Event Player, boss_spawns[Index(boss_heroes, Event Player.hero)])
 
 Rule "Initialize Upgrade Text"
-    Each(Team 1)
+    EachPlayer(Team 1)
     Actions
         UpgradeText(0, pvar hp_cost)
         UpgradeText(1, pvar damage_scale_cost)
@@ -258,7 +206,7 @@ Rule "Initialize Upgrade Text"
         UpgradeText(4, pvar defense_cost)
 
 Rule "Teleport to Shop"
-    Each(Team 1)
+    EachPlayer(Team 1)
     Conditions
         Any True
             Array: portals
@@ -272,7 +220,7 @@ Rule "Teleport to Shop"
         pvar location = -1
 
 Rule "Teleport from Shop"
-    Each(Team 1)
+    EachPlayer(Team 1)
     Conditions
         Distance Between
             Event Player
@@ -286,7 +234,7 @@ Rule "Teleport from Shop"
         WooshSound()
 
 Rule "Shop Boundary & Heal"
-    Each(Team 1)
+    EachPlayer(Team 1)
     Conditions
         pvar location == -1
     Actions
@@ -308,7 +256,7 @@ Rule "Shop Boundary & Heal"
         Teleport(Event Player, boss_spawns[Index(boss_heroes, hero_)])
 
 Rule "Boss Boundaries (Soldier: 76)"
-    Each(All)
+    EachPlayer(All)
     Conditions
         Event Player.pos.y < 4.5
     Actions
@@ -316,7 +264,7 @@ Rule "Boss Boundaries (Soldier: 76)"
         Wait(2s)
         Loop If Condition Is True
 Rule "Boss Boundaries (Mei)"
-    Each(All)
+    EachPlayer(All)
     Conditions
         Event Player.pos.x > -72
     Actions
@@ -324,7 +272,7 @@ Rule "Boss Boundaries (Mei)"
         Wait(2s)
         Loop If Condition Is True
 Rule "Boss Boundaries (Lucio)"
-    Each(All)
+    EachPlayer(All)
     Conditions
         not Event Player in Players In Radius(boss_spawns[3], 20, Team(All), Off)
     Actions
@@ -332,7 +280,7 @@ Rule "Boss Boundaries (Lucio)"
         Wait(2s)
         Loop If Condition Is True
 Rule "Boss Boundaries (Reaper)"
-    Each(All)
+    EachPlayer(All)
     Conditions
         Event Player.pos.x > -94
     Actions
@@ -349,7 +297,7 @@ Rule "Boss Boundaries (Reaper)"
     Wait(0.1s)
     Loop If Condition Is True
 Rule "Buy HP"
-    Each(Team 1)
+    EachPlayer(Team 1)
     ShopCondition(upgrade_positions[0])
     Actions
         if pvar money >= pvar hp_cost:
@@ -364,7 +312,7 @@ Rule "Buy HP"
             FailSound()
 
 Rule "Buy Damage %"
-    Each(Team 1)
+    EachPlayer(Team 1)
     ShopCondition(upgrade_positions[1])
     Actions
         if pvar money >= pvar damage_scale_cost:
@@ -382,7 +330,7 @@ Rule "Buy Damage %"
             FailSound()
 
 Rule "Buy Reload Speed"
-    Each(Team 1)
+    EachPlayer(Team 1)
     ShopCondition(upgrade_positions[2])
     Actions
         if pvar money >= pvar reload_speed_cost:
@@ -396,7 +344,7 @@ Rule "Buy Reload Speed"
             FailSound()
 
 Rule "Buy Money Multiplier"
-    Each(Team 1)
+    EachPlayer(Team 1)
     ShopCondition(upgrade_positions[3])
     Actions
         if pvar money >= pvar money_multiplier_cost:
@@ -410,7 +358,7 @@ Rule "Buy Money Multiplier"
             FailSound()
 
 Rule "Buy Defense"
-    Each(Team 1)
+    EachPlayer(Team 1)
     ShopCondition(upgrade_positions[4])
     Actions
         if (pvar money >= pvar defense_cost) and (pvar defense > 5):
@@ -428,7 +376,7 @@ Rule "Buy Defense"
             FailSound()
 
 Rule "Buy Ability 1"
-    Each(Team 1)
+    EachPlayer(Team 1)
     ShopCondition(ability1_pos)
     Actions
         if (pvar money >= ability1_cost) and (not pvar ability1):
@@ -443,7 +391,7 @@ Rule "Buy Ability 1"
             MissingFunds()
 
 Rule "Buy Ability 2"
-    Each(Team 1)
+    EachPlayer(Team 1)
     ShopCondition(ability2_pos)
     Actions
         if (pvar money >= ability2_cost) and (not pvar ability2):
@@ -458,7 +406,7 @@ Rule "Buy Ability 2"
             MissingFunds()
 
 Rule "Teleport Player to Start"
-    Each(Team 1)
+    EachPlayer(Team 1)
     Conditions
         Has Spawned(Event Player)
     Actions
@@ -467,7 +415,7 @@ Rule "Teleport Player to Start"
             player_spawns[pvar cur_boss]
 
 Rule "Shooting Control"
-    Each(Team 1)
+    EachPlayer(Team 1)
     Conditions
         Has Spawned(Event Player)
         Is Firing Primary(Event Player)
@@ -506,7 +454,7 @@ Rule "Player Death"
         Warp(Event Player, shop_pos, upgr_pos)
 
 Rule "Next Boss"
-    Each(Team 1)
+    EachPlayer(Team 1)
     Conditions
         Event Player in Players In Radius(next_boss_portals[pvar cur_boss], 2, Team(All), Off)
     Actions
@@ -526,7 +474,7 @@ Rule "Next Boss"
 
 %SaveInput(name, value, pos)
     Rule "Save Input " + name
-        Each(Team 1)
+        EachPlayer(Team 1)
         Conditions
             Distance Between(Event Player, pos) <= 1.25
             Event Player.interacting
@@ -550,7 +498,7 @@ SaveInput("Right", 3, save_pos + x_offset)
     Wait(0.25)
 
 Rule "Buy Prestige Item"
-    Each(Team 1)
+    EachPlayer(Team 1)
     ShopCondition(soldier_temp_pos)
     Actions
         if pvar credits >= 1:
@@ -560,7 +508,7 @@ Rule "Buy Prestige Item"
             Big Msg(Event Player, `Defeat Final Boss`)
 
 Rule "Check Save Code"
-    Each(Team 1)
+    EachPlayer(Team 1)
     Conditions
         Count Of(pvar save_code) == 5
     Actions
@@ -591,14 +539,14 @@ Rule "Check Save Code"
         pvar save_code = []
 
 Rule "Prestige Confirm"
-    Each(Team 1)
+    EachPlayer(Team 1)
     Conditions
         Distance Between(Event Player, prestige_pos) <= 1.5
     Actions
         Msg(Event Player, `Start Over? (Jump)`)
 
 Rule "Prestige"
-    Each(Team 1)
+    EachPlayer(Team 1)
     Conditions
         Distance Between(Event Player, prestige_pos) <= 1.5
         Event Player.jumping
@@ -618,7 +566,7 @@ Rule "Prestige"
             
 
 Rule "Money Bonus (Ability 2 / E)"
-    Each(Team 1)
+    EachPlayer(Team 1)
     Conditions
         Is Using Ability 2(Event Player)
     Actions
@@ -631,7 +579,7 @@ Rule "Money Bonus (Ability 2 / E)"
             Msg(Event Player, `Cooldown: {} sec`(pvar money_cd))
 
 Rule "Damage Bonus (Ability 1 / Shift)"
-    Each(Team 1)
+    EachPlayer(Team 1)
     Conditions
         Is Using Ability 1(Event Player)
     Actions
@@ -646,7 +594,7 @@ Rule "Damage Bonus (Ability 1 / Shift)"
             Msg(Event Player, `Cooldown: {} sec`(pvar damage_cd))
 
 Rule "Money/Damage Cooldowns"
-    Each(Team 1)
+    EachPlayer(Team 1)
     Conditions
         (pvar damage_cd > 0) or (pvar money_cd > 0)
     Actions
@@ -658,13 +606,16 @@ Rule "Money/Damage Cooldowns"
         Loop If Condition Is True
 
 Rule "Secret 1" // Flight after jumping by statue
-    Each(Team 1)
+    EachPlayer(Team 1)
 
 Rule "Secret 2" // Grandma giving passive income every 5s?
-    Each(Team 1)
+    EachPlayer(Team 1)
+
+Rule "Secret 3" // 30% faster ability cooldowns
+    EachPlayer(Team 1)
 
 Disabled Rule "Coordinate Viewer"
-    Each(Team 1)
+    EachPlayer(Team 1)
     Conditions
         Has Spawned(Event Player)
         Event Player.moving
@@ -691,7 +642,7 @@ Disabled Rule "Coordinate Viewer"
             Reevaluation: Visible To And String
 
 Disabled Rule "Cheats"
-    Each(Team 1)
+    EachPlayer(Team 1)
     Conditions
         Event Player.jumping
     Actions

@@ -187,6 +187,11 @@ class Parser:
                 var = Var(self.curvalue, type_=Var.STRING)
                 var._pos = self.curpos
                 name.append(var)
+            elif self.curtype == 'DOT':
+                self.eat('DOT')
+                node = Attribute(name=self.curvalue, parent=name.pop())
+                node._pos = self.curpos
+                name.append(node)
             else:
                 raise Errors.ParseError('Unexpected token \'{}\' in rule name'.format(self.curvalue), pos=self.curpos)
             self.eat(self.curtype)

@@ -421,7 +421,9 @@ class Array(AST):
         self.elements = elements or []
 
     def append(self, tp, elem):
-        elem = Raw(code=tp.visit(elem, tp.scope))
+        elem = tp.visit(elem, tp.scope)
+        if type(elem) != Object:
+            elem = Raw(code=elem)
         self.elements.append(elem)
 
     def index(self, elem):
@@ -449,19 +451,6 @@ class Compare(BinaryOp):
 
 class Assign(BinaryOp):
     pass
-
-# class GlobalVar(Data):
-#     vartype = 'global'
-
-# class PlayerVar(Data):
-#     vartype = 'player'
-#     def __init__(self, name, player=None):
-#         super().__init__(name)
-#         self.player = player or Constant(name='Event Player')
-# class VarType:
-#     # Compares whether a value is a GlobalVar or PlayerVar
-#     def __eq__(self, other):
-#         return other in (GlobalVar, PlayerVar)
 
 class GlobalVar(AST):
     def __init__(self, letter, index=None):
@@ -579,7 +568,7 @@ class Class(AST):
     def __repr__(self):
         return 'class {}'.format(self.name)
 
-class Object(AST):
+class Object():
     def __init__(self, type_):
         self.type = type_
         self.env = {}

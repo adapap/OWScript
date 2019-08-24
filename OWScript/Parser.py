@@ -394,7 +394,7 @@ class Parser:
     def compare(self):
         """compare : term (COMPARE term)*"""
         node = self.term()
-        while self.curtype in ('COMPARE', 'IN', 'NOT_IN') and self.peek().type not in ('COMMA', 'RPAREN', 'RBRACK', 'COMPARE', 'NEWLINE'):
+        while self.curtype in ('COMPARE', 'IN', 'NOT_IN') and self.peek().type not in ('COMMA', 'RPAREN', 'RBRACK', 'NEWLINE'):
             op = self.curvalue
             self.eat(self.curtype)
             node = Compare(left=node, op=op, right=self.compare())

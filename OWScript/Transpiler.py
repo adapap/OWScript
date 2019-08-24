@@ -288,6 +288,7 @@ class Transpiler:
                 if not var:
                     raise Errors.NameError('\'{}\' is undefined'.format(child.name), pos=node._pos)
                 node.children[index] = Raw(code=var.data.letter)
+                print(var.data.letter)
                 continue
             values = list(map(lambda x: x.replace(',', ''), flatten(arg.get_values())))
             value = self.visit(child, scope).upper()
@@ -390,6 +391,8 @@ class Transpiler:
                 raise Errors.SyntaxError('Cannot assign value to attributes')
             resolved = self.resolve_name(value, scope)
             var = Var(name=node.left.name, type_=Var.INTERNAL, value=resolved)
+            if type(resolved) == String:
+                var.type = Var.STRING
             obj.env.assign(node.left.name, var)
             return code
         else:
@@ -658,10 +661,12 @@ class Transpiler:
                     return self.visit(var.value[index], scope)
         else:
             try:
-                index = int(scope.get(node.index.name).value)
+                index = scope.get(node.index.name)
+                assert hasattr(index, 'value')
+                index = int(index.value)
                 item = scope.get(node.parent.name).value[index]
                 return self.visit(item, scope) if visit else item
-            except (ValueError, TypeError, AttributeError):
+            except (ValueError, TypeError, AssertionError):
                 array = self.visit(node.parent, scope)
                 index = self.visit(node.index, scope)
                 return 'Value In Array({}, {})'.format(array, index)
@@ -681,9 +686,9 @@ class Transpiler:
         try:
             attribute = getattr(parent, attr)
         except AttributeError:
-            name = node.parent.name
-            if type(parent) != Object:
-                name = parent.name.title()
+            name = node.parent
+            if type(parent) != Object and type(name) == str:
+                name = name.title()
             raise Errors.AttributeError('\'{}\' has no attribute \'{}\''.format(name, attr), pos=node._pos)
         if type(parent) == Object:
             code = self.visit(attribute, parent.env)

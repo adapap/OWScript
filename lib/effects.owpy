@@ -21,8 +21,8 @@
         Position: pos
         Radius: 1.5
         Reevaluation: Visible To
-%UpgradeText(upg, cost_var)
-    GameText(Event Player, `{}: {}`(upgrade_names[upg], cost_var), upgrade_positions[upg] + Up * 0.5, 1.5)
+%UpgradeText(text, pos, cost_var)
+    GameText(Event Player, `{}: {}`(text, cost_var), pos + Up * 0.5, 1.5)
 %SaveIcon(pos, icon, color)
     Create Icon
         Visible_To: Filter
@@ -43,3 +43,11 @@
         Position: pos
         Radius: 1
         Reevaluation: Visible To Position And Radius
+
+class Upgrade:
+    %init(name, rate, cost, pos, color)
+        this.name = name
+        this.rate = rate
+        this.pos = pos
+        this.color = color
+        this.cost = cost

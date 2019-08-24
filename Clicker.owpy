@@ -90,19 +90,22 @@ Rule "Initialize Effects (Portals / Upgrades / Saves / Boundaries)"
         soldier_temp_pos = <3, 3, 77.5>
         x_offset = <2.5, 0, 0>
         z_offset = <0, 0, 2.5>
-        upgrade_names = ["Heal", "Damage", "Faster", "Money", "Defend"]
-        upgrade_rates = [100, 1.003, 1.04, 1.045, 1.03]
-        upgrade_positions = []
-        for i in range(-2, 3):
-            upgrade_positions.append(upgr_pos + i * x_offset)
-        upgrade_colors = [Purple, Red, Yellow, Green, Blue]
+        
+        // Upgrade(name, rate, pos, color)
+        upgrades = []
+        upgrades.append(Upgrade("Heal", 100, hp_cost, upgr_pos - 2 * x_offset, Purple))
+        upgrades.append(Upgrade("Damage", 1.003, damage_scale_cost, upgr_pos - x_offset, Red))
+        upgrades.append(Upgrade("Faster", 1.04, reload_speed_cost, upgr_pos, Yellow))
+        upgrades.append(Upgrade("Money", 1.045, money_multiplier_cost, upgr_pos + x_offset, Green))
+        upgrades.append(Upgrade("Defend", 1.03, defense_cost, upgr_pos + 2 * x_offset, Blue))
         // Bosses 1-6 -> Shop
         for portal in portals:
             UpgradePortal(portal)
         ShopPortal(shop_portal)
         // HP, Damage, Reload Speed, Money Multiplier, Damage Resistance
-        for i in range(5):
-            UpgradeEffect(upgrade_positions[i], upgrade_colors[i])
+        for upgrade in upgrades:
+            UpgradeEffect(upgrade.pos, upgrade.color)
+            UpgradeText(upgrade.name, upgrade.pos, upgrade.cost)
         // Next Boss
         for i in range(5):
             NextBossPortal(next_boss_portals[i], `Next Boss: {}`(next_boss_cost[i]))
@@ -195,15 +198,6 @@ Rule "Respawn Bosses"
         Respawn(Event Player)
         Wait(0.1s)
         Teleport(Event Player, boss_spawns[Index(boss_heroes, Event Player.hero)])
-
-Rule "Initialize Upgrade Text"
-    EachPlayer(Team 1)
-    Actions
-        UpgradeText(0, pvar hp_cost)
-        UpgradeText(1, pvar damage_scale_cost)
-        UpgradeText(2, pvar reload_speed_cost)
-        UpgradeText(3, pvar money_multiplier_cost)
-        UpgradeText(4, pvar defense_cost)
 
 Rule "Teleport to Shop"
     EachPlayer(Team 1)
@@ -298,11 +292,11 @@ Rule "Boss Boundaries (Reaper)"
     Loop If Condition Is True
 Rule "Buy HP"
     EachPlayer(Team 1)
-    ShopCondition(upgrade_positions[0])
+    ShopCondition(upgrades[0].pos)
     Actions
         if pvar money >= pvar hp_cost:
             pvar money -= pvar hp_cost
-            pvar hp_cost = ceil(pvar hp_cost + upgrade_rates[0])
+            pvar hp_cost = ceil(pvar hp_cost + upgrades[0].rate)
             pvar hp += 10
             Set Max Health(Event Player, pvar hp)
             sound.Success()
@@ -313,7 +307,7 @@ Rule "Buy HP"
 
 Rule "Buy Damage %"
     EachPlayer(Team 1)
-    ShopCondition(upgrade_positions[1])
+    ShopCondition(upgrades[1].pos)
     Actions
         if pvar money >= pvar damage_scale_cost:
             pvar money -= pvar damage_scale_cost
@@ -322,7 +316,7 @@ Rule "Buy Damage %"
             Skip If(pvar damage_scale < 75, 1)
             pvar damage_scale += 2
             Set Damage Dealt(Event Player, pvar damage_scale)
-            pvar damage_scale_cost = ceil(pvar damage_scale_cost ^ upgrade_rates[1])
+            pvar damage_scale_cost = ceil(pvar damage_scale_cost ^ upgrades[1].rate)
             sound.Success()
             ShopAutobuy()
         else:
@@ -331,11 +325,11 @@ Rule "Buy Damage %"
 
 Rule "Buy Reload Speed"
     EachPlayer(Team 1)
-    ShopCondition(upgrade_positions[2])
+    ShopCondition(upgrades[2].pos)
     Actions
         if pvar money >= pvar reload_speed_cost:
             pvar money -= pvar reload_speed_cost
-            pvar reload_speed_cost = ceil(pvar reload_speed_cost ^ upgrade_rates[2])
+            pvar reload_speed_cost = ceil(pvar reload_speed_cost ^ upgrades[2].rate)
             pvar reload_speed = max(pvar reload_speed * 0.95, 0)
             sound.Success()
             ShopAutobuy()
@@ -345,11 +339,11 @@ Rule "Buy Reload Speed"
 
 Rule "Buy Money Multiplier"
     EachPlayer(Team 1)
-    ShopCondition(upgrade_positions[3])
+    ShopCondition(upgrades[3].pos)
     Actions
         if pvar money >= pvar money_multiplier_cost:
             pvar money -= pvar money_multiplier_cost
-            pvar money_multiplier_cost = ceil(pvar money_multiplier_cost ^ upgrade_rates[3])
+            pvar money_multiplier_cost = ceil(pvar money_multiplier_cost ^ upgrades[3].rate)
             pvar money_multiplier += 0.075
             sound.Success()
             ShopAutobuy()
@@ -359,11 +353,11 @@ Rule "Buy Money Multiplier"
 
 Rule "Buy Defense"
     EachPlayer(Team 1)
-    ShopCondition(upgrade_positions[4])
+    ShopCondition(upgrades[4].pos)
     Actions
         if (pvar money >= pvar defense_cost) and (pvar defense > 5):
             pvar money -= pvar defense_cost
-            pvar defense_cost = ceil(pvar defense_cost ^ upgrade_rates[4])
+            pvar defense_cost = ceil(pvar defense_cost ^ upgrades[4].rate)
             pvar defense = Max(pvar defense - 2, 5)
             Set Damage Received(Event Player, pvar defense)
             sound.Success()
@@ -375,7 +369,7 @@ Rule "Buy Defense"
             messager.MissingFunds()
             sound.Fail()
 
-Rule "Buy Ability 1"
+/* Rule "Buy Ability 1"
     EachPlayer(Team 1)
     ShopCondition(ability1_pos)
     Actions
@@ -649,4 +643,4 @@ Disabled Rule "Cheats"
         pvar money += 1000000
         pvar reload_speed = 0.01
         Set Damage Received(Event Player, 0)
-        Set Damage Dealt(Event Player, 10000)
+        Set Damage Dealt(Event Player, 10000) */

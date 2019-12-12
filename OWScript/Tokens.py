@@ -85,6 +85,7 @@ class Tokens:
     LBRACK : r'\['
     RBRACK : r'\]'
     STRING : r'("[^\\\r\n\f]*?"|\'[^\\\r\n\f]*?\')'
+    C_STRING: r'(~"[^\\\r\n\f]*?"|~\'[^\\\r\n\f]*?\')'
     F_STRING : r'(`[^\\\r\n\f]*?`)'
     IMPORT : r'#IMPORT\b'
     CLASS : r'CLASS\b'

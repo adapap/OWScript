@@ -484,6 +484,8 @@ class Parser:
             node = self.vector()
         elif self.curtype in ('STRING', 'F_STRING'):
             node = self.string()
+        elif self.curtype in ('C_STRING'):
+            node = self.string()
         elif self.curtype == 'TIME':
             node = Time(value=self.curvalue)
             self.eat('TIME')
@@ -580,12 +582,17 @@ class Parser:
 
     def string(self):
         """string : STRING
+                  | C_STRING
                   | F_STRING args?"""
         pos = self.curpos
         if self.curtype == 'STRING':
             node = String(value=self.curvalue.strip('"').strip("'"))
             self.eat('STRING')
             node.children = [Constant(name='Null')] * 3
+        elif self.curtype == 'C_STRING':
+            node = CustomString(value=self.curvalue.strip('~"').strip("~'"))
+            self.eat('C_STRING')
+            node.children  = [Constant(name='Null')] * 3
         else:
             string = self.curvalue
             num_params = string.count('{')

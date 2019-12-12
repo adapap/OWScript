@@ -335,6 +335,21 @@ class String(WorkshopType):
     def __repr__(self):
         return '{}({}){}'.format(self.value, ', '.join(map(repr, self.children)), f'[{self.length}]' if self.length else '')
 
+class CustomString(WorkshopType):
+    _values = ['HERO ICON STRING', 'STRING']
+    _extends = [Any]
+
+    def __init__(self, value, length=None):
+        super().__init__()
+        self.value = value
+        self.length = length
+
+    def get_length(self):
+        return self.length + sum(child.get_length for child in self.children)
+
+    def __repr__(self):
+        return '{}({}){}'.format(self.value, ', '.join(map(repr, self.children)), f'[{self.length}]' if self.length else '')
+        
 class Base(WorkshopType):
     _values = ['ADD', 'APPEND TO ARRAY', 'ARRAY SLICE', 'CURRENT ARRAY ELEMENT', 'DIVIDE', 'EMPTY ARRAY', 'FILTERED ARRAY', 'FIRST OF', 'GLOBAL VARIABLE', 'LAST OF', 'MULTIPLY', 'PLAYER VARIABLE', 'RANDOM VALUE IN ARRAY', 'RANDOMIZED ARRAY', 'REMOVE FROM ARRAY', 'SORTED ARRAY', 'SUBTRACT', 'VALUE IN ARRAY']
     _extends = [Any, Boolean, Hero, Number, Direction, Position, Player, Team]

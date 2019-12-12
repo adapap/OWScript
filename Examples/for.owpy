@@ -12,7 +12,7 @@ Rule "For Loop"
                     vertical: 45
                 To World
             Msg(Everyone, "HEllo")
-        // for i in range(3):
-        //     Msg(Everyone, i)
-        // for player in Everyone:
-        //     Msg(player, "Hello")
+        for i in range(3):
+            Msg(Everyone, i)
+        for player in Everyone:
+            Msg(player, "Hello")

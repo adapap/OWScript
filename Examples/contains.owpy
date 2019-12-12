@@ -2,5 +2,5 @@ Rule "x in array?"
     Event
         On Global
     Actions
-        x = Event Player in Everyone
-        y = 1 not in [1, 2, 3]
+        a = Event Player in Everyone
+        b = 1 not in [1, 2, 3]

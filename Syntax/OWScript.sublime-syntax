@@ -91,7 +91,7 @@ contexts:
     - match: '(@)'
       captures:
         0: keyword.operator.OWScript
-    - match: '(?i)(\s*\b(Event|Conditions|Actions|and|or|not|in|if|elif|else|for|while)\b)'
+    - match: '(?i)(\s*(Event|Conditions|Actions|and|or|not|in|if|elif|else|for|while|#import)\b)'
       captures:
         0: keyword.OWScript
     - match: '(\s*([_a-zA-Z][_a-zA-Z0-9]*))'

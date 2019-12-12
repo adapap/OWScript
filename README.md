@@ -11,8 +11,21 @@ Setup
 - `-s | --save [FILE]` Optional: saves to the target output file instead of stdout
 - `-c | --copy` Optional: copies code to clipboard (must have *pyperclip* installed: `pip install pyperclip`)
 
+**NPM Integration** by @MatthewSH
+[OWScript NPM Package](https://www.npmjs.com/package/owscript)
+
 ## Syntax Highlighting
+
+**Visual Studio Code**
+Download the latest [OWScript extension](https://marketplace.visualstudio.com/items?itemName=adapap.owscript) from the marketplace.
+
+**Sublime Text 3**
 In the `Syntax/` folder, you can find the raw Iro code which I used to generate a Sublime Text file with modifications. You can directly import the `OWScript.sublime-syntax` file by putting it in your ST3 `User` folder.
+
+Projects
+========
+- **Cookie Clicker** [![Discord Shield](https://discordapp.com/api/guilds/572937743114436619/widget.png?style=shield "Made by @adapap")](https://discord.gg/5Nst8g5)
+- [**Upgrade Shop**](https://github.com/overwatchworkshop/upgrade-shop)
 
 Documentation
 =============
@@ -30,6 +43,7 @@ Documentation
 * [Functions](#functions)
 * [Loops](#loops)
 * [Attributes / Methods](#attributes--methods)
+* [Imports](#imports)
 
 **Data Types & Structures**
 * [Variables](#variables)
@@ -93,20 +107,24 @@ y = Event Player in Players In Radius(<1, 2, 3>, 15)
 ```
 
 ## Variables
-There are 3 ways to manipulate variables:
+Variables are ways to reference values using a name. Their type is stored when they are defined.
 
-**Explicit Global Assignment**
+**Global Variables (default)**
 ```
-gvar varname = 1
+gvar hero_index = 1
+global_time = 60s // default type is global
 ```
-**Explicit Player Assignment**
+**Player Variables**
 ```
-pvar varname = 2
-pvar varname@Event Player = 3 // Event Player (default) is the player which the variable will be bound to
+pvar score = 2 // pvar is only needed when defining a variable
+pvar score@Event Player = 3 // Event Player (default) is the player which the variable will be bound to
+score += 1 // modifies the pvar score
 ```
-**Implicit Global Assignment**
+**Const**
 ```
-varname = 3
+const cost = 100
+/* const cannot be modified and directly outputs the value,
+rather than outputting Value In Array(...) */
 ```
 
 Using the technique from [@ItsDeltin](https://github.com/ItsDeltin), the limit to
@@ -146,7 +164,7 @@ Vector
 ```
 
 ## Time
-Time can be represented in *ms*, *s*, or *min*.
+Time can be represented in *ms*, *s*, or *min* as a shorthand for the number value.
 ```
 Wait(1s + 500ms)
 Wait
@@ -168,11 +186,10 @@ total = costs[0] + costs[1] + costs[2]
 ```
 
 ## Functions
-Functions allow you to write a block of code once and reuse it many times. They can be used to generate HUDs like a macro or used as a rule factory. All functions must be defined before they are called, and they must be defined at the top level scope (same as where rules are defined):
+Functions allow you to write a block of code once and reuse it many times. They can be used to generate HUDs like a macro or used as a rule factory. All functions must be defined before they are called, and they must be defined at the top level scope (same as where rules are defined). Parameters can be optional, denoted by `?`, which sets the value to `Null` when omitted. Alternatively, specify a default value e.g. `pos?=Event Player.pos`.
 
 *Note: Functions can access global-scope variables; however, the global scope cannot access variables defined locally in functions*
 
-**Input**
 ```
 %event_func
     Event
@@ -183,31 +200,13 @@ Functions allow you to write a block of code once and reuse it many times. They 
     Rule name_
         event_func()
         c = a + b
+%say(text, who?=Everyone) // optional parameter, default to Everyone
+    Msg(who, text)
 Rule "Function Demo"
     event_func()
+    Actions
+        say("Thanks!")
 add_rule(1, 5, "Add Two")
-```
-**Output**
-```
-rule("Function Demo") {
-   Event {
-      Ongoing - Each Player;
-      All;
-      All;
-   }
-}
-
-rule("Add Two") {
-   Event {
-      Ongoing - Each Player;
-      All;
-      All;
-   }
-
-   Actions {
-      Set Global Variable At Index(A, 1, Add(1, 5));
-   }
-}
 ```
 **Builtin Functions**
 
@@ -287,3 +286,35 @@ scores.append(123) // Method
 |Sin|Sine From Degrees|
 |Sinr|Sine From Radians|
 |Torbjorn|Torbjörn|
+
+## Imports
+OWScript allows bigger scripts and scripts that use common funcitonality to be broken up into modules and imported into a base file. All the "imported" files are evaluated into a parse tree, which is transpiled to workshop code by the base file.
+
+You can import a file by using the `#import 'filepath'`. If the file is in a folder, put the relative path to the file as shown in the examples below:
+
+**Imported File** `lib/functions.owpy`
+```
+%CreateEffect(pos, type, color)
+    Create Effect
+        Visible_To: Everyone
+        Type: type
+        Color: color
+        Position: pos
+        Radius: 1.5
+        Reevaluation: Visible To
+```
+
+**Imported File** `src/setup.owpy`
+```
+Rule "Setup Effects"
+    Event
+        On Global
+    Actions
+        CreateEffect(<0,0,0>, Ring, Red)
+```
+
+**Base File** `src/game.owpy`
+```
+#import 'lib/functions'
+#import 'src/setup'
+```

@@ -3,7 +3,7 @@ class AST:
     def __init__(self):
         self.children = []
 
-    @property 
+    @property
     def format_children(self):
         return ', '.join(map(repr, self.children))
 
@@ -22,10 +22,6 @@ class AST:
     @property
     def moving(self):
         return 'Compare(Speed Of({}), >, 0)'
-
-    @property
-    def jumping(self):
-        return 'Is In Air({})'
 
     @property
     def facing(self):
@@ -67,11 +63,6 @@ class AST:
     def rmb(self):
         return 'Is Button Held({}, Secondary Fire)'
 
-    @property
-    def moving(self):
-        return 'Compare(Speed Of({}), >, 0)'
-
-
     def string(self, indent=0):
         string = ''
         if not self.__class__ == Block:
@@ -94,6 +85,13 @@ class Raw(AST):
     def __repr__(self):
         return '<Raw {}>'.format(len(self.code))
 
+class Import(AST):
+    def __init__(self, path):
+        self.path = path
+
+    def __repr__(self):
+        return '#import {}'.format(self.path)
+
 # Workshop Types
 class WorkshopType(AST):
     @classmethod
@@ -103,7 +101,7 @@ class WorkshopType(AST):
     def __repr__(self):
         try:
             return self.__name__
-        except:
+        except AttributeError:
             return self.__class__.__name__
 
 class Transformation(WorkshopType):
@@ -127,7 +125,7 @@ class Operation(WorkshopType):
     _extends = []
 
 class Event(WorkshopType):
-    _values = ['ONGOING - EACH PLAYER', 'ONGOING - GLOBAL', 'PLAYER DEALT DAMAGE', 'PLAYER DEALT FINAL BLOW', 'PLAYER DIED', 'PLAYER EARNED ELIMINATION', 'PLAYER TOOK DAMAGE']
+    _values = ['ONGOING - EACH PLAYER', 'ONGOING - GLOBAL', 'PLAYER DEALT DAMAGE', 'PLAYER DEALT FINAL BLOW', 'PLAYER DIED', 'PLAYER EARNED ELIMINATION', 'PLAYER TOOK DAMAGE', 'PLAYER DEALT HEALING', 'PLAYER RECEIVED HEALING', 'PLAYER JOINED MATCH', 'PLAYER LEFT MATCH']
     _extends = []
 
 class StringConstant(WorkshopType):
@@ -146,15 +144,15 @@ class TeamConstant(WorkshopType):
     _extends = []
 
 class HeroConstant(WorkshopType):
-    _values = ['ANA', 'ASHE', 'BAPTISTE', 'BASTION', 'BRIGITTE', 'D.VA', 'DOOMFIST', 'GENJI', 'HANZO', 'JUNKRAT', 'LÚCIO', 'MCCREE', 'MEI', 'MERCY', 'MOIRA', 'ORISA', 'PHARAH', 'REAPER', 'REINHARDT', 'ROADHOG', 'SOLDIER: 76', 'SOMBRA', 'SYMMETRA', 'TORBJÖRN', 'TRACER', 'WIDOWMAKER', 'WINSTON', 'WRECKING BALL', 'ZARYA', 'ZENYATTA']
+    _values = ['SIGMA', 'ANA', 'ASHE', 'BAPTISTE', 'BASTION', 'BRIGITTE', 'D.VA', 'DOOMFIST', 'GENJI', 'HANZO', 'JUNKRAT', 'LÚCIO', 'MCCREE', 'MEI', 'MERCY', 'MOIRA', 'ORISA', 'PHARAH', 'REAPER', 'REINHARDT', 'ROADHOG', 'SOLDIER: 76', 'SOMBRA', 'SYMMETRA', 'TORBJÖRN', 'TRACER', 'WIDOWMAKER', 'WINSTON', 'WRECKING BALL', 'ZARYA', 'ZENYATTA']
     _extends = []
 
 class EventPlayer(WorkshopType):
-    _values = ['ALL', 'ANA', 'ASHE', 'BAPTISTE', 'BASTION', 'BRIGITTE', 'D.VA', 'DOOMFIST', 'GENJI', 'HANZO', 'JUNKRAT', 'LÚCIO', 'MCCREE', 'MEI', 'MERCY', 'MOIRA', 'ORISA', 'PHARAH', 'REAPER', 'REINHARDT', 'ROADHOG', 'SLOT 0', 'SLOT 1', 'SLOT 10', 'SLOT 11', 'SLOT 2', 'SLOT 3', 'SLOT 4', 'SLOT 5', 'SLOT 6', 'SLOT 7', 'SLOT 8', 'SLOT 9', 'SOLDIER: 76', 'SOMBRA', 'SYMMETRA', 'TORBJÖRN', 'TRACER', 'WIDOWMAKER', 'WINSTON', 'WRECKING BALL', 'ZARYA', 'ZENYATTA']
+    _values = ['ALL', 'SIGMA', 'ANA', 'ASHE', 'BAPTISTE', 'BASTION', 'BRIGITTE', 'D.VA', 'DOOMFIST', 'GENJI', 'HANZO', 'JUNKRAT', 'LÚCIO', 'MCCREE', 'MEI', 'MERCY', 'MOIRA', 'ORISA', 'PHARAH', 'REAPER', 'REINHARDT', 'ROADHOG', 'SLOT 0', 'SLOT 1', 'SLOT 10', 'SLOT 11', 'SLOT 2', 'SLOT 3', 'SLOT 4', 'SLOT 5', 'SLOT 6', 'SLOT 7', 'SLOT 8', 'SLOT 9', 'SOLDIER: 76', 'SOMBRA', 'SYMMETRA', 'TORBJÖRN', 'TRACER', 'WIDOWMAKER', 'WINSTON', 'WRECKING BALL', 'ZARYA', 'ZENYATTA']
     _extends = []
 
 class Variable(WorkshopType):
-    _values = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    _values = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
     _extends = []
 
     def __init__(self, value, index):
@@ -266,7 +264,7 @@ class Hero(WorkshopType):
     _extends = [Any]
 
 class Number(WorkshopType):
-    _values = ['INDEX OF ARRAY VALUE', 'ABSOLUTE VALUE', 'ALTITUDE OF', 'ANGLE DIFFERENCE', 'CONTROL MODE SCORING PERCENTAGE', 'COSINE FROM DEGREES', 'COSINE FROM RADIANS', 'COUNT OF', 'DISTANCE BETWEEN', 'DOT PRODUCT', 'EVENT DAMAGE', 'HEALTH', 'HEALTH PERCENT', 'HORIZONTAL ANGLE FROM DIRECTION', 'HORIZONTAL ANGLE TOWARDS', 'HORIZONTAL FACING ANGLE OF', 'HORIZONTAL SPEED OF', 'LAST DAMAGE MODIFICATION ID', 'LAST DAMAGE OVER TIME ID', 'LAST HEAL OVER TIME ID', 'LAST TEXT ID', 'MATCH ROUND', 'MATCH TIME', 'MAX', 'MAX HEALTH', 'MIN', 'MODULO', 'NUMBER', 'NUMBER OF DEAD PLAYERS', 'NUMBER OF DEATHS', 'NUMBER OF ELIMINATIONS', 'NUMBER OF FINAL BLOWS', 'NUMBER OF HEROES', 'NUMBER OF LIVING PLAYERS', 'NUMBER OF PLAYERS', 'NUMBER OF PLAYERS ON OBJECTIVE', 'OBJECTIVE INDEX', 'PAYLOAD PROGRESS PERCENTAGE', 'POINT CAPTURE PERCENTAGE', 'RAISE TO POWER', 'RANDOM INTEGER', 'RANDOM REAL', 'ROUND TO INTEGER', 'SCORE OF', 'SINE FROM DEGREES', 'SINE FROM RADIANS', 'SLOT OF', 'SPEED OF', 'SPEED OF IN DIRECTION', 'SQUARE ROOT', 'TEAM SCORE', 'TOTAL TIME ELAPSED', 'ULTIMATE CHARGE PERCENT', 'VERTICAL ANGLE FROM DIRECTION', 'VERTICAL ANGLE TOWARDS', 'VERTICAL FACING ANGLE OF', 'VERTICAL SPEED OF', 'X COMPONENT OF', 'Y COMPONENT OF', 'Z COMPONENT OF']
+    _values = ['INDEX OF ARRAY VALUE', 'EVENT HEALING', 'ABSOLUTE VALUE', 'ALTITUDE OF', 'ANGLE DIFFERENCE', 'CONTROL MODE SCORING PERCENTAGE', 'COSINE FROM DEGREES', 'COSINE FROM RADIANS', 'COUNT OF', 'DISTANCE BETWEEN', 'DOT PRODUCT', 'EVENT DAMAGE', 'HEALTH', 'HEALTH PERCENT', 'HORIZONTAL ANGLE FROM DIRECTION', 'HORIZONTAL ANGLE TOWARDS', 'HORIZONTAL FACING ANGLE OF', 'HORIZONTAL SPEED OF', 'LAST DAMAGE MODIFICATION ID', 'LAST DAMAGE OVER TIME ID', 'LAST HEAL OVER TIME ID', 'LAST TEXT ID', 'MATCH ROUND', 'MATCH TIME', 'MAX', 'MAX HEALTH', 'MIN', 'MODULO', 'NUMBER', 'NUMBER OF DEAD PLAYERS', 'NUMBER OF DEATHS', 'NUMBER OF ELIMINATIONS', 'NUMBER OF FINAL BLOWS', 'NUMBER OF HEROES', 'NUMBER OF LIVING PLAYERS', 'NUMBER OF PLAYERS', 'NUMBER OF PLAYERS ON OBJECTIVE', 'OBJECTIVE INDEX', 'PAYLOAD PROGRESS PERCENTAGE', 'POINT CAPTURE PERCENTAGE', 'RAISE TO POWER', 'RANDOM INTEGER', 'RANDOM REAL', 'ROUND TO INTEGER', 'SCORE OF', 'SINE FROM DEGREES', 'SINE FROM RADIANS', 'SLOT OF', 'SPEED OF', 'SPEED OF IN DIRECTION', 'SQUARE ROOT', 'TEAM SCORE', 'TOTAL TIME ELAPSED', 'ULTIMATE CHARGE PERCENT', 'VERTICAL ANGLE FROM DIRECTION', 'VERTICAL ANGLE TOWARDS', 'VERTICAL FACING ANGLE OF', 'VERTICAL SPEED OF', 'X COMPONENT OF', 'Y COMPONENT OF', 'Z COMPONENT OF']
     _extends = [Any]
 
     def __init__(self, value):
@@ -299,7 +297,7 @@ class Number(WorkshopType):
 class Vector(WorkshopType):
     _values = ['VELOCITY OF']
     _extends = [Any]
-    
+
 
 class Direction(WorkshopType):
     _values = ['DIRECTION TOWARDS', 'FACING DIRECTION OF', 'RAY CAST HIT NORMAL', 'VECTOR TOWARDS', 'LEFT', 'RIGHT', 'FORWARD', 'BACKWARD', 'UP', 'DOWN']
@@ -314,9 +312,9 @@ class BaseVector(WorkshopType):
     _extends = [Direction, Position]
 
 class Player(WorkshopType):
-    _values = ['PLAYERS IN VIEW ANGLE', 'PLAYER CLOSEST TO RETICLE', 'ALL DEAD PLAYERS', 'ALL LIVING PLAYERS', 'ALL PLAYERS', 'ALL PLAYERS NOT ON OBJECTIVE', 'ALL PLAYERS ON OBJECTIVE', 'ATTACKER', 'CLOSEST PLAYER TO', 'EVENT PLAYER', 'FARTHEST PLAYER FROM', 'LAST CREATED ENTITY', 'NULL', 'PLAYER CARRYING FLAG', 'PLAYERS IN SLOT', 'PLAYERS ON HERO', 'PLAYERS WITHIN RADIUS', 'RAY CAST HIT PLAYER', 'VICTIM']
+    _values = ['HEALER', 'HEALEE', 'HOST PLAYER', 'PLAYERS IN VIEW ANGLE', 'PLAYER CLOSEST TO RETICLE', 'ALL DEAD PLAYERS', 'ALL LIVING PLAYERS', 'ALL PLAYERS', 'ALL PLAYERS NOT ON OBJECTIVE', 'ALL PLAYERS ON OBJECTIVE', 'ATTACKER', 'CLOSEST PLAYER TO', 'EVENT PLAYER', 'FARTHEST PLAYER FROM', 'LAST CREATED ENTITY', 'NULL', 'PLAYER CARRYING FLAG', 'PLAYERS IN SLOT', 'PLAYERS ON HERO', 'PLAYERS WITHIN RADIUS', 'RAY CAST HIT PLAYER', 'VICTIM']
     _extends = [BaseVector]
-    
+
 
 class Team(WorkshopType):
     _values = ['CONTROL MODE SCORING TEAM', 'OPPOSITE TEAM OF', 'TEAM', 'TEAM OF']
@@ -376,7 +374,7 @@ class Constant(AST):
     def __repr__(self):
         return self.name
 
-    def halt(self):
+    def halt(self, tp):
         return Raw(code='Apply Impulse({}, Down, Multiply(0.001, 0.001), To World, Cancel Contrary Motion)'.format(self.name.title()))
 
 class BinaryOp(AST):
@@ -423,8 +421,9 @@ class Array(AST):
         self.elements = elements or []
 
     def append(self, tp, elem):
-        if type(elem) == GlobalVar:
-            elem = tp.scope.get(elem.name).value
+        elem = tp.visit(elem, tp.scope)
+        if type(elem) != Object:
+            elem = Raw(code=elem)
         self.elements.append(elem)
 
     def index(self, elem):
@@ -438,7 +437,7 @@ class Array(AST):
 
     def __setitem__(self, index, item):
         while index > len(self) - 1:
-            self.append(Number(value='0'))
+            self.elements.append(Number(value='0'))
         self.elements.__setitem__(index, item)
 
     def __getitem__(self, index):
@@ -453,14 +452,59 @@ class Compare(BinaryOp):
 class Assign(BinaryOp):
     pass
 
-class GlobalVar(Data):
-    vartype = 'global'
+class GlobalVar(AST):
+    def __init__(self, letter, index=None):
+        self.letter = letter
+        self.index = index
 
-class PlayerVar(Data):
-    vartype = 'player'
-    def __init__(self, name, player=None):
-        super().__init__(name)
+    def __repr__(self):
+        return 'Global.{}[{}]'.format(self.letter, self.index)
+
+class PlayerVar(AST):
+    def __init__(self, letter, index=None, player=None):
+        self.letter = letter
+        self.index = index
         self.player = player or Constant(name='Event Player')
+
+    def __repr__(self):
+        return 'Player@{}.{}[{}]'.format(self.player, self.letter, self.index)
+
+class Var(AST):
+    GLOBAL = 0
+    PLAYER = 1
+    INTERNAL = 2
+    BUILTIN = 3
+    CONST = 4
+    STRING = 5
+    CLASS = 6
+    OBJECT = 7
+    METHOD = 8
+
+    def __init__(self, name, type_, value=None, data=None, player=None, chase=False):
+        self.name = name
+        self.type = type_
+        self.value = value
+        self.data = data
+        self.player = player
+
+    @property
+    def _type(self):
+        return {
+            0: 'GLOBAL',
+            1: 'PLAYER',
+            2: 'INTERNAL',
+            3: 'BUILTIN',
+            4: 'CONST',
+            5: 'STRING',
+            6: 'CLASS',
+            7: 'OBJECT',
+            8: 'METHOD'
+        }.get(self.type)
+
+    def __repr__(self):
+        if self.value or self.data:
+            return '<{}: type={}, value={}, data={}>'.format(self.name, self._type, self.value, self.data)
+        return '{}'.format(self.name)
 
 class If(AST):
     def __init__(self, cond, true_block, false_block=None):
@@ -475,7 +519,7 @@ class While(AST):
     def __init__(self, cond, body):
         self.cond = cond
         self.body = body
-    
+
     def __repr__(self):
         return 'while {}: {}'.format(self.cond, self.body)
 
@@ -493,9 +537,47 @@ class Function(AST):
         super().__init__()
         self.name = name
         self.params = params
+        self.closure = None
+
+    @property
+    def arity(self):
+        return len(self.params)
+
+    @property
+    def min_arity(self):
+        return len([p for p in self.params if not p.optional])
 
     def __repr__(self):
         return '%{}({}): {}'.format(self.name, ', '.join(map(repr, self.params)), self.format_children)
+
+class Parameter(AST):
+    def __init__(self, name, optional=False, default=None):
+        self.name = name
+        self.optional = optional
+        self.default = None or Constant(name='Null')
+
+    def __repr__(self):
+        return 'param {}{}'.format(self.name, '?=' + repr(self.default) if self.default else '')
+
+class Class(AST):
+    def __init__(self, name, body):
+        self.name = name
+        self.body = body
+        self.closure = None
+
+    def __repr__(self):
+        return 'class {}'.format(self.name)
+
+class Object():
+    def __init__(self, type_):
+        self.type = type_
+        self.env = {}
+    
+    def __getattr__(self, attr):
+        return self.env.get(attr)
+    
+    def __repr__(self):
+        return '<obj {}>'.format(self.type.name)
 
 class Return(AST):
     def __init__(self, value):

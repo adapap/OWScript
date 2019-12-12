@@ -1,5 +1,6 @@
 {
-    "events": [{
+    "events": [
+        {
             "name": "ONGOING - GLOBAL",
             "description": "",
             "args": []
@@ -7,7 +8,8 @@
         {
             "name": "ONGOING - EACH PLAYER",
             "description": "",
-            "args": [{
+            "args": [
+                {
                     "name": "TEAM",
                     "description": "",
                     "type": "TEAM CONSTANT",
@@ -24,7 +26,8 @@
         {
             "name": "PLAYER DEALT DAMAGE",
             "description": "",
-            "args": [{
+            "args": [
+                {
                     "name": "TEAM",
                     "description": "",
                     "type": "TEAM CONSTANT",
@@ -41,7 +44,26 @@
         {
             "name": "PLAYER DEALT FINAL BLOW",
             "description": "",
-            "args": [{
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "",
+                    "type": "TEAM CONSTANT",
+                    "default": "ALL"
+                },
+                {
+                    "name": "PLAYER",
+                    "description": "",
+                    "type": "EVENT PLAYER",
+                    "default": "ALL"
+                }
+            ]
+        },
+        {
+            "name": "PLAYER DEALT HEALING",
+            "description": "",
+            "args": [
+                {
                     "name": "TEAM",
                     "description": "",
                     "type": "TEAM CONSTANT",
@@ -58,24 +80,8 @@
         {
             "name": "PLAYER DIED",
             "description": "",
-            "args": [{
-                    "name": "TEAM",
-                    "description": "",
-                    "type": "TEAM CONSTANT",
-                    "default": "ALL"
-                },
+            "args": [
                 {
-                    "name": "PLAYER",
-                    "description": "",
-                    "type": "EVENT PLAYER",
-                    "default": "ALL"
-                }
-            ]
-        },
-        {
-            "name": "PLAYER DIED",
-            "description": "",
-            "args": [{
                     "name": "TEAM",
                     "description": "",
                     "type": "TEAM CONSTANT",
@@ -92,7 +98,62 @@
         {
             "name": "PLAYER EARNED ELIMINATION",
             "description": "",
-            "args": [{
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "",
+                    "type": "TEAM CONSTANT",
+                    "default": "ALL"
+                },
+                {
+                    "name": "PLAYER",
+                    "description": "",
+                    "type": "EVENT PLAYER",
+                    "default": "ALL"
+                }
+            ]
+        },
+        {
+            "name": "PLAYER JOINED MATCH",
+            "description": "",
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "",
+                    "type": "TEAM CONSTANT",
+                    "default": "ALL"
+                },
+                {
+                    "name": "PLAYER",
+                    "description": "",
+                    "type": "EVENT PLAYER",
+                    "default": "ALL"
+                }
+            ]
+        },
+        {
+            "name": "PLAYER LEFT MATCH",
+            "description": "",
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "",
+                    "type": "TEAM CONSTANT",
+                    "default": "ALL"
+                },
+                {
+                    "name": "PLAYER",
+                    "description": "",
+                    "type": "EVENT PLAYER",
+                    "default": "ALL"
+                }
+            ]
+        },
+        {
+            "name": "PLAYER RECEIVED HEALING",
+            "description": "",
+            "args": [
+                {
                     "name": "TEAM",
                     "description": "",
                     "type": "TEAM CONSTANT",
@@ -109,7 +170,8 @@
         {
             "name": "PLAYER TOOK DAMAGE",
             "description": "",
-            "args": [{
+            "args": [
+                {
                     "name": "TEAM",
                     "description": "",
                     "type": "TEAM CONSTANT",
@@ -124,7 +186,8 @@
             ]
         }
     ],
-    "actions": [{
+    "actions": [
+        {
             "name": "ABORT",
             "description": "Stops execution of the action list.",
             "args": []
@@ -132,12 +195,14 @@
         {
             "name": "ABORT IF",
             "description": "Stops execution of the action list if this action's condition evaluates to true. If it does not, execution continues with the next action.",
-            "args": [{
-                "name": "CONDITION",
-                "description": "Specifies whether the execution is stopped.",
-                "type": "BOOLEAN",
-                "default": "COMPARE"
-            }]
+            "args": [
+                {
+                    "name": "CONDITION",
+                    "description": "Specifies whether the execution is stopped.",
+                    "type": "BOOLEAN",
+                    "default": "COMPARE"
+                }
+            ]
         },
         {
             "name": "ABORT IF CONDITION IS FALSE",
@@ -152,7 +217,8 @@
         {
             "name": "ALLOW BUTTON",
             "description": "Undoes the effect of the disallow button action for one or more players.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose button is being reenabled.",
                     "type": "PLAYER",
@@ -169,7 +235,8 @@
         {
             "name": "APPLY IMPULSE",
             "description": "Applies an instantaneous change in velocity to the movement of one or more players.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose velocity will be changed.",
                     "type": "PLAYER",
@@ -204,7 +271,8 @@
         {
             "name": "BIG MESSAGE",
             "description": "Displays a large message above the reticle that is visible to specific players.",
-            "args": [{
+            "args": [
+                {
                     "name": "VISIBLE TO",
                     "description": "One or more players who will see the message.",
                     "type": "PLAYER",
@@ -221,7 +289,8 @@
         {
             "name": "CHASE GLOBAL VARIABLE AT RATE",
             "description": "Gradually modifies the value of a global variable at a specific rate. (A global variable is a variable that belongs to the game itself.)",
-            "args": [{
+            "args": [
+                {
                     "name": "VARIABLE",
                     "description": "Specifies which global variable to modify gradually.",
                     "type": "VARIABLE",
@@ -250,7 +319,8 @@
         {
             "name": "CHASE GLOBAL VARIABLE OVER TIME",
             "description": "Gradually modifies the value of a global variable over time. (A global variable is a variable that belongs to the game itself.)",
-            "args": [{
+            "args": [
+                {
                     "name": "VARIABLE",
                     "description": "Specifies which global variable to modify gradually.",
                     "type": "VARIABLE",
@@ -279,7 +349,8 @@
         {
             "name": "CHASE PLAYER VARIABLE AT RATE",
             "description": "Gradually modifies the value of a player variable at a specific rate. (A player variable is a variable that belongs to a specific player.)",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player whose variable will gradually change. If multiple players are provided, each of their variables will change independently.",
                     "type": "PLAYER",
@@ -302,13 +373,20 @@
                     "description": "The amount of change that will happen to the variable's value each second.",
                     "type": "NUMBER",
                     "default": "NUMBER"
+                },
+                {
+                    "name": "REEVALUATION",
+                    "description": "Specifies which of this action's inputs will be continuously reevaluated. This action will keep asking for and using new values from reevaluated inputs.",
+                    "type": "CHASE RATE REEVALUATION",
+                    "default": "DESTINATION AND RATE"
                 }
             ]
         },
         {
             "name": "CHASE PLAYER VARIABLE OVER TIME",
             "description": "Gradually modifies the value of a player variable over time. (A player variable is a variable that belongs to a specific player.)",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player whose variable will gradually change. If multiple players are provided, each of their variables will change independently.",
                     "type": "PLAYER",
@@ -331,13 +409,20 @@
                     "description": "The amount of time, in seconds, over which the variable's value will approach the destination.",
                     "type": "ANY",
                     "default": "NUMBER"
+                },
+                {
+                    "name": "REEVALUATION",
+                    "description": "Specifies which of this action's inputs will be continuously reevaluated. This action will keep asking for and using new values from reevaluated inputs.",
+                    "type": "CHASE TIME REEVALUATION",
+                    "default": "DESTINATION AND DURATION"
                 }
             ]
         },
         {
             "name": "CLEAR STATUS",
             "description": "Clears a status that was applied from a set status action from one or more players.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players from whom the status will be removed.",
                     "type": "PLAYER",
@@ -354,7 +439,8 @@
         {
             "name": "COMMUNICATE",
             "description": "Causes one or more players to use an emote, voice line, or other equipped communication.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players to perform the communication.",
                     "type": "PLAYER",
@@ -371,7 +457,8 @@
         {
             "name": "CREATE EFFECT",
             "description": "Creates an in-world effect entity. This effect entity will persist until destroyed. To obtain a reference to this entity, use the last created entity value. This action will fail if too many entities have been created.",
-            "args": [{
+            "args": [
+                {
                     "name": "VISIBLE TO",
                     "description": "One or more players who will be able to see the effect.",
                     "type": "PLAYER",
@@ -412,7 +499,8 @@
         {
             "name": "CREATE HUD TEXT",
             "description": "Creates hud text visible to specific players at a specific location on the screen. This text will persist until destroyed. To obtain a reference to this text, use the last text id value. This action will fail if too many text elements have been created.",
-            "args": [{
+            "args": [
+                {
                     "name": "VISIBLE TO",
                     "description": "One or more players who will see the hud text.",
                     "type": "PLAYER",
@@ -477,7 +565,8 @@
         {
             "name": "CREATE ICON",
             "description": "Creates an in-world icon entity. This icon entity will persist until destroyed. To obtain a reference to this entity, use the last created entity value. This action will fail if too many entities have been created.",
-            "args": [{
+            "args": [
+                {
                     "name": "VISIBLE TO",
                     "description": "One or more players who will be able to see the icon.",
                     "type": "PLAYER",
@@ -518,7 +607,8 @@
         {
             "name": "CREATE IN-WORLD TEXT",
             "description": "Creates in-world text visible to specific players at a specific position in the world. This text will persist until destroyed. To obtain a reference to this text, use the last text id value. This action will fail if too many text elements have been created.",
-            "args": [{
+            "args": [
+                {
                     "name": "VISIBLE TO",
                     "description": "One or more players who will see the in-world text.",
                     "type": "PLAYER",
@@ -559,7 +649,8 @@
         {
             "name": "DAMAGE",
             "description": "Applies instantaneous damage to one or more players, possibly killing the players.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players who will receive damage.",
                     "type": "PLAYER",
@@ -587,32 +678,38 @@
         {
             "name": "DECLARE PLAYER VICTORY",
             "description": "Instantly ends the match with the specific player as the winner. This action only has an effect in free-for-all modes.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The winning player.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The winning player.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "DECLARE ROUND VICTORY",
             "description": "Declare a team as the current round winner. This only works in the control and elimination game modes",
-            "args": [{
-                "name": "ROUND WINNING TEAM",
-                "description": "Round winning team",
-                "type": "TEAM",
-                "default": "TEAM"
-            }]
+            "args": [
+                {
+                    "name": "ROUND WINNING TEAM",
+                    "description": "Round winning team",
+                    "type": "TEAM",
+                    "default": "TEAM"
+                }
+            ]
         },
         {
             "name": "DECLARE TEAM VICTORY",
             "description": "Instantly ends the match with the specified team as the winner. This action has no effect in free-for-all modes.",
-            "args": [{
-                "name": "TEAM",
-                "description": "The winning team.",
-                "type": "TEAM",
-                "default": "TEAM"
-            }]
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "The winning team.",
+                    "type": "TEAM",
+                    "default": "TEAM"
+                }
+            ]
         },
         {
             "name": "DESTROY ALL EFFECTS",
@@ -637,42 +734,50 @@
         {
             "name": "DESTROY EFFECT",
             "description": "Destroys an effect entity that was created by create effect.",
-            "args": [{
-                "name": "ENTITY",
-                "description": "Specifies which effect entity to destroy. This entity may be last created entity or a variable into which last created entity was earlier stored.",
-                "type": "PLAYER",
-                "default": "LAST CREATED ENTITY"
-            }]
+            "args": [
+                {
+                    "name": "ENTITY",
+                    "description": "Specifies which effect entity to destroy. This entity may be last created entity or a variable into which last created entity was earlier stored.",
+                    "type": "PLAYER",
+                    "default": "LAST CREATED ENTITY"
+                }
+            ]
         },
         {
             "name": "DESTROY HUD TEXT",
             "description": "Destroys hud text that was created by create hud text.",
-            "args": [{
-                "name": "TEXT ID",
-                "description": "Specifies which hud text to destroy. This id may be last text id or a variable into which last text id was earlier stored.",
-                "type": "NUMBER",
-                "default": "LAST TEXT ID"
-            }]
+            "args": [
+                {
+                    "name": "TEXT ID",
+                    "description": "Specifies which hud text to destroy. This id may be last text id or a variable into which last text id was earlier stored.",
+                    "type": "NUMBER",
+                    "default": "LAST TEXT ID"
+                }
+            ]
         },
         {
             "name": "DESTROY ICON",
             "description": "Destroys an icon entity that was created by create icon.",
-            "args": [{
-                "name": "ENTITY",
-                "description": "Specifies which icon entity to destroy. This entity may be last created entity or a variable into which last created entity was earlier stored.",
-                "type": "PLAYER",
-                "default": "LAST CREATED ENTITY"
-            }]
+            "args": [
+                {
+                    "name": "ENTITY",
+                    "description": "Specifies which icon entity to destroy. This entity may be last created entity or a variable into which last created entity was earlier stored.",
+                    "type": "PLAYER",
+                    "default": "LAST CREATED ENTITY"
+                }
+            ]
         },
         {
             "name": "DESTROY IN-WORLD TEXT",
             "description": "Destroys in-world text that was created by create in-world text.",
-            "args": [{
-                "name": "TEXT ID",
-                "description": "Specifies which in-world text to destroy. This id may be last text id or a variable into which last text id was earlier stored.",
-                "type": "NUMBER",
-                "default": "LAST TEXT ID"
-            }]
+            "args": [
+                {
+                    "name": "TEXT ID",
+                    "description": "Specifies which in-world text to destroy. This id may be last text id or a variable into which last text id was earlier stored.",
+                    "type": "NUMBER",
+                    "default": "LAST TEXT ID"
+                }
+            ]
         },
         {
             "name": "DISABLE BUILT-IN GAME MODE ANNOUNCER",
@@ -692,12 +797,14 @@
         {
             "name": "DISABLE BUILT-IN GAME MODE RESPAWNING",
             "description": "Disables automatic respawning for one or more players, only allowing respawning by scripting commands.",
-            "args": [{
-                "name": "PLAYERS",
-                "description": "The player or players whose respawning is affected.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYERS",
+                    "description": "The player or players whose respawning is affected.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "DISABLE BUILT-IN GAME MODE SCORING",
@@ -707,27 +814,32 @@
         {
             "name": "DISABLE DEATH SPECTATE ALL PLAYERS",
             "description": "Undoes the effect of the enable death spectate all players action for or more players.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player or players whose default death spectate behavior is restored.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player or players whose default death spectate behavior is restored.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "DISABLE DEATH SPECTATE TARGET HUD",
             "description": "Undoes the effect of the enable death spectate target hud action for or more players.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player or players who will revert to seeing their own hud while death spectating.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player or players who will revert to seeing their own hud while death spectating.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "DISALLOW BUTTON",
             "description": "Disables a logical button for one or more players such that pressing it has no effect.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose button is being disabled.",
                     "type": "PLAYER",
@@ -759,12 +871,14 @@
         {
             "name": "ENABLE BUILT-IN GAME MODE RESPAWNING",
             "description": "Undoes the effect of the disable built-in game mode respawning action for one or more players.",
-            "args": [{
-                "name": "PLAYERS",
-                "description": "The player or players whose respawning is affected.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYERS",
+                    "description": "The player or players whose respawning is affected.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "ENABLE BUILT-IN GAME MODE SCORING",
@@ -774,22 +888,26 @@
         {
             "name": "ENABLE DEATH SPECTATE ALL PLAYERS",
             "description": "Allows one or more players to spectate all players when dead, as opposed to only allies.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player or players who will be allowed to spectate all players.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player or players who will be allowed to spectate all players.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "ENABLE DEATH SPECTATE TARGET HUD",
             "description": "Causes one or more players to see their spectate target's hud instead of their own while death spectating.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player or players who will begin seeing their spectate targets hud while death spectating.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player or players who will begin seeing their spectate targets hud while death spectating.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "GO TO ASSEMBLE HEROES",
@@ -799,7 +917,8 @@
         {
             "name": "HEAL",
             "description": "Provides an instantaneous heal to one or more players. This heal will not resurrect dead players.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose health will be restored.",
                     "type": "PLAYER",
@@ -822,7 +941,8 @@
         {
             "name": "KILL",
             "description": "Instantly kills one or more players.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players who will be killed.",
                     "type": "PLAYER",
@@ -844,12 +964,14 @@
         {
             "name": "LOOP IF",
             "description": "Restarts the action list from the beginning if this action's condition evaluates to true. If it does not, execution continues with the next action. To prevent an infinite loop, a wait action must execute between the start of the action list and this action.",
-            "args": [{
-                "name": "CONDITION",
-                "description": "Specifies whether the loop will occur.",
-                "type": "BOOLEAN",
-                "default": "COMPARE"
-            }]
+            "args": [
+                {
+                    "name": "CONDITION",
+                    "description": "Specifies whether the loop will occur.",
+                    "type": "BOOLEAN",
+                    "default": "COMPARE"
+                }
+            ]
         },
         {
             "name": "LOOP IF CONDITION IS FALSE",
@@ -864,7 +986,8 @@
         {
             "name": "MODIFY GLOBAL VARIABLE",
             "description": "Modifies the value of a global variable, which is a variable that belongs to the game itself.",
-            "args": [{
+            "args": [
+                {
                     "name": "VARIABLE",
                     "description": "The global variable to modify.",
                     "type": "VARIABLE",
@@ -887,7 +1010,8 @@
         {
             "name": "MODIFY PLAYER SCORE",
             "description": "Modifies the score (kill count) of one or more players. This action only has an effect in free-for-all modes.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose score will change.",
                     "type": "PLAYER",
@@ -904,7 +1028,8 @@
         {
             "name": "MODIFY PLAYER VARIABLE",
             "description": "Modifies the value of a player variable, which is a variable that belongs to a specific player.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player whose variable will be modified. If multiple players are provided, each of their variables will be set.",
                     "type": "PLAYER",
@@ -933,7 +1058,8 @@
         {
             "name": "MODIFY TEAM SCORE",
             "description": "Modifies the score of one or both teams. This action has no effect in free-for-all modes or modes without a team score.",
-            "args": [{
+            "args": [
+                {
                     "name": "TEAM",
                     "description": "The team or teams whose score will be changed.",
                     "type": "TEAM",
@@ -955,7 +1081,8 @@
         {
             "name": "PLAY EFFECT",
             "description": "Plays an effect at a position in the world. The lifetime of this effect is short, so it does not need to be updated or destroyed.",
-            "args": [{
+            "args": [
+                {
                     "name": "VISIBLE TO",
                     "description": "One or more players who will be able to see the effect.",
                     "type": "PLAYER",
@@ -990,7 +1117,8 @@
         {
             "name": "PRELOAD HERO",
             "description": "Preemptively loads the specified hero or heroes into memory using the skins of the specified player or players, available memory permitting. Useful whenever rapid hero changing is possible and the next hero is known.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players who will begin preloading a hero or heroes. Only one preload hero action will be active at a time for a given player.",
                     "type": "PLAYER",
@@ -1007,7 +1135,8 @@
         {
             "name": "PRESS BUTTON",
             "description": "Forces one or more players to press a button virtually for a single frame.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players for whom the virtual button input will be forced.",
                     "type": "PLAYER",
@@ -1024,37 +1153,44 @@
         {
             "name": "RESET PLAYER HERO AVAILABILITY",
             "description": "Restores the list of heroes available to one or more players to the list specified by the game settings. If a player's current hero becomes unavailable, the player is forced to choose a different hero and respawn at an appropriate spawn location.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player or players whose hero list is being reset.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player or players whose hero list is being reset.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "RESPAWN",
             "description": "Respawns one or more players at an appropriate spawn location with full health, even if they were already alive.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player or players to respawn.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player or players to respawn.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "RESURRECT",
             "description": "Instantly resurrects one or more players at the location they died with no transition.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player or players who will be resurrected.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player or players who will be resurrected.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "SET ABILITY 1 ENABLED",
             "description": "Enables or disables ability 1 for one or more players.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose access to ability 1 is affected.",
                     "type": "PLAYER",
@@ -1071,7 +1207,8 @@
         {
             "name": "SET ABILITY 2 ENABLED",
             "description": "Enables or disables ability 2 for one or more players.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose access to ability 2 is affected.",
                     "type": "PLAYER",
@@ -1088,7 +1225,8 @@
         {
             "name": "SET AIM SPEED",
             "description": "Sets the aim speed of one or more players to a percentage of their normal aim speed.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose aim speed will be set.",
                     "type": "PLAYER",
@@ -1105,7 +1243,8 @@
         {
             "name": "SET DAMAGE DEALT",
             "description": "Sets the damage dealt of one or more players to a percentage of their raw damage dealt.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose damage dealt will be set.",
                     "type": "PLAYER",
@@ -1122,7 +1261,8 @@
         {
             "name": "SET DAMAGE RECEIVED",
             "description": "Sets the damage received of one or more players to a percentage of their raw damage received.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose damage received will be set.",
                     "type": "PLAYER",
@@ -1139,7 +1279,8 @@
         {
             "name": "SET FACING",
             "description": "Sets the facing of one or more players to the specified direction.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose facing will be set.",
                     "type": "PLAYER",
@@ -1162,7 +1303,8 @@
         {
             "name": "SET GLOBAL VARIABLE",
             "description": "Stores a value into a global variable, which is a variable that belongs to the game itself.",
-            "args": [{
+            "args": [
+                {
                     "name": "VARIABLE",
                     "description": "Specifies which global variable to store the value into.",
                     "type": "VARIABLE",
@@ -1179,7 +1321,8 @@
         {
             "name": "SET GLOBAL VARIABLE AT INDEX",
             "description": "Finds or creates an array on a global variable, which is a variable that belongs to the game itself, then stores a value in the array at the specified index.",
-            "args": [{
+            "args": [
+                {
                     "name": "VARIABLE",
                     "description": "Specifies which global variable's value is the array to modify. If the variable's value is not an array, then its value becomes an empty array.",
                     "type": "VARIABLE",
@@ -1202,7 +1345,8 @@
         {
             "name": "SET GRAVITY",
             "description": "Sets the movement gravity for one or more players to a percentage regular movement gravity.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose movement gravity will be set.",
                     "type": "PLAYER",
@@ -1219,7 +1363,8 @@
         {
             "name": "SET HEALING DEALT",
             "description": "Sets the healing dealt of one or more players to a percentage of their raw healing dealt.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose healing dealt will be set.",
                     "type": "PLAYER",
@@ -1236,7 +1381,8 @@
         {
             "name": "SET HEALING RECEIVED",
             "description": "Sets the healing received of one or more players to a percentage of their raw healing received.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose healing received will be set.",
                     "type": "PLAYER",
@@ -1253,7 +1399,8 @@
         {
             "name": "SET INVISIBLE",
             "description": "Causes one or more players to become invisible to either all other players or just enemies.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players who will become invisible.",
                     "type": "PLAYER",
@@ -1270,17 +1417,20 @@
         {
             "name": "SET MATCH TIME",
             "description": "Sets the current match time (which is visible at the top of the screen). This can be used to shorten or extend the duration of a match or to change the duration of assemble heroes or setup.",
-            "args": [{
-                "name": "TIME",
-                "description": "The match time in seconds.",
-                "type": "NUMBER",
-                "default": "NUMBER"
-            }]
+            "args": [
+                {
+                    "name": "TIME",
+                    "description": "The match time in seconds.",
+                    "type": "NUMBER",
+                    "default": "NUMBER"
+                }
+            ]
         },
         {
             "name": "SET MAX HEALTH",
             "description": "Sets the max health of one or more players as a percentage of their max health. This action will ensure that a player's current health will not exceed the new max health.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose max health will be set.",
                     "type": "PLAYER",
@@ -1297,7 +1447,8 @@
         {
             "name": "SET MOVE SPEED",
             "description": "Sets the move speed of one or more players to a percentage of their raw move speed.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose move speed will be set.",
                     "type": "PLAYER",
@@ -1314,7 +1465,8 @@
         {
             "name": "SET OBJECTIVE DESCRIPTION",
             "description": "Sets the text at the top center of the screen that normally describes the objective to a message visible to specific players.",
-            "args": [{
+            "args": [
+                {
                     "name": "VISIBLE TO",
                     "description": "One or more players who will see the message.",
                     "type": "PLAYER",
@@ -1337,7 +1489,8 @@
         {
             "name": "SET PLAYER ALLOWED HEROES",
             "description": "Sets the list of heroes available to one or more players. If a player's current hero becomes unavailable, the player is forced to choose a different hero and respawn at an appropriate spawn location.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose hero list is being set.",
                     "type": "PLAYER",
@@ -1354,7 +1507,8 @@
         {
             "name": "SET PLAYER SCORE",
             "description": "Sets the score (kill count) of one or more players. This action only has an effect in free-for-all modes.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose score will be set.",
                     "type": "PLAYER",
@@ -1371,7 +1525,8 @@
         {
             "name": "SET PLAYER VARIABLE",
             "description": "Stores a value into a player variable, which is a variable that belongs to a specific player.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player whose variable will be set. If multiple players are provided, each of their variables will be set.",
                     "type": "PLAYER",
@@ -1394,7 +1549,8 @@
         {
             "name": "SET PLAYER VARIABLE AT INDEX",
             "description": "Finds or creates an array on a player variable, which is a variable that belongs to a specific player, then stores a value in the array at the specified index.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player whose variable will be modified. If multiple players are provided, each of their variables will be set.",
                     "type": "PLAYER",
@@ -1423,7 +1579,8 @@
         {
             "name": "SET PRIMARY FIRE ENABLED",
             "description": "Enables or disables primary fire for one or more players.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose access to primary fire is affected.",
                     "type": "PLAYER",
@@ -1440,7 +1597,8 @@
         {
             "name": "SET PROJECTILE GRAVITY",
             "description": "Sets the projectile gravity for one or more players to a percentage of regular projectile gravity.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose projectile gravity will be set.",
                     "type": "PLAYER",
@@ -1457,7 +1615,8 @@
         {
             "name": "SET PROJECTILE SPEED",
             "description": "Iets the projectile speed for one or more players to a percentage of projectile speed.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose projectile speed will be set.",
                     "type": "PLAYER",
@@ -1474,7 +1633,8 @@
         {
             "name": "SET RESPAWN MAX TIME",
             "description": "Sets the duration between death and respawn for one or more players. For players that are already dead when this action is executed, the change takes effect on their next death.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose respawn max time is being defined.",
                     "type": "PLAYER",
@@ -1491,7 +1651,8 @@
         {
             "name": "SET SECONDARY FIRE ENABLED",
             "description": "Enables or disables secondary fire for one or more players.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose access to secondary fire is affected.",
                     "type": "PLAYER",
@@ -1508,17 +1669,20 @@
         {
             "name": "SET SLOW MOTION",
             "description": "Sets the simulation rate for the entire game, including all players, projectiles, effects, and game mode logic.",
-            "args": [{
-                "name": "SPEED PERCENT",
-                "description": "The simulation rate as a percentage of normal speed. Only rates up to 100% are allowed.",
-                "type": "NUMBER",
-                "default": "NUMBER"
-            }]
+            "args": [
+                {
+                    "name": "SPEED PERCENT",
+                    "description": "The simulation rate as a percentage of normal speed. Only rates up to 100% are allowed.",
+                    "type": "NUMBER",
+                    "default": "NUMBER"
+                }
+            ]
         },
         {
             "name": "SET STATUS",
             "description": "Applies a status to one or more players. This status will remain in effect for the specified duration or until it is cleared by the clear status action.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players to whom the status will be applied.",
                     "type": "PLAYER",
@@ -1547,7 +1711,8 @@
         {
             "name": "SET TEAM SCORE",
             "description": "Sets the score for one or both teams. This action has no effect in free-for-all modes or modes without a team score.",
-            "args": [{
+            "args": [
+                {
                     "name": "TEAM",
                     "description": "The team or teams whose score will be set.",
                     "type": "TEAM",
@@ -1564,7 +1729,8 @@
         {
             "name": "SET ULTIMATE ABILITY ENABLED",
             "description": "Enables or disables the ultimate ability of one or more players.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose access to their ultimate ability is affected.",
                     "type": "PLAYER",
@@ -1581,7 +1747,8 @@
         {
             "name": "SET ULTIMATE CHARGE",
             "description": "Sets the ultimate charge for one or more players as a percentage of maximum charge.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose ultimate charge will be set.",
                     "type": "PLAYER",
@@ -1598,17 +1765,20 @@
         {
             "name": "SKIP",
             "description": "Skips execution of a certain number of actions in the action list.",
-            "args": [{
-                "name": "NUMBER OF ACTIONS",
-                "description": "The number of actions to skip, not including this action.",
-                "type": "NUMBER",
-                "default": "NUMBER"
-            }]
+            "args": [
+                {
+                    "name": "NUMBER OF ACTIONS",
+                    "description": "The number of actions to skip, not including this action.",
+                    "type": "NUMBER",
+                    "default": "NUMBER"
+                }
+            ]
         },
         {
             "name": "SKIP IF",
             "description": "Skips execution of a certain number of actions in the action list if this action's condition evaluates to true. If it does not, execution continues with the next action.",
-            "args": [{
+            "args": [
+                {
                     "name": "CONDITION",
                     "description": "Specifies whether the skip occurs.",
                     "type": "BOOLEAN",
@@ -1625,7 +1795,8 @@
         {
             "name": "SMALL MESSAGE",
             "description": "Displays a small message beneath the reticle that is visible to specific players.",
-            "args": [{
+            "args": [
+                {
                     "name": "VISIBLE TO",
                     "description": "One or more players who will see the message.",
                     "type": "PLAYER",
@@ -1642,7 +1813,8 @@
         {
             "name": "START ACCELERATING",
             "description": "Starts accelerating one or more players in a specified direction.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players that will begin accelerating.",
                     "type": "PLAYER",
@@ -1671,7 +1843,8 @@
         {
             "name": "START CAMERA",
             "description": "Places your camera at a location, facing a direction.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose cameras will be placed at the location.",
                     "type": "PLAYER",
@@ -1700,7 +1873,8 @@
         {
             "name": "START DAMAGE MODIFICATION",
             "description": "Starts modifying how much damage one or more receivers will receive from one or more damagers. A reference to this damage modification can be obtained from the last damage modification id value. This action will fail if too many damage modifications have been started.",
-            "args": [{
+            "args": [
+                {
                     "name": "RECEIVERS",
                     "description": "The player or players whose incoming damage will be modified (when attacked by the damagers).",
                     "type": "PLAYER",
@@ -1729,7 +1903,8 @@
         {
             "name": "START DAMAGE OVER TIME",
             "description": "Starts an instance of damage over time. This dot will persist for the specified duration or until stopped by script. To obtain a reference to this dot, use the last damage over time id value.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "One or more players who will receive the damage over time.",
                     "type": "PLAYER",
@@ -1758,7 +1933,8 @@
         {
             "name": "START FACING",
             "description": "Starts turning one or more players to face the specified direction.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players who will start turning.",
                     "type": "PLAYER",
@@ -1793,7 +1969,8 @@
         {
             "name": "START FORCING PLAYER TO BE HERO",
             "description": "Starts forcing one or more players to be a specific hero and, if necessary, respawns them immediately in their current location. This will be the only hero available to the player or players until the stop forcing player to be hero action is executed.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players who will be forced to be a specific hero.",
                     "type": "PLAYER",
@@ -1810,7 +1987,8 @@
         {
             "name": "START FORCING SPAWN ROOM",
             "description": "Forces a team to spawn in a particular spawn room, regardless of the spawn room normally used by the game mode. This action only has an effect in assault, hybrid, and payload maps.",
-            "args": [{
+            "args": [
+                {
                     "name": "TEAM",
                     "description": "The team whose spawn room will be forced.",
                     "type": "TEAM",
@@ -1827,7 +2005,8 @@
         {
             "name": "START FORCING THROTTLE",
             "description": "Defines minimum and maximum movement input values for one or more players, possibly forcing or preventing movement.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players whose movement will be forced or limited.",
                     "type": "PLAYER",
@@ -1874,7 +2053,8 @@
         {
             "name": "START HEAL OVER TIME",
             "description": "Starts an instance of heal over time. This hot will persist for the specified duration or until stopped by script. To obtain a reference to this hot, use the last heal over time id value.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "One or more players who will receive the heal over time.",
                     "type": "PLAYER",
@@ -1903,7 +2083,8 @@
         {
             "name": "START HOLDING BUTTON",
             "description": "Forces one or more players to hold a button virtually until stopped by the stop holding button action.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players who are holding a button virtually.",
                     "type": "PLAYER",
@@ -1918,14 +2099,46 @@
             ]
         },
         {
+            "name": "START TRANSFORMING THROTTLE",
+            "description": "Starts transforming (scaling and rotating) the throttle (directional input control) of a player or players. Cancels any existing start transforming throttle behavior.",
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player or players whose throttle will be transformed.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                },
+                {
+                    "name": "X AXIS SCALAR",
+                    "description": "The player or players will have their throttle X axis (left to right) multiplied by this value before the throttle is rotated to its new relative direction. This value is evaluated continuously (meaning it updates every frame).",
+                    "type": "NUMBER",
+                    "default": "NUMBER"
+                },
+                {
+                    "name": "Y AXIS SCALAR",
+                    "description": "The player or players will have their throttle Y axis (front to back) multiplied by this value before the throttle is rotated to its new relative direction. This value is evaluated continuously (meaning it updates every frame).",
+                    "type": "NUMBER",
+                    "default": "NUMBER"
+                },
+                {
+                    "name": "RELATIVE DIRECTION",
+                    "description": "After the axis scalars are applied, the player or players will have their throttle transformed so that it is relative to this unit direction vector. For example, to make the throttle camera relative, provide the direction that the camera is facing. This value is evaluated continuously (meaning it updates every frame) and normalized internally.",
+                    "type": "VECTOR",
+                    "default": "VECTOR"
+                }
+            ]
+        },
+        {
             "name": "STOP ACCELERATING",
             "description": "Stops the acceleration started by the start accelerating action for one or more players.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player or players who will stop accelerating.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player or players who will stop accelerating.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "STOP ALL DAMAGE MODIFICATIONS",
@@ -1935,47 +2148,56 @@
         {
             "name": "STOP ALL DAMAGE OVER TIME",
             "description": "Stops all damage over time started by start damage over time for one or more players.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player or players whose scripted damage over time will stop.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player or players whose scripted damage over time will stop.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "STOP ALL HEAL OVER TIME",
             "description": "Stops all heal over time started by start heal over time for one or more players.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player or players whose scripted heal over time will stop.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player or players whose scripted heal over time will stop.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "STOP CAMERA",
             "description": "None",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player or players whose cameras will be put back to the default view.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player or players whose cameras will be put back to the default view.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "STOP CHASING GLOBAL VARIABLE",
             "description": "Stops an in-progress chase of a global variable, leaving it at its current value.",
-            "args": [{
-                "name": "VARIABLE",
-                "description": "Specifies which global variable to stop modifying.",
-                "type": "VARIABLE",
-                "default": "A"
-            }]
+            "args": [
+                {
+                    "name": "VARIABLE",
+                    "description": "Specifies which global variable to stop modifying.",
+                    "type": "VARIABLE",
+                    "default": "A"
+                }
+            ]
         },
         {
             "name": "STOP CHASING PLAYER VARIABLE",
             "description": "Stops an in-progress chase of a player variable, leaving it at its current value.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player whose variable will stop changing. If multiple players are provided, each of their variables will stop changing.",
                     "type": "PLAYER",
@@ -1992,77 +2214,92 @@
         {
             "name": "STOP DAMAGE MODIFICATION",
             "description": "Stops a damage modification that was started by the start damage modification action.",
-            "args": [{
-                "name": "DAMAGE MODIFICATION",
-                "description": "Specifies which damage modification instance to stop. This id may be last damage modification id or a variable into which last damage modification id was earlier stored.",
-                "type": "NUMBER",
-                "default": "LAST DAMAGE MODIFICATION ID"
-            }]
+            "args": [
+                {
+                    "name": "DAMAGE MODIFICATION",
+                    "description": "Specifies which damage modification instance to stop. This id may be last damage modification id or a variable into which last damage modification id was earlier stored.",
+                    "type": "NUMBER",
+                    "default": "LAST DAMAGE MODIFICATION ID"
+                }
+            ]
         },
         {
             "name": "STOP DAMAGE OVER TIME",
             "description": "Stops an instance of damage over time started by the start damage over time action.",
-            "args": [{
-                "name": "DAMAGE OVER TIME ID",
-                "description": "Specifies which damage over time instance to stop. This id may be last damage over time id or a variable into which last damage over time id was earlier stored.",
-                "type": "NUMBER",
-                "default": "LAST DAMAGE OVER TIME ID"
-            }]
+            "args": [
+                {
+                    "name": "DAMAGE OVER TIME ID",
+                    "description": "Specifies which damage over time instance to stop. This id may be last damage over time id or a variable into which last damage over time id was earlier stored.",
+                    "type": "NUMBER",
+                    "default": "LAST DAMAGE OVER TIME ID"
+                }
+            ]
         },
         {
             "name": "STOP FACING",
             "description": "Stops the turning started by the start facing action for one or more players.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player or players who will stop turning.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player or players who will stop turning.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "STOP FORCING PLAYER TO BE HERO",
             "description": "Stops forcing one or more players to be a specific hero. This will not respawn the player or players, but it will restore their hero availability the next time they go to select a hero.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player or players who will no longer be forced to be a specific hero.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player or players who will no longer be forced to be a specific hero.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "STOP FORCING SPAWN ROOM",
             "description": "Undoes the effect of the start forcing spawn room action for the specified team.",
-            "args": [{
-                "name": "TEAM",
-                "description": "The team that will resume using their normal spawn room.",
-                "type": "TEAM",
-                "default": "TEAM"
-            }]
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "The team that will resume using their normal spawn room.",
+                    "type": "TEAM",
+                    "default": "TEAM"
+                }
+            ]
         },
         {
             "name": "STOP FORCING THROTTLE",
             "description": "Undoes the effect of the start forcing throttle action for one or more players.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player or players whose movement input will be restored.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player or players whose movement input will be restored.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "STOP HEAL OVER TIME",
             "description": "Stops an instance of heal over time started by the start heal over time action.",
-            "args": [{
-                "name": "HEAL OVER TIME ID",
-                "description": "Specifies which heal over time instance to stop. This id may be last heal over time id or a variable into which last heal over time id was earlier stored.",
-                "type": "NUMBER",
-                "default": "PLAYER VARIABLE"
-            }]
+            "args": [
+                {
+                    "name": "HEAL OVER TIME ID",
+                    "description": "Specifies which heal over time instance to stop. This id may be last heal over time id or a variable into which last heal over time id was earlier stored.",
+                    "type": "NUMBER",
+                    "default": "PLAYER VARIABLE"
+                }
+            ]
         },
         {
             "name": "STOP HOLDING BUTTON",
             "description": "Undoes the effect of the start holding button action for one or more players.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players who are no longer holding a button virtually.",
                     "type": "PLAYER",
@@ -2077,9 +2314,22 @@
             ]
         },
         {
+            "name": "STOP TRANSFORMING THROTTLE",
+            "description": "Stops the throttle transform started by start transforming throttle for one or more players.",
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player or players whose throttle will stop being transformed.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
+        },
+        {
             "name": "TELEPORT",
             "description": "Teleports one or more players to the specified position.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player or players to teleport.",
                     "type": "PLAYER",
@@ -2101,7 +2351,8 @@
         {
             "name": "WAIT",
             "description": "Pauses the execution of the action list. Unless the wait is interrupted, the remainder of the actions will execute after the pause.",
-            "args": [{
+            "args": [
+                {
                     "name": "TIME",
                     "description": "The duration of the pause.",
                     "type": "NUMBER",
@@ -2116,20 +2367,24 @@
             ]
         }
     ],
-    "values": [{
+    "values": [
+        {
             "name": "ABSOLUTE VALUE",
             "description": "The absolute value of the specified value.",
-            "args": [{
-                "name": "VALUE",
-                "description": "The real number value whose absolute value will be computed.",
-                "type": "NUMBER",
-                "default": "NUMBER"
-            }]
+            "args": [
+                {
+                    "name": "VALUE",
+                    "description": "The real number value whose absolute value will be computed.",
+                    "type": "NUMBER",
+                    "default": "NUMBER"
+                }
+            ]
         },
         {
             "name": "ADD",
             "description": "The sum of two numbers or vectors.",
-            "args": [{
+            "args": [
+                {
                     "name": "VALUE",
                     "description": "The left-hand operand. May be any value that results in a number or a vector.",
                     "type": "ANY",
@@ -2146,12 +2401,14 @@
         {
             "name": "ALL DEAD PLAYERS",
             "description": "An array containing all dead players on a team or in the match.",
-            "args": [{
-                "name": "TEAM",
-                "description": "The team or teams from which players may come.",
-                "type": "TEAM",
-                "default": "TEAM"
-            }]
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "The team or teams from which players may come.",
+                    "type": "TEAM",
+                    "default": "TEAM"
+                }
+            ]
         },
         {
             "name": "ALL HEROES",
@@ -2161,67 +2418,80 @@
         {
             "name": "ALL LIVING PLAYERS",
             "description": "An array containing all living players on a team or in the match.",
-            "args": [{
-                "name": "TEAM",
-                "description": "The team or teams from which players may come.",
-                "type": "TEAM",
-                "default": "TEAM"
-            }]
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "The team or teams from which players may come.",
+                    "type": "TEAM",
+                    "default": "TEAM"
+                }
+            ]
         },
         {
             "name": "ALL PLAYERS",
             "description": "An array containing all players on a team or in the match.",
-            "args": [{
-                "name": "TEAM",
-                "description": "The team or teams from which players may come.",
-                "type": "TEAM",
-                "default": "TEAM"
-            }]
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "The team or teams from which players may come.",
+                    "type": "TEAM",
+                    "default": "TEAM"
+                }
+            ]
         },
         {
             "name": "ALL PLAYERS NOT ON OBJECTIVE",
             "description": "An array containing all players occupying neither a payload nor a control point (either on a team or in the match).",
-            "args": [{
-                "name": "TEAM",
-                "description": "The team or teams from which players may come.",
-                "type": "TEAM",
-                "default": "TEAM"
-            }]
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "The team or teams from which players may come.",
+                    "type": "TEAM",
+                    "default": "TEAM"
+                }
+            ]
         },
         {
             "name": "ALL PLAYERS ON OBJECTIVE",
             "description": "An array containing all players occupying a payload or control point (either on a team or in the match).",
-            "args": [{
-                "name": "TEAM",
-                "description": "The team or teams from which players may come.",
-                "type": "TEAM",
-                "default": "TEAM"
-            }]
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "The team or teams from which players may come.",
+                    "type": "TEAM",
+                    "default": "TEAM"
+                }
+            ]
         },
         {
             "name": "ALLOWED HEROES",
             "description": "The array of heroes from which the specified player is currently allowed to select.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose allowed heroes to acquire.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose allowed heroes to acquire.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "ALTITUDE OF",
             "description": "The player's current height in meters above a surface. Results in 0 whenever the player is on a surface.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose altitude to acquire.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose altitude to acquire.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "AND",
             "description": "Whether both of the two inputs are true (or equivalent to true).",
-            "args": [{
+            "args": [
+                {
                     "name": "VALUE",
                     "description": "One of the two inputs considered. If both are true (or equivalent to true), then the and value is true.",
                     "type": "BOOLEAN",
@@ -2238,7 +2508,8 @@
         {
             "name": "ANGLE DIFFERENCE",
             "description": "The difference in degrees between two angles. After the angles are wrapped to be within +/- 180 of each other, the result is positive if the second angle is greater than the first angle. Otherwise, the result is zero or negative.",
-            "args": [{
+            "args": [
+                {
                     "name": "ANGLE",
                     "description": "One of the two angles between which to measure the resulting angle.",
                     "type": "NUMBER",
@@ -2255,7 +2526,8 @@
         {
             "name": "APPEND TO ARRAY",
             "description": "A copy of an array with one or more values appended to the end.",
-            "args": [{
+            "args": [
+                {
                     "name": "ARRAY",
                     "description": "The array to which to append.",
                     "type": "ANY",
@@ -2272,7 +2544,8 @@
         {
             "name": "ARRAY CONTAINS",
             "description": "Whether the specified array contains the specified value.",
-            "args": [{
+            "args": [
+                {
                     "name": "ARRAY",
                     "description": "The array in which to search for the specified value.",
                     "type": "ANY",
@@ -2289,7 +2562,8 @@
         {
             "name": "ARRAY SLICE",
             "description": "A copy of the specified array containing only values from a specified index range.",
-            "args": [{
+            "args": [
+                {
                     "name": "ARRAY",
                     "description": "The array from which to make a copy.",
                     "type": "ANY",
@@ -2322,7 +2596,8 @@
         {
             "name": "CLOSEST PLAYER TO",
             "description": "The player closest to a position, optionally restricted by team.",
-            "args": [{
+            "args": [
+                {
                     "name": "CENTER",
                     "description": "The position from which to measure proximity.",
                     "type": "POSITION",
@@ -2339,7 +2614,8 @@
         {
             "name": "COMPARE",
             "description": "Whether the comparison of the two inputs is true.",
-            "args": [{
+            "args": [
+                {
                     "name": "VALUE",
                     "description": "The left-hand side of the comparison. This may be any value type if the operation is == or !=. Otherwise, real numbers are expected.",
                     "type": "ANY",
@@ -2362,12 +2638,14 @@
         {
             "name": "CONTROL MODE SCORING PERCENTAGE",
             "description": "The score percentage for the specified team in control mode.",
-            "args": [{
-                "name": "TEAM",
-                "description": "The team whose score percentage to acquire.",
-                "type": "TEAM",
-                "default": "TEAM"
-            }]
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "The team whose score percentage to acquire.",
+                    "type": "TEAM",
+                    "default": "TEAM"
+                }
+            ]
         },
         {
             "name": "CONTROL MODE SCORING TEAM",
@@ -2377,37 +2655,44 @@
         {
             "name": "COSINE FROM DEGREES",
             "description": "Cosine of the specified angle in degrees.",
-            "args": [{
-                "name": "ANGLE",
-                "description": "Angle in degrees.",
-                "type": "NUMBER",
-                "default": "NUMBER"
-            }]
+            "args": [
+                {
+                    "name": "ANGLE",
+                    "description": "Angle in degrees.",
+                    "type": "NUMBER",
+                    "default": "NUMBER"
+                }
+            ]
         },
         {
             "name": "COSINE FROM RADIANS",
             "description": "Cosine of the specified angle in radians.",
-            "args": [{
-                "name": "ANGLE",
-                "description": "Angle in radians.",
-                "type": "NUMBER",
-                "default": "NUMBER"
-            }]
+            "args": [
+                {
+                    "name": "ANGLE",
+                    "description": "Angle in radians.",
+                    "type": "NUMBER",
+                    "default": "NUMBER"
+                }
+            ]
         },
         {
             "name": "COUNT OF",
             "description": "The number of elements in the specified array.",
-            "args": [{
-                "name": "ARRAY",
-                "description": "The array whose elements will be counted.",
-                "type": "ANY",
-                "default": "GLOBAL VARIABLE"
-            }]
+            "args": [
+                {
+                    "name": "ARRAY",
+                    "description": "The array whose elements will be counted.",
+                    "type": "ANY",
+                    "default": "GLOBAL VARIABLE"
+                }
+            ]
         },
         {
             "name": "CROSS PRODUCT",
             "description": "The cross product of the specified values. (Left cross up equals forward.)",
-            "args": [{
+            "args": [
+                {
                     "name": "VALUE",
                     "description": "The left-hand-side vector operand of the cross product.",
                     "type": "VECTOR",
@@ -2429,7 +2714,8 @@
         {
             "name": "DIRECTION FROM ANGLES",
             "description": "The unit-length direction vector corresponding to the specified angles.",
-            "args": [{
+            "args": [
+                {
                     "name": "HORIZONTAL ANGLE",
                     "description": "The horizontal angle in degrees used to construct the resulting vector.",
                     "type": "NUMBER",
@@ -2446,7 +2732,8 @@
         {
             "name": "DIRECTION TOWARDS",
             "description": "The unit-length direction vector from one position to another.",
-            "args": [{
+            "args": [
+                {
                     "name": "START POS",
                     "description": "The position from which the resulting direction vector will point.",
                     "type": "POSITION",
@@ -2463,7 +2750,8 @@
         {
             "name": "DISTANCE BETWEEN",
             "description": "The distance between two positions in meters.",
-            "args": [{
+            "args": [
+                {
                     "name": "START POS",
                     "description": "One of the two positions used in the distance measurement.",
                     "type": "POSITION",
@@ -2480,7 +2768,8 @@
         {
             "name": "DIVIDE",
             "description": "The ratio of two numbers or vectors. A vector divided by a number will yield a scaled vector. Division by zero results in zero.",
-            "args": [{
+            "args": [
+                {
                     "name": "VALUE",
                     "description": "The left-hand operand. May be any value that results in a number or a vector.",
                     "type": "ANY",
@@ -2497,7 +2786,8 @@
         {
             "name": "DOT PRODUCT",
             "description": "The dot product of the specified values.",
-            "args": [{
+            "args": [
+                {
                     "name": "VALUE",
                     "description": "One of two vector operands of the dot product.",
                     "type": "VECTOR",
@@ -2524,16 +2814,23 @@
         {
             "name": "ENTITY EXISTS",
             "description": "Whether the specified player, icon entity, or effect entity still exists. Useful for determining if a player has left the match or an entity has been destroyed.",
-            "args": [{
-                "name": "ENTITY",
-                "description": "The player, icon entity, or effect entity whose existence to check.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "ENTITY",
+                    "description": "The player, icon entity, or effect entity whose existence to check.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "EVENT DAMAGE",
             "description": "The amount of damage received by the victim for the event currently being processed by this rule.",
+            "args": []
+        },
+        {
+            "name": "EVENT HEALING",
+            "description": "The amount of healing received by the healee for the event currently being processed by this rule.",
             "args": []
         },
         {
@@ -2549,22 +2846,26 @@
         {
             "name": "EYE POSITION",
             "description": "The position of a player's first person view (used for aiming)",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The position of a player's first person view (used for aiming)",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The position of a player's first person view (used for aiming)",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "FACING DIRECTION OF",
             "description": "The unit-length directional vector of a player's current facing relative to the world. This value includes both horizontal and vertical facing.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose facing direction to acquire.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose facing direction to acquire.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "FALSE",
@@ -2574,7 +2875,8 @@
         {
             "name": "FARTHEST PLAYER FROM",
             "description": "The player farthest from a position, optionally restricted by team.",
-            "args": [{
+            "args": [
+                {
                     "name": "CENTER",
                     "description": "The position from which to measure distance.",
                     "type": "POSITION",
@@ -2591,7 +2893,8 @@
         {
             "name": "FILTERED ARRAY",
             "description": "A copy of the specified array with any values that do not match the specified condition removed.",
-            "args": [{
+            "args": [
+                {
                     "name": "ARRAY",
                     "description": "The array whose copy will be filtered.",
                     "type": "ANY",
@@ -2608,22 +2911,26 @@
         {
             "name": "FIRST OF",
             "description": "The value at the start of the specified array. Results in 0 if the specified array is empty.",
-            "args": [{
-                "name": "ARRAY",
-                "description": "The array from which the value is acquired.",
-                "type": "ANY",
-                "default": "GLOBAL VARIABLE"
-            }]
+            "args": [
+                {
+                    "name": "ARRAY",
+                    "description": "The array from which the value is acquired.",
+                    "type": "ANY",
+                    "default": "GLOBAL VARIABLE"
+                }
+            ]
         },
         {
             "name": "FLAG POSITION",
             "description": "The position of a specific team's flag in capture the flag.",
-            "args": [{
-                "name": "TEAM",
-                "description": "The team whose flag position to acquire.",
-                "type": "TEAM",
-                "default": "TEAM"
-            }]
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "The team whose flag position to acquire.",
+                    "type": "TEAM",
+                    "default": "TEAM"
+                }
+            ]
         },
         {
             "name": "FORWARD",
@@ -2633,27 +2940,32 @@
         {
             "name": "GLOBAL VARIABLE",
             "description": "The current value of a global variable, which is a variable that belongs to the game itself.",
-            "args": [{
-                "name": "VARIABLE",
-                "description": "The variable whose value to acquire.",
-                "type": "VARIABLE",
-                "default": "A"
-            }]
+            "args": [
+                {
+                    "name": "VARIABLE",
+                    "description": "The variable whose value to acquire.",
+                    "type": "VARIABLE",
+                    "default": "A"
+                }
+            ]
         },
         {
             "name": "HAS SPAWNED",
             "description": "Whether an entity has spawned in the world. Results in false for players who have not chosen a hero yet.",
-            "args": [{
-                "name": "ENTITY",
-                "description": "The player, icon entity, or effect entity whose presence in world to check.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "ENTITY",
+                    "description": "The player, icon entity, or effect entity whose presence in world to check.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "HAS STATUS",
             "description": "Whether the specified player has the specified status, either from the set status action or from a non-scripted game mechanic.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player whose status to check.",
                     "type": "PLAYER",
@@ -2668,69 +2980,92 @@
             ]
         },
         {
+            "name": "HEALEE",
+            "description": "The player that received the healing for the event currently being processed by this rule. May be the same as the healer or the event player.",
+            "args": []
+        },
+        {
+            "name": "HEALER",
+            "description": "The player that dealt the healing for the event currently being processed by this rule. May be the same as the healee or the event player.",
+            "args": []
+        },
+        {
             "name": "HEALTH",
             "description": "The current health of a player, including armor and shields.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose health to acquire.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose health to acquire.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "HEALTH PERCENT",
             "description": "The current health of a player as a percentage of their max health, including armor and shields.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose health percentage to acquire.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose health percentage to acquire.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "HERO",
             "description": "A hero constant.",
-            "args": [{
-                "name": "HERO",
-                "description": "A hero constant.",
-                "type": "HERO CONSTANT",
-                "default": "ANA"
-            }]
+            "args": [
+                {
+                    "name": "HERO",
+                    "description": "A hero constant.",
+                    "type": "HERO CONSTANT",
+                    "default": "ANA"
+                }
+            ]
         },
         {
             "name": "HERO ICON STRING",
             "description": "Converts a hero parameter into a string that shows up as an icon.",
-            "args": [{
-                "name": "VALUE",
-                "description": "The hero that will be converted to an icon.",
-                "type": "HERO",
-                "default": "HERO"
-            }]
+            "args": [
+                {
+                    "name": "VALUE",
+                    "description": "The hero that will be converted to an icon.",
+                    "type": "HERO",
+                    "default": "HERO"
+                }
+            ]
         },
         {
             "name": "HERO OF",
             "description": "The current hero of a player.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose hero to acquire.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose hero to acquire.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "HORIZONTAL ANGLE FROM DIRECTION",
             "description": "The horizontal angle in degrees corresponding to the specified direction vector.",
-            "args": [{
-                "name": "DIRECTION",
-                "description": "The direction vector from which to acquire a horizontal angle in degrees. The vector is unitized before calculation begins.",
-                "type": "VECTOR",
-                "default": "VECTOR"
-            }]
+            "args": [
+                {
+                    "name": "DIRECTION",
+                    "description": "The direction vector from which to acquire a horizontal angle in degrees. The vector is unitized before calculation begins.",
+                    "type": "VECTOR",
+                    "default": "VECTOR"
+                }
+            ]
         },
         {
             "name": "HORIZONTAL ANGLE TOWARDS",
             "description": "The horizontal angle in degrees from a player's current forward direction to the specified position. The result is positive if the position is on the player's left. Otherwise, the result is zero or negative.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player from whose current facing the angle begins.",
                     "type": "PLAYER",
@@ -2747,27 +3082,37 @@
         {
             "name": "HORIZONTAL FACING ANGLE OF",
             "description": "The horizontal angle in degrees of a player's current facing relative to the world. This value increases as the player rotates to the left (wrapping around at +/- 180).",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose horizontal facing angle to acquire.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose horizontal facing angle to acquire.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "HORIZONTAL SPEED OF",
             "description": "The current horizontal speed of a player in meters per second. This measurement excludes all vertical motion.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose horizontal speed to acquire.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose horizontal speed to acquire.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
+        },
+        {
+            "name": "HOST PLAYER",
+            "description": "The player that is currently the host of the custom game. This value will change if the current host player leaves the match.",
+            "args": []
         },
         {
             "name": "INDEX OF ARRAY VALUE",
             "description": "The index of a value within an array or -1 if no such value can be found.",
-            "args": [{
+            "args": [
+                {
                     "name": "ARRAY",
                     "description": "The array in which to search for the specified value.",
                     "type": "ANY",
@@ -2784,12 +3129,14 @@
         {
             "name": "IS ALIVE",
             "description": "Whether a player is alive.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose life to check.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose life to check.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "IS ASSEMBLING HEROES",
@@ -2804,7 +3151,8 @@
         {
             "name": "IS BUTTON HELD",
             "description": "Whether a player is holding a specific button.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player whose button to check.",
                     "type": "PLAYER",
@@ -2821,7 +3169,8 @@
         {
             "name": "IS COMMUNICATING",
             "description": "Whether a player is using a specific communication type (such as emoting, using a voice line, etc.).",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player whose communication status to check.",
                     "type": "PLAYER",
@@ -2838,32 +3187,38 @@
         {
             "name": "IS COMMUNICATING ANY",
             "description": "Whether a player is using any communication type (such as emoting, using a voice line, etc.).",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose communication status to check.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose communication status to check.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "IS COMMUNICATING ANY EMOTE",
             "description": "Whether a player is using an emote.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose emoting status to check.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose emoting status to check.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "IS COMMUNICATING ANY VOICE LINE",
             "description": "Whether a player is using a voice line. (The duration of voice lines is assumed to be 4 seconds.)",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose voice line status to check.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose voice line status to check.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "IS CONTROL MODE POINT LOCKED",
@@ -2873,12 +3228,14 @@
         {
             "name": "IS CROUCHING",
             "description": "Whether a player is crouching.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose crouching status to check.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose crouching status to check.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "IS CTF MODE IN SUDDEN DEATH",
@@ -2888,52 +3245,62 @@
         {
             "name": "IS DEAD",
             "description": "Whether a player is dead.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose death to check.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose death to check.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "IS FIRING PRIMARY",
             "description": "Whether the specified player's primary weapon attack is being used.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose primary weapon attack usage to check.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose primary weapon attack usage to check.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "IS FIRING SECONDARY",
             "description": "Whether the specified player's secondary weapon attack is being used.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose secondary weapon attack usage to check.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose secondary weapon attack usage to check.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "IS FLAG AT BASE",
             "description": "Whether a specific team's flag is at its base in capture the flag.",
-            "args": [{
-                "name": "TEAM",
-                "description": "The team whose flag to check.",
-                "type": "TEAM",
-                "default": "TEAM"
-            }]
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "The team whose flag to check.",
+                    "type": "TEAM",
+                    "default": "TEAM"
+                }
+            ]
         },
         {
             "name": "IS FLAG BEING CARRIED",
             "description": "Whether a specific team's flag is being carried by a member of the opposing team in capture the flag.",
-            "args": [{
-                "name": "TEAM",
-                "description": "The team whose flag to check.",
-                "type": "TEAM",
-                "default": "TEAM"
-            }]
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "The team whose flag to check.",
+                    "type": "TEAM",
+                    "default": "TEAM"
+                }
+            ]
         },
         {
             "name": "IS GAME IN PROGRESS",
@@ -2943,7 +3310,8 @@
         {
             "name": "IS HERO BEING PLAYED",
             "description": "Whether a specific hero is being played (either on a team or in the match).",
-            "args": [{
+            "args": [
+                {
                     "name": "HERO",
                     "description": "The hero to check for play.",
                     "type": "HERO",
@@ -2960,17 +3328,20 @@
         {
             "name": "IS IN AIR",
             "description": "Whether a player is airborne.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose airborne status to check.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose airborne status to check.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "IS IN LINE OF SIGHT",
             "description": "Whether two positions have line of sight with each other.",
-            "args": [{
+            "args": [
+                {
                     "name": "START POS",
                     "description": "The start position for the line-of-sight check. If a player is provided, a position 2 meters above the player's feet is used.",
                     "type": "POSITION",
@@ -2998,17 +3369,20 @@
         {
             "name": "IS IN SPAWN ROOM",
             "description": "Whether a specific player is in the spawn room (and is thus being healed and able to change heroes).",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose spawn room status to check.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose spawn room status to check.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "IS IN VIEW ANGLE",
             "description": "Whether a location is within view of a player.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player whose view to use for the check.",
                     "type": "PLAYER",
@@ -3036,97 +3410,116 @@
         {
             "name": "IS MOVING",
             "description": "Whether a player is moving (defined as having a nonzero current speed).",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose moving status to check.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose moving status to check.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "IS OBJECTIVE COMPLETE",
             "description": "Whether the specified objective has been completed. Results in false if the game mode is not assault, escort, or assault/escort.",
-            "args": [{
-                "name": "NUMBER",
-                "description": "The index of the objective to consider, starting at 0 and counting up. Each control point, payload checkpoint, and payload destination has its own index.",
-                "type": "NUMBER",
-                "default": "NUMBER"
-            }]
+            "args": [
+                {
+                    "name": "NUMBER",
+                    "description": "The index of the objective to consider, starting at 0 and counting up. Each control point, payload checkpoint, and payload destination has its own index.",
+                    "type": "NUMBER",
+                    "default": "NUMBER"
+                }
+            ]
         },
         {
             "name": "IS ON GROUND",
             "description": "Whether a player is on the ground (or other walkable surface).",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose ground status to check.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose ground status to check.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "IS ON OBJECTIVE",
             "description": "Whether a specific player is currently occupying a payload or capture point.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose objective status to check.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose objective status to check.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "IS ON WALL",
             "description": "Whether a player is on a wall (climbing or riding).",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose wall status to check.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose wall status to check.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "IS PORTRAIT ON FIRE",
             "description": "Whether a specific player's portrait is on fire.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose portrait to check.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose portrait to check.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "IS STANDING",
             "description": "Whether a player is standing (defined as both not moving and not in the air).",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose standing status to check.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose standing status to check.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "IS TEAM ON DEFENSE",
             "description": "Whether the specified team is currently on defense. Results in false if the game mode is not assault, escort, or assault/escort.",
-            "args": [{
-                "name": "TEAM",
-                "description": "The team whose role to check.",
-                "type": "TEAM",
-                "default": "TEAM"
-            }]
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "The team whose role to check.",
+                    "type": "TEAM",
+                    "default": "TEAM"
+                }
+            ]
         },
         {
             "name": "IS TEAM ON OFFENSE",
             "description": "Whether the specified team is currently on offense. Results in false if the game mode is not assault, escort, or assault/escort.",
-            "args": [{
-                "name": "TEAM",
-                "description": "The team whose role to check.",
-                "type": "TEAM",
-                "default": "TEAM"
-            }]
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "The team whose role to check.",
+                    "type": "TEAM",
+                    "default": "TEAM"
+                }
+            ]
         },
         {
             "name": "IS TRUE FOR ALL",
             "description": "Whether the specified condition evaluates to true for every value in the specified array.",
-            "args": [{
+            "args": [
+                {
                     "name": "ARRAY",
                     "description": "The array whose values will be considered.",
                     "type": "ANY",
@@ -3143,7 +3536,8 @@
         {
             "name": "IS TRUE FOR ANY",
             "description": "Whether the specified condition evaluates to true for any value in the specified array.",
-            "args": [{
+            "args": [
+                {
                     "name": "ARRAY",
                     "description": "The array whose values will be considered.",
                     "type": "ANY",
@@ -3160,32 +3554,38 @@
         {
             "name": "IS USING ABILITY 1",
             "description": "Whether the specified player is using ability 1.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose ability 1 usage to check.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose ability 1 usage to check.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "IS USING ABILITY 2",
             "description": "Whether the specified player is using ability 2.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose ability 2 usage to check.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose ability 2 usage to check.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "IS USING ULTIMATE",
             "description": "Whether a player is using an ultimate ability.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose ultimate ability usage to check.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose ultimate ability usage to check.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "IS WAITING FOR PLAYERS",
@@ -3215,12 +3615,14 @@
         {
             "name": "LAST OF",
             "description": "The value at the end of the specified array. Results in 0 if the specified array is empty.",
-            "args": [{
-                "name": "ARRAY",
-                "description": "The array from which the value is acquired.",
-                "type": "ANY",
-                "default": "GLOBAL VARIABLE"
-            }]
+            "args": [
+                {
+                    "name": "ARRAY",
+                    "description": "The array from which the value is acquired.",
+                    "type": "ANY",
+                    "default": "GLOBAL VARIABLE"
+                }
+            ]
         },
         {
             "name": "LAST TEXT ID",
@@ -3235,7 +3637,8 @@
         {
             "name": "LOCAL VECTOR OF",
             "description": "The vector in local coordinates corresponding to the provided vector in world coordinates.",
-            "args": [{
+            "args": [
+                {
                     "name": "WORLD VECTOR",
                     "description": "The vector in world coordinates that will be converted to local coordinates.",
                     "type": "POSITION",
@@ -3268,7 +3671,8 @@
         {
             "name": "MAX",
             "description": "The greater of two numbers.",
-            "args": [{
+            "args": [
+                {
                     "name": "VALUE",
                     "description": "The left-hand operand. May be any value that results in a number.",
                     "type": "NUMBER",
@@ -3285,17 +3689,20 @@
         {
             "name": "MAX HEALTH",
             "description": "The max health of a player, including armor and shields.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose max health to acquire.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose max health to acquire.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "MIN",
             "description": "The lesser of two numbers.",
-            "args": [{
+            "args": [
+                {
                     "name": "VALUE",
                     "description": "The left-hand operand. May be any value that results in a number.",
                     "type": "NUMBER",
@@ -3312,7 +3719,8 @@
         {
             "name": "MODULO",
             "description": "The remainder of the left-hand operand divided by the right-hand operand. Any number modulo zero results in zero.",
-            "args": [{
+            "args": [
+                {
                     "name": "VALUE",
                     "description": "The left-hand operand. May be any value that results in a number.",
                     "type": "NUMBER",
@@ -3329,7 +3737,8 @@
         {
             "name": "MULTIPLY",
             "description": "The product of two numbers or vectors. A vector multiplied by a number will yield a scaled vector.",
-            "args": [{
+            "args": [
+                {
                     "name": "VALUE",
                     "description": "The left-hand operand. May be any value that results in a number or a vector.",
                     "type": "ANY",
@@ -3346,32 +3755,38 @@
         {
             "name": "NEAREST WALKABLE POSITION",
             "description": "The position closest to the specified position that can be stood on and is accessible from a spawn point.",
-            "args": [{
-                "name": "POSITION",
-                "description": "The position from which to search for the nearest walkable position.",
-                "type": "POSITION",
-                "default": "VECTOR"
-            }]
+            "args": [
+                {
+                    "name": "POSITION",
+                    "description": "The position from which to search for the nearest walkable position.",
+                    "type": "POSITION",
+                    "default": "VECTOR"
+                }
+            ]
         },
         {
             "name": "NORMALIZE",
             "description": "The unit-length normalization of a vector.",
-            "args": [{
-                "name": "VECTOR",
-                "description": "The vector to normalize.",
-                "type": "VECTOR",
-                "default": "VECTOR"
-            }]
+            "args": [
+                {
+                    "name": "VECTOR",
+                    "description": "The vector to normalize.",
+                    "type": "VECTOR",
+                    "default": "VECTOR"
+                }
+            ]
         },
         {
             "name": "NOT",
             "description": "Whether the input is false (or equivalent to false).",
-            "args": [{
-                "name": "VALUE",
-                "description": "When this input is false (or equivalent to false), then the not value is true. Otherwise, the not value is false.",
-                "type": "BOOLEAN",
-                "default": "TRUE"
-            }]
+            "args": [
+                {
+                    "name": "VALUE",
+                    "description": "When this input is false (or equivalent to false), then the not value is true. Otherwise, the not value is false.",
+                    "type": "BOOLEAN",
+                    "default": "TRUE"
+                }
+            ]
         },
         {
             "name": "NULL",
@@ -3381,57 +3796,68 @@
         {
             "name": "NUMBER",
             "description": "A real number constant.",
-            "args": [{
-                "name": "NUMBER",
-                "description": "",
-                "type": "NUMBER CONSTANT",
-                "default": "0.00"
-            }]
+            "args": [
+                {
+                    "name": "NUMBER",
+                    "description": "",
+                    "type": "NUMBER CONSTANT",
+                    "default": "0.00"
+                }
+            ]
         },
         {
             "name": "NUMBER OF DEAD PLAYERS",
             "description": "The number of dead players on a team or in the match.",
-            "args": [{
-                "name": "TEAM",
-                "description": "The team or teams on which to count players.",
-                "type": "TEAM",
-                "default": "TEAM"
-            }]
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "The team or teams on which to count players.",
+                    "type": "TEAM",
+                    "default": "TEAM"
+                }
+            ]
         },
         {
             "name": "NUMBER OF DEATHS",
             "description": "The number of deaths a specific player has earned. This value only accumulates while a game is in progress.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose death count to acquire.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose death count to acquire.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "NUMBER OF ELIMINATIONS",
             "description": "The number of eliminations a specific player has earned. This value only accumulates while a game is in progress.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose elimination count to acquire.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose elimination count to acquire.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "NUMBER OF FINAL BLOWS",
             "description": "The number of final blows a specific player has earned. This value only accumulates while a game is in progress.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose final blow count to acquire.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose final blow count to acquire.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "NUMBER OF HEROES",
             "description": "The number of players playing a specific hero on a team or in the match.",
-            "args": [{
+            "args": [
+                {
                     "name": "HERO",
                     "description": "The hero to check for play.",
                     "type": "HERO",
@@ -3448,32 +3874,38 @@
         {
             "name": "NUMBER OF LIVING PLAYERS",
             "description": "The number of living players on a team or in the match.",
-            "args": [{
-                "name": "TEAM",
-                "description": "The team or teams on which to count players.",
-                "type": "TEAM",
-                "default": "TEAM"
-            }]
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "The team or teams on which to count players.",
+                    "type": "TEAM",
+                    "default": "TEAM"
+                }
+            ]
         },
         {
             "name": "NUMBER OF PLAYERS",
             "description": "The number of players on a team or in the match.",
-            "args": [{
-                "name": "TEAM",
-                "description": "The team or teams on which to count players.",
-                "type": "TEAM",
-                "default": "TEAM"
-            }]
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "The team or teams on which to count players.",
+                    "type": "TEAM",
+                    "default": "TEAM"
+                }
+            ]
         },
         {
             "name": "NUMBER OF PLAYERS ON OBJECTIVE",
             "description": "The number of players occupying a payload or control point (either on a team or in the match).",
-            "args": [{
-                "name": "TEAM",
-                "description": "The team or teams on which to count players.",
-                "type": "TEAM",
-                "default": "TEAM"
-            }]
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "The team or teams on which to count players.",
+                    "type": "TEAM",
+                    "default": "TEAM"
+                }
+            ]
         },
         {
             "name": "OBJECTIVE INDEX",
@@ -3483,27 +3915,32 @@
         {
             "name": "OBJECTIVE POSITION",
             "description": "The position in the world of the specified objective (either a control point, a payload checkpoint, or a payload destination). Valid in assault, assault/escort, escort, and control.",
-            "args": [{
-                "name": "NUMBER",
-                "description": "The index of the objective to consider, starting at 0 and counting up. Each control point, payload checkpoint, and payload destination has its own index.",
-                "type": "NUMBER",
-                "default": "NUMBER"
-            }]
+            "args": [
+                {
+                    "name": "NUMBER",
+                    "description": "The index of the objective to consider, starting at 0 and counting up. Each control point, payload checkpoint, and payload destination has its own index.",
+                    "type": "NUMBER",
+                    "default": "NUMBER"
+                }
+            ]
         },
         {
             "name": "OPPOSITE TEAM OF",
             "description": "The team opposite the specified team.",
-            "args": [{
-                "name": "TEAM",
-                "description": "The team whose opposite to acquire. If all, the result will be all.",
-                "type": "TEAM",
-                "default": "TEAM"
-            }]
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "The team whose opposite to acquire. If all, the result will be all.",
+                    "type": "TEAM",
+                    "default": "TEAM"
+                }
+            ]
         },
         {
             "name": "OR",
             "description": "Whether either of the two inputs are true (or equivalent to true).",
-            "args": [{
+            "args": [
+                {
                     "name": "VALUE",
                     "description": "One of the two inputs considered. If either one is true (or equivalent to true), then the or value is true.",
                     "type": "BOOLEAN",
@@ -3530,17 +3967,20 @@
         {
             "name": "PLAYER CARRYING FLAG",
             "description": "The player carrying a particular team's flag in capture the flag. Results in null if no player is carrying the flag.",
-            "args": [{
-                "name": "TEAM",
-                "description": "The team whose flag to check.",
-                "type": "TEAM",
-                "default": "TEAM"
-            }]
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "The team whose flag to check.",
+                    "type": "TEAM",
+                    "default": "TEAM"
+                }
+            ]
         },
         {
             "name": "PLAYER CLOSEST TO RETICLE",
             "description": "The player closest to the reticle of the specified player, optionally restricted by team.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player from whose reticle to search for the closest player.",
                     "type": "PLAYER",
@@ -3557,7 +3997,8 @@
         {
             "name": "PLAYER VARIABLE",
             "description": "The current value of a player variable, which is a variable that belongs to a specific player.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player whose variable value to acquire.",
                     "type": "PLAYER",
@@ -3574,7 +4015,8 @@
         {
             "name": "PLAYERS IN SLOT",
             "description": "The player or array of players who occupy a specific slot in the game.",
-            "args": [{
+            "args": [
+                {
                     "name": "SLOT",
                     "description": "The slot number from which to acquire a player or players. In team games, each team has slots 0 through 5. In free-for-all games, slots are numbered 0 through 11.",
                     "type": "NUMBER",
@@ -3591,7 +4033,8 @@
         {
             "name": "PLAYERS IN VIEW ANGLE",
             "description": "The players who are within a specific view angle of a specific player's reticle, optionally restricted by team.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player whose view to use for the check.",
                     "type": "PLAYER",
@@ -3614,7 +4057,8 @@
         {
             "name": "PLAYERS ON HERO",
             "description": "The array of players playing a specific hero on a team or in the match.",
-            "args": [{
+            "args": [
+                {
                     "name": "HERO",
                     "description": "The hero to check for play.",
                     "type": "HERO",
@@ -3631,7 +4075,8 @@
         {
             "name": "PLAYERS WITHIN RADIUS",
             "description": "An array containing all players within a certain distance of a position, optionally restricted by team and line of sight.",
-            "args": [{
+            "args": [
+                {
                     "name": "CENTER",
                     "description": "The center position from which to measure distance.",
                     "type": "POSITION",
@@ -3665,17 +4110,20 @@
         {
             "name": "POSITION OF",
             "description": "The current position of a player as a vector.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose position to acquire.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose position to acquire.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "RAISE TO POWER",
             "description": "The left-hand operand raised to the power of the right-hand operand. If the left-hand operand is negative, the result is always zero.",
-            "args": [{
+            "args": [
+                {
                     "name": "VALUE",
                     "description": "The left-hand operand. May be any value that results in a number.",
                     "type": "NUMBER",
@@ -3692,7 +4140,8 @@
         {
             "name": "RANDOM INTEGER",
             "description": "A random integer between the specified min and max, inclusive.",
-            "args": [{
+            "args": [
+                {
                     "name": "MIN",
                     "description": "The smallest integer allowed. If a real number is provided to this input, it is rounded to the nearest integer.",
                     "type": "NUMBER",
@@ -3709,7 +4158,8 @@
         {
             "name": "RANDOM REAL",
             "description": "A random real number between the specified min and max.",
-            "args": [{
+            "args": [
+                {
                     "name": "MIN",
                     "description": "The smallest real number allowed.",
                     "type": "NUMBER",
@@ -3726,27 +4176,32 @@
         {
             "name": "RANDOM VALUE IN ARRAY",
             "description": "A random value from the specified array.",
-            "args": [{
-                "name": "ARRAY",
-                "description": "The array from which to randomly take a value. If a non-array value is provided, the result is simply the provided value.",
-                "type": "ANY",
-                "default": "GLOBAL VARIABLE"
-            }]
+            "args": [
+                {
+                    "name": "ARRAY",
+                    "description": "The array from which to randomly take a value. If a non-array value is provided, the result is simply the provided value.",
+                    "type": "ANY",
+                    "default": "GLOBAL VARIABLE"
+                }
+            ]
         },
         {
             "name": "RANDOMIZED ARRAY",
             "description": "A copy of the specified array with the values in a random order.",
-            "args": [{
-                "name": "ARRAY",
-                "description": "The array whose copy will be randomized.",
-                "type": "ANY",
-                "default": "GLOBAL VARIABLE"
-            }]
+            "args": [
+                {
+                    "name": "ARRAY",
+                    "description": "The array whose copy will be randomized.",
+                    "type": "ANY",
+                    "default": "GLOBAL VARIABLE"
+                }
+            ]
         },
         {
             "name": "RAY CAST HIT NORMAL",
             "description": "The surface normal at the ray cast hit position (or from end pos to start pos if no hit occurs).",
-            "args": [{
+            "args": [
+                {
                     "name": "START POS",
                     "description": "The start position for the ray cast. If a player is provided, a position 2 meters above the player's feet is used.",
                     "type": "POSITION",
@@ -3781,7 +4236,8 @@
         {
             "name": "RAY CAST HIT PLAYER",
             "description": "The player hit by the ray cast (or null if no player is hit).",
-            "args": [{
+            "args": [
+                {
                     "name": "START POS",
                     "description": "The start position for the ray cast. If a player is provided, a position 2 meters above the player's feet is used.",
                     "type": "POSITION",
@@ -3816,7 +4272,8 @@
         {
             "name": "RAY CAST HIT POSITION",
             "description": "The position where the ray cast hits a surface, object, or player (or the end pos if no hit occurs).",
-            "args": [{
+            "args": [
+                {
                     "name": "START POS",
                     "description": "The start position for the ray cast. If a player is provided, a position 2 meters above the player's feet is used.",
                     "type": "POSITION",
@@ -3851,7 +4308,8 @@
         {
             "name": "REMOVE FROM ARRAY",
             "description": "A copy of an array with one or more values removed (if found).",
-            "args": [{
+            "args": [
+                {
                     "name": "ARRAY",
                     "description": "The array from which to remove values.",
                     "type": "ANY",
@@ -3873,7 +4331,8 @@
         {
             "name": "ROUND TO INTEGER",
             "description": "The integer to which the specified value rounds.",
-            "args": [{
+            "args": [
+                {
                     "name": "VALUE",
                     "description": "The real number to round.",
                     "type": "NUMBER",
@@ -3890,47 +4349,56 @@
         {
             "name": "SCORE OF",
             "description": "The current score of a player. Results in 0 if the game mode is not free-for-all.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose score to acquire.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose score to acquire.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "SINE FROM DEGREES",
             "description": "Sine of the specified angle in degrees.",
-            "args": [{
-                "name": "ANGLE",
-                "description": "Angle in degrees.",
-                "type": "NUMBER",
-                "default": "NUMBER"
-            }]
+            "args": [
+                {
+                    "name": "ANGLE",
+                    "description": "Angle in degrees.",
+                    "type": "NUMBER",
+                    "default": "NUMBER"
+                }
+            ]
         },
         {
             "name": "SINE FROM RADIANS",
             "description": "Sine of the specified angle in radians.",
-            "args": [{
-                "name": "ANGLE",
-                "description": "Angle in radians.",
-                "type": "NUMBER",
-                "default": "NUMBER"
-            }]
+            "args": [
+                {
+                    "name": "ANGLE",
+                    "description": "Angle in radians.",
+                    "type": "NUMBER",
+                    "default": "NUMBER"
+                }
+            ]
         },
         {
             "name": "SLOT OF",
             "description": "The slot number of the specified player. In team games, each team has slots 0 through 5. In free-for-all games, slots are numbered 0 through 11.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose slot number to acquire.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose slot number to acquire.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "SORTED ARRAY",
             "description": "A copy of the specified array with the values sorted according to the value rank that is evaluated for each element.",
-            "args": [{
+            "args": [
+                {
                     "name": "ARRAY",
                     "description": "The array whose copy will be sorted.",
                     "type": "ANY",
@@ -3947,17 +4415,20 @@
         {
             "name": "SPEED OF",
             "description": "The current speed of a player in meters per second.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose speed to acquire.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose speed to acquire.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "SPEED OF IN DIRECTION",
             "description": "The current speed of a player in a specific direction in meters per second.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player whose speed to acquire.",
                     "type": "PLAYER",
@@ -3974,17 +4445,20 @@
         {
             "name": "SQUARE ROOT",
             "description": "The square root of the specified value.",
-            "args": [{
-                "name": "VALUE",
-                "description": "The real number value whose square root will be computed. Negative values result in zero.",
-                "type": "NUMBER",
-                "default": "NUMBER"
-            }]
+            "args": [
+                {
+                    "name": "VALUE",
+                    "description": "The real number value whose square root will be computed. Negative values result in zero.",
+                    "type": "NUMBER",
+                    "default": "NUMBER"
+                }
+            ]
         },
         {
             "name": "STRING",
             "description": "Text formed from a selection of strings and specified values.",
-            "args": [{
+            "args": [
+                {
                     "name": "STRING",
                     "description": "",
                     "type": "STRING CONSTANT",
@@ -4013,7 +4487,8 @@
         {
             "name": "SUBTRACT",
             "description": "The difference between two numbers or vectors.",
-            "args": [{
+            "args": [
+                {
                     "name": "VALUE",
                     "description": "The left-hand operand. May be any value that results in a number or a vector.",
                     "type": "ANY",
@@ -4030,42 +4505,50 @@
         {
             "name": "TEAM",
             "description": "A team constant. The all option represents both teams in a team game or all players in a free-for-all game.",
-            "args": [{
-                "name": "TEAM",
-                "description": "A team constant. The all option represents both teams in a team game or all players in a free-for-all game.",
-                "type": "TEAM CONSTANT",
-                "default": "ALL"
-            }]
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "A team constant. The all option represents both teams in a team game or all players in a free-for-all game.",
+                    "type": "TEAM CONSTANT",
+                    "default": "ALL"
+                }
+            ]
         },
         {
             "name": "TEAM OF",
             "description": "The team of a player. If the game mode is free-for-all, the team is considered to be all.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose team to acquire.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose team to acquire.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "TEAM SCORE",
             "description": "The current score for the specified team. Results in 0 in free-for-all game modes.",
-            "args": [{
-                "name": "TEAM",
-                "description": "The team whose score to acquire.",
-                "type": "TEAM",
-                "default": "TEAM"
-            }]
+            "args": [
+                {
+                    "name": "TEAM",
+                    "description": "The team whose score to acquire.",
+                    "type": "TEAM",
+                    "default": "TEAM"
+                }
+            ]
         },
         {
             "name": "THROTTLE OF",
             "description": "The directional input of a player, represented by a vector with horizontal input on the x component (positive to the left) and vertical input on the z component (positive upward).",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose directional input to acquire.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose directional input to acquire.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "TOTAL TIME ELAPSED",
@@ -4080,12 +4563,14 @@
         {
             "name": "ULTIMATE CHARGE PERCENT",
             "description": "The current ultimate ability charge percentage of a player.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose ultimate charge percentage to acquire.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose ultimate charge percentage to acquire.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "UP",
@@ -4095,7 +4580,8 @@
         {
             "name": "VALUE IN ARRAY",
             "description": "The value found at a specific element of an array. Results in 0 if the element does not exist.",
-            "args": [{
+            "args": [
+                {
                     "name": "ARRAY",
                     "description": "The array whose element to acquire.",
                     "type": "ANY",
@@ -4112,7 +4598,8 @@
         {
             "name": "VECTOR",
             "description": "A vector composed of three real numbers (x, y, z) where x is left, y is up, and z is forward. Vectors are used for position, direction, and velocity.",
-            "args": [{
+            "args": [
+                {
                     "name": "X",
                     "description": "The x value of the vector.",
                     "type": "NUMBER",
@@ -4135,7 +4622,8 @@
         {
             "name": "VECTOR TOWARDS",
             "description": "The displacement vector from one position to another.",
-            "args": [{
+            "args": [
+                {
                     "name": "START POS",
                     "description": "The position from which the resulting displacement vector begins.",
                     "type": "POSITION",
@@ -4152,27 +4640,32 @@
         {
             "name": "VELOCITY OF",
             "description": "The current velocity of a player as a vector. If the player is on a surface, the y component of this velocity will be 0, even when traveling up or down a slope.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose velocity to acquire.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose velocity to acquire.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "VERTICAL ANGLE FROM DIRECTION",
             "description": "The vertical angle in degrees corresponding to the specified direction vector.",
-            "args": [{
-                "name": "DIRECTION",
-                "description": "The direction vector from which to acquire a vertical angle in degrees. The vector is unitized before calculation begins.",
-                "type": "VECTOR",
-                "default": "VECTOR"
-            }]
+            "args": [
+                {
+                    "name": "DIRECTION",
+                    "description": "The direction vector from which to acquire a vertical angle in degrees. The vector is unitized before calculation begins.",
+                    "type": "VECTOR",
+                    "default": "VECTOR"
+                }
+            ]
         },
         {
             "name": "VERTICAL ANGLE TOWARDS",
             "description": "The vertical angle in degrees from a player's current forward direction to the specified position. The result is positive if the position is below the player. Otherwise, the result is zero or negative.",
-            "args": [{
+            "args": [
+                {
                     "name": "PLAYER",
                     "description": "The player from whose current facing the angle begins.",
                     "type": "PLAYER",
@@ -4189,22 +4682,26 @@
         {
             "name": "VERTICAL FACING ANGLE OF",
             "description": "The vertical angle in degrees of a player's current facing relative to the world. This value increases as the player looks down.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose vertical facing angle to acquire.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose vertical facing angle to acquire.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "VERTICAL SPEED OF",
             "description": "The current vertical speed of a player in meters per second. This measurement excludes all horizontal motion, including motion while traveling up and down slopes.",
-            "args": [{
-                "name": "PLAYER",
-                "description": "The player whose vertical speed to acquire.",
-                "type": "PLAYER",
-                "default": "EVENT PLAYER"
-            }]
+            "args": [
+                {
+                    "name": "PLAYER",
+                    "description": "The player whose vertical speed to acquire.",
+                    "type": "PLAYER",
+                    "default": "EVENT PLAYER"
+                }
+            ]
         },
         {
             "name": "VICTIM",
@@ -4214,7 +4711,8 @@
         {
             "name": "WORLD VECTOR OF",
             "description": "The vector in world coordinates corresponding to the provided vector in local coordinates.",
-            "args": [{
+            "args": [
+                {
                     "name": "LOCAL VECTOR",
                     "description": "The vector in local coordinates that will be converted to world coordinates.",
                     "type": "VECTOR",
@@ -4237,35 +4735,42 @@
         {
             "name": "X COMPONENT OF",
             "description": "The x component of the specified vector, usually representing a leftward amount.",
-            "args": [{
-                "name": "VALUE",
-                "description": "The vector from which to acquire the x component.",
-                "type": "VECTOR",
-                "default": "VECTOR"
-            }]
+            "args": [
+                {
+                    "name": "VALUE",
+                    "description": "The vector from which to acquire the x component.",
+                    "type": "VECTOR",
+                    "default": "VECTOR"
+                }
+            ]
         },
         {
             "name": "Y COMPONENT OF",
             "description": "The y component of the specified vector, usually representing an upward amount.",
-            "args": [{
-                "name": "VALUE",
-                "description": "The vector from which to acquire the y component.",
-                "type": "VECTOR",
-                "default": "VECTOR"
-            }]
+            "args": [
+                {
+                    "name": "VALUE",
+                    "description": "The vector from which to acquire the y component.",
+                    "type": "VECTOR",
+                    "default": "VECTOR"
+                }
+            ]
         },
         {
             "name": "Z COMPONENT OF",
             "description": "The z component of the specified vector, usually representing a forward amount.",
-            "args": [{
-                "name": "VALUE",
-                "description": "The vector from which to acquire the z component.",
-                "type": "VECTOR",
-                "default": "VECTOR"
-            }]
+            "args": [
+                {
+                    "name": "VALUE",
+                    "description": "The vector from which to acquire the z component.",
+                    "type": "VECTOR",
+                    "default": "VECTOR"
+                }
+            ]
         }
     ],
-    "types": [{
+    "types": [
+        {
             "name": "TRANSFORMATION",
             "values": [
                 "ROTATION",
@@ -4399,6 +4904,8 @@
                 "ALIVE",
                 "ALLIES",
                 "ALLY",
+                "AMMUNITION",
+                "ANGLE",
                 "ATTACK",
                 "ATTACKED",
                 "ATTACKING",
@@ -4415,6 +4922,14 @@
                 "BANNING",
                 "BEST",
                 "BETTER",
+                "BID",
+                "BIDS",
+                "BLOCK",
+                "BLOCKED",
+                "BLOCKING",
+                "BLUE",
+                "BONUS",
+                "BONUSES",
                 "BOSS",
                 "BOSSES",
                 "BOUGHT",
@@ -4432,6 +4947,7 @@
                 "CAUTION",
                 "CENTER",
                 "CHALLENGE ACCEPTED",
+                "CHARISMA",
                 "CHASE",
                 "CHASED",
                 "CHASING",
@@ -4439,12 +4955,16 @@
                 "CHECKPOINTS",
                 "CLOUD",
                 "CLOUDS",
+                "CLUB",
+                "CLUBS",
+                "COMBO",
                 "COME HERE",
                 "CONDITION",
                 "CONGRATULATIONS",
                 "CONNECT",
                 "CONNECTED",
                 "CONNECTING",
+                "CONSTITUTION",
                 "CONTROL POINT",
                 "CONTROL POINTS",
                 "COOLDOWN",
@@ -4488,20 +5008,36 @@
                 "DAMAGING",
                 "DANGER",
                 "DEAD",
+                "DEAL",
+                "DEALING",
+                "DEALT",
+                "DECK",
+                "DECKS",
                 "DEFEAT",
                 "DEFEND",
                 "DEFENDED",
                 "DEFENDING",
+                "DEFENCE",
                 "DELIVER",
                 "DELIVERED",
                 "DELIVERING",
+                "DEPTH",
                 "DESTABILIZE",
                 "DESTABILIZED",
                 "DESTABILIZING",
                 "DESTROY",
                 "DESTROYED",
                 "DESTROYING",
+                "DETECT",
+                "DETECTED",
+                "DETECTING",
+                "DEXTERITY",
+                "DIAMOND",
+                "DIAMONDS",
                 "DIE",
+                "DISCARD",
+                "DISCARDED",
+                "DISCARDING",
                 "DISCONNECT",
                 "DISCONNECTED",
                 "DISCONNECTING",
@@ -4517,6 +5053,8 @@
                 "DOWNLOADED",
                 "DOWNLOADING",
                 "DRAW",
+                "DRAWING",
+                "DRAWN",
                 "DROP",
                 "DROPPED",
                 "DROPPING",
@@ -4535,7 +5073,11 @@
                 "ESCORTING",
                 "EXCELLENT",
                 "EXIT",
+                "EXPERIENCE",
                 "EXTREME",
+                "FACE",
+                "FACES",
+                "FACING",
                 "FAILED",
                 "FAILING",
                 "FAILURE",
@@ -4583,6 +5125,9 @@
                 "FLOWN",
                 "FLY",
                 "FLYING",
+                "FOLD",
+                "FOLDED",
+                "FOLDING",
                 "FORM",
                 "FORMS",
                 "FORWARD",
@@ -4602,15 +5147,21 @@
                 "GOOD",
                 "GOOD LUCK",
                 "GOODBYE",
+                "GREEN",
                 "GUILTY",
                 "HACK",
                 "HACKED",
                 "HACKING",
+                "HAND",
+                "HANDS",
                 "HEAL",
                 "HEALED",
                 "HEALER",
                 "HEALERS",
                 "HEALING",
+                "HEART",
+                "HEARTS",
+                "HEIGHT",
                 "HELLO",
                 "HELP",
                 "HERE",
@@ -4621,6 +5172,8 @@
                 "HIDING",
                 "HIGH SCORE",
                 "HIGH SCORES",
+                "HIT",
+                "HITTING",
                 "HMMM",
                 "HOSTAGE",
                 "HOSTAGES",
@@ -4633,6 +5186,7 @@
                 "I GIVE UP",
                 "I TRIED",
                 "IN VIEW",
+                "INCOME",
                 "INCOMING",
                 "INITIAL",
                 "INITIAL ALLIES",
@@ -4660,6 +5214,8 @@
                 "INITIAL UPGRADE",
                 "INNOCENT",
                 "INSIDE",
+                "INTELLIGENCE",
+                "INTERACT",
                 "INVISIBLE",
                 "ITEM",
                 "ITEMS",
@@ -4671,6 +5227,7 @@
                 "KILL",
                 "KILLS",
                 "KILLSTREAK",
+                "KILLSTREAK",
                 "KILLSTREAKS",
                 "LEADER",
                 "LEADERS",
@@ -4678,6 +5235,8 @@
                 "LEFT",
                 "LESS",
                 "LEVEL",
+                "LEVEL DOWN",
+                "LEVEL UP",
                 "LEVELS",
                 "LIFE",
                 "LIMITED",
@@ -4685,6 +5244,7 @@
                 "LOAD",
                 "LOADED",
                 "LOADING",
+                "LOCATION",
                 "LOCK",
                 "LOCKED",
                 "LOCKING",
@@ -4696,13 +5256,14 @@
                 "MILD",
                 "MIN",
                 "MISSION",
-                "MISSION",
                 "MISSION ABORTED",
                 "MISSION ACCOMPLISHED",
                 "MISSION FAILED",
                 "MISSIONS",
                 "MODERATE",
                 "MONEY",
+                "MONSTER",
+                "MONSTERS",
                 "MORE",
                 "MOST",
                 "MY MISTAKE",
@@ -4763,6 +5324,8 @@
                 "OUTSIDE",
                 "OVER",
                 "OVERTIME",
+                "PARTICIPANT",
+                "PARTICIPANTS",
                 "PAYLOAD",
                 "PAYLOADS",
                 "PHASE",
@@ -4770,23 +5333,32 @@
                 "PICK",
                 "PICKED",
                 "PICKING",
-                "PLAYER",
+                "PILE",
+                "PILES",
+                "PLAY",
+                "PLAYED",
                 "PLAYER",
                 "PLAYERS",
-                "PLAYERS",
+                "PLAYING",
                 "POINT",
                 "POINTS",
                 "POINTS EARNED",
                 "POINTS LOST",
+                "POSITION",
+                "POWER",
                 "POWER-UP",
                 "POWER-UPS",
                 "PRICE",
+                "PRIMARY FIRE",
+                "PROJECTILE",
+                "PROJECTILES",
                 "PROTECT",
                 "PROTECTED",
                 "PROTECTING",
                 "PURIFIED",
                 "PURIFY",
                 "PURIFYING",
+                "PURPLE",
                 "RAISE",
                 "RAISED",
                 "RAISING",
@@ -4798,17 +5370,23 @@
                 "RANK E",
                 "RANK F",
                 "RANK S",
+                "REACH",
+                "REACHED",
+                "REACHING",
                 "READY",
                 "RECORD",
                 "RECORDS",
                 "RECOVER",
                 "RECOVERED",
                 "RECOVERING",
+                "RED",
                 "REMAIN",
                 "REMAINING",
                 "RESCUE",
                 "RESCUED",
                 "RESCUING",
+                "RESOURCE",
+                "RESOURCES",
                 "RESURRECT",
                 "RESURRECTED",
                 "RESURRECTING",
@@ -4829,17 +5407,31 @@
                 "SAVING",
                 "SCORE",
                 "SCORES",
+                "SECONDARY FIRE",
                 "SECURE",
                 "SECURED",
                 "SECURING",
+                "SELECT",
+                "SELECTED",
+                "SELECTING",
                 "SELL",
                 "SELLING",
+                "SERVER LOAD",
+                "SERVER LOAD AVERAGE",
+                "SERVER LOAD PEAK",
                 "SEVER",
                 "SEVERE",
                 "SEVERED",
                 "SEVERING",
+                "SHOP",
+                "SHOPS",
+                "SHUFFLE",
+                "SHUFFLED",
                 "SINK",
                 "SINKING",
+                "SKIP",
+                "SKIPPED",
+                "SKIPPING",
                 "SLEEP",
                 "SLEEPING",
                 "SLEPT",
@@ -4851,10 +5443,14 @@
                 "SOUTH",
                 "SOUTHEAST",
                 "SOUTHWEST",
+                "SPADE",
+                "SPADES",
                 "SPARKLES",
                 "SPAWN",
                 "SPAWNED",
                 "SPAWNING",
+                "SPEED",
+                "SPEEDS",
                 "SPHERE",
                 "SPHERES",
                 "STABILIZE",
@@ -4867,10 +5463,14 @@
                 "STARTED",
                 "STARTING",
                 "STATUS",
+                "STAY",
                 "STAY AWAY",
+                "STAYED",
+                "STAYING",
                 "STOP",
                 "STOPPED",
                 "STOPPING",
+                "STRENGTH",
                 "STUN",
                 "STUNNED",
                 "STUNNING",
@@ -4939,22 +5539,28 @@
                 "WALL",
                 "WALLS",
                 "WARNING",
+                "WELCOME",
                 "WELL PLAYED",
                 "WEST",
+                "WHITE",
+                "WILD",
                 "WIN",
                 "WINNER",
                 "WINNERS",
                 "WINS",
+                "WISDOM",
                 "WORSE",
+                "WORST",
                 "WOW",
+                "YELLOW",
                 "YES",
                 "YOU",
                 "YOU LOSE",
                 "YOU WIN",
                 "ZONE",
                 "ZONES",
-                "\u00a1{0}!",
-                "\u00bf{0}?"
+                "¡{0}!",
+                "¿{0}?"
             ]
         },
         {
@@ -4989,6 +5595,7 @@
                 "REAPER",
                 "REINHARDT",
                 "ROADHOG",
+                "SIGMA",
                 "SOLDIER: 76",
                 "SOMBRA",
                 "SYMMETRA",
@@ -5025,6 +5632,7 @@
                 "REAPER",
                 "REINHARDT",
                 "ROADHOG",
+                "SIGMA",
                 "SLOT 0",
                 "SLOT 1",
                 "SLOT 10",

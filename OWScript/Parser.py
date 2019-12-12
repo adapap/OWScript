@@ -1,21 +1,17 @@
 import re
-from collections import deque
 from functools import partial
 
-try:
-    from . import Errors
-    from .AST import *
-    from .Tokens import ALIASES
-    from .Workshop import *
-except ImportError:
-    import Errors
-    from AST import *
+from . import Errors
+from .AST import *
+from .Tokens import ALIASES
+from .Workshop import *
 
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
         self.pos = 0
-        self.call_stack = deque(maxlen=5)
+        self.chase_vars = set()
+        self.map_rule = False
 
     @property
     def curtoken(self):
@@ -31,7 +27,6 @@ class Parser:
     def curpos(self):
         """Returns the tuple (line, column) of the current token position."""
         return self.curtoken.line, self.curtoken.column
-    
 
     @property
     def curvalue(self):
@@ -44,7 +39,7 @@ class Parser:
             return self.tokens[self.pos + n]
         except IndexError:
             print('Cannot peek further than token length')
-    
+
     def eat(self, *tokens):
         """Consumes a token and moves on to the next one."""
         if len(tokens) > 1:
@@ -66,14 +61,27 @@ class Parser:
             node = String(value='{0}')
             node.children = [formats[0]] + [null] * 2
             return node
-        elif string == ' ':
+        elif string == '':
             node = String(value='')
             node.children = [null] * 3
             return node
+        else:
+            match = re.match(r'^ $| (?: +)$', string)
+            if match:
+                empty_string = String(value='')
+                empty_string.children = [null] * 3
+
+                node = String(value='{0} {1}')
+                node.children = [
+                    empty_string if len(match.group(0)) == 1 else self.parse_string(string[1:], formats, _pos),
+                    empty_string,
+                    null
+                ]
+                return node
         for group in StringConstant.sorted_values:
             for pattern in group:
                 patt = re.sub(r'([^a-zA-Z0-9_\s{}])', r'\\\1', pattern)
-                patt = re.sub(r'{\d}', r'(.+?)', patt) + '$'
+                patt = re.sub(r'{\d}', r'(.*?)', patt) + '$'
                 match = re.match(patt, string, re.I)
                 if match and not match.group(0) == '':
                     groups = match.groups()
@@ -102,14 +110,20 @@ class Parser:
                 self.eat('NEWLINE')
             else:
                 node.children.append(self.stmt())
+        node.chase_vars = self.chase_vars
+        node.map_rule = self.map_rule
         return node
 
     def stmt(self):
-        """stmt : (funcdef | ruledef | line)"""
+        """stmt : (funcdef | ruledef | importdef | classdef | line)"""
         if self.curvalue == '%':
             return self.funcdef()
         elif self.curtype in ('DISABLED', 'RULE'):
             return self.ruledef()
+        elif self.curtype == 'IMPORT':
+            return self.importdef()
+        elif self.curtype == 'CLASS':
+            return self.classdef()
         else:
             return self.line()
 
@@ -129,15 +143,24 @@ class Parser:
     def params(self):
         """params : (expr ( , expr)*)"""
         self.eat('LPAREN')
-        params = [self.expr()]
-        while self.curtype == 'COMMA':
-            self.eat('COMMA')
-            params.append(self.expr())
+        params = []
+        while self.curtype != 'RPAREN':
+            param = Parameter(name=self.curvalue)
+            self.eat('NAME')
+            if self.curtype == 'QUERY':
+                param.optional = True
+                self.eat('QUERY')
+                if self.curvalue == '=':
+                    self.eat('ASSIGN')
+                    param.default = self.expr()
+            params.append(param)
+            if self.curtype == 'COMMA':
+                self.eat('COMMA')
         self.eat('RPAREN')
         return params
 
     def funcbody(self):
-        """funcbody : NEWLINE INDENT (ruledef | ruleblock | block | primary)+ DEDENT"""
+        """funcbody : NEWLINE INDENT (ruledef | ruleblock | block)+ DEDENT"""
         self.eat('NEWLINE', 'INDENT')
         body = []
         while self.curtype != 'DEDENT':
@@ -156,19 +179,24 @@ class Parser:
         if disabled:
             self.eat('DISABLED')
         self.eat('RULE')
-        name = [self.curvalue.replace('"', '')]
-        self.eat(self.curtype)
-        while self.curtype == 'PLUS':
-            self.eat('PLUS')
+        name = []
+        while self.curtype != 'NEWLINE':
             if self.curtype == 'STRING':
                 name.append(self.curvalue.replace('"', ''))
             elif self.curtype == 'NAME':
-                var = GlobalVar(name='gvar_' + self.curvalue)
+                var = Var(self.curvalue, type_=Var.STRING)
                 var._pos = self.curpos
                 name.append(var)
+            elif self.curtype == 'DOT':
+                self.eat('DOT')
+                node = Attribute(name=self.curvalue, parent=name.pop())
+                node._pos = self.curpos
+                name.append(node)
             else:
                 raise Errors.ParseError('Unexpected token \'{}\' in rule name'.format(self.curvalue), pos=self.curpos)
             self.eat(self.curtype)
+            if self.curtype == 'PLUS':
+                self.eat('PLUS')
         node = Rule(name=name, disabled=disabled)
         self.eat('NEWLINE', 'INDENT')
         while self.curtype != 'DEDENT':
@@ -186,7 +214,10 @@ class Parser:
         while self.curtype == 'RULEBLOCK':
             ruleblock = Ruleblock(name=self.curvalue)
             self.eat('RULEBLOCK')
-            ruleblock.children.append(self.block())
+            if self.peek(1).type == 'INDENT':
+                ruleblock.children.append(self.block())
+            else:
+                self.eat('NEWLINE')
             node.children.append(ruleblock)
         return node
 
@@ -198,7 +229,6 @@ class Parser:
             self.eat('NEWLINE', 'INDENT')
             while self.curtype != 'DEDENT':
                 line = self.line()
-                self.in_compare_expr = type(line) == Compare
                 if line is not None:
                     node.children.append(line)
             self.eat('DEDENT')
@@ -207,8 +237,39 @@ class Parser:
             node.children.append(line)
         return node
 
+    def importdef(self):
+        """importdef : #import STRING"""
+        self.eat('IMPORT')
+        path = self.curvalue.strip('\'').strip('"').replace('/', '\\').replace('.owpy', '')
+        pos = self.curpos
+        self.eat('STRING')
+        node = Import(path=path)
+        node._pos = pos
+        return node
+    
+    def classdef(self):
+        """classdef : class NAME : classbody"""
+        self.eat('CLASS')
+        name = self.curvalue
+        self.eat('NAME')
+        self.eat('COLON')
+        body = self.classbody()
+        return Class(name=name, body=body)
+    
+    def classbody(self):
+        """classbody : line | funcdef"""
+        self.eat('NEWLINE', 'INDENT')
+        body = []
+        while self.curtype != 'DEDENT':
+            if self.curtype == 'MOD':
+                body.append(self.funcdef())
+            else:
+                body.append(self.line())
+        self.eat('DEDENT')
+        return body
+
     def line(self):
-        """line : 
+        """line :
                 ( if_stmt
                 | while_stmt
                 | for_stmt
@@ -333,10 +394,10 @@ class Parser:
     def compare(self):
         """compare : term (COMPARE term)*"""
         node = self.term()
-        while self.curtype in ('COMPARE', 'IN', 'NOT_IN') and self.peek().type not in ('COMMA', 'RPAREN', 'RBRACK', 'COMPARE', 'NEWLINE'):
+        while self.curtype in ('COMPARE', 'IN', 'NOT_IN') and self.peek().type not in ('COMMA', 'RPAREN', 'RBRACK', 'NEWLINE'):
             op = self.curvalue
             self.eat(self.curtype)
-            node = Compare(left=node, op=op, right=self.expr())
+            node = Compare(left=node, op=op, right=self.compare())
         return node
 
     def term(self):
@@ -400,7 +461,7 @@ class Parser:
         pos = self.curpos
         if self.curtype == 'OWID':
             name = self.curvalue.upper()
-            for key, aliases in ALIASES.items():
+            for aliases in ALIASES.values():
                 name = aliases.get(name, name)
             self.eat('OWID')
             maps = ['BLACK FOREST', 'BLIZZARD WORLD', 'BUSAN', 'CASTILLO', 'CHÂTEAU GUILLARD', 'DORADO', 'ECOPOINT: ANTARCTICA', 'EICHENWALDE', 'HANAMURA', 'HAVANA', 'HOLLYWOOD', 'HORIZON LUNAR COLONY', 'ILIOS', 'JUNKERTOWN', "KING'S ROW", 'LIJIANG TOWER', 'NECROPOLIS', 'NEPAL', 'NUMBANI', 'OASIS', 'PARIS', 'PETRA', 'RIALTO', 'ROUTE 66', 'TEMPLE OF ANUBIS', 'VOLSKAYA INDUSTRIES', 'WATCHPOINT: GIBRALTAR', 'AYUTTHAYA', 'BUSAN DOWNTOWN', 'BUSAN SANCTUARY', 'ILIOS LIGHTHOUSE', 'ILIOS RUINS', 'ILIOS WELL', 'LIJIANG CONTROL CENTER', 'LIJIANG GARDEN', 'LIJIANG NIGHT MARKET', 'NEPAL SANCTUM', 'NEPAL SHRINE', 'NEPAL VILLAGE', 'OASIS CITY CENTER', 'OASIS GARDENS', 'OASIS UNIVERSITY']
@@ -411,7 +472,13 @@ class Parser:
                 args = self.args()
                 if args:
                     node.children.extend(args)
-        elif self.curtype in ('GVAR', 'PVAR', 'NAME'):
+                else:
+                    node = Constant(name=node.name)
+            if "CHASE" in name:
+                for child in node.children:
+                    if type(child) == Var:
+                        self.chase_vars.add(child.name)
+        elif self.curtype in ('GVAR', 'PVAR', 'CONST', 'NAME'):
             node = self.variable()
         elif self.curvalue == '<':
             node = self.vector()
@@ -460,41 +527,41 @@ class Parser:
 
     def variable(self):
         """variable : GVAR NAME
-                    | PVAR (@ primary)? NAME
+                    | PVAR NAME (@ atom)?
+                    | CONST NAME
                     | NAME"""
         pos = self.curpos
         try:
-            if self.curtype == 'GVAR':
-                self.eat('GVAR')
-                name = self.curvalue
-                self.eat('NAME')
-                node = GlobalVar(name='gvar_' + name)
+            if self.curvalue == 'get_map':
+                self.map_rule = True
+            if self.curtype in ('GVAR', 'NAME'):
+                if self.curtype == 'GVAR':
+                    self.eat('GVAR')
+                node = Var(name=self.curvalue, type_=Var.GLOBAL)
             elif self.curtype == 'PVAR':
                 self.eat('PVAR')
-                name = self.curvalue
-                self.eat('NAME')
-                node = PlayerVar(name='pvar_' + name)
-                if self.curvalue == '@':
-                    self.eat('AT')
-                    node.player = self.primary()
-            elif self.curtype == 'NAME':
-                name = self.curvalue
-                self.eat('NAME')
-                node = GlobalVar(name='gvar_' + name)
+                node = Var(name=self.curvalue, type_=Var.PLAYER)
+            elif self.curtype == 'CONST':
+                self.eat('CONST')
+                node = Var(name=self.curvalue, type_=Var.CONST)
+            self.eat('NAME')
+            if self.curvalue == '@':
+                self.eat('AT')
+                node.player = self.atom()
         except Errors.ParseError:
-            raise Errors.SyntaxError('Invalid variable')
+            raise Errors.SyntaxError('Invalid variable syntax', pos=pos)
         node._pos = pos
         return node
 
     def vector(self):
-        """vector : < expr , expr , expr >"""
+        """vector : < term , term , term >"""
         node = Vector()
         self.eat('COMPARE')
-        node.children.append(self.expr())
+        node.children.append(self.term())
         self.eat('COMMA')
-        node.children.append(self.expr())
+        node.children.append(self.term())
         self.eat('COMMA')
-        node.children.append(self.expr())
+        node.children.append(self.term())
         self.eat('COMPARE')
         return node
 
@@ -502,8 +569,12 @@ class Parser:
         """array : [ arglist? ]"""
         node = Array()
         self.eat('LBRACK')
+        if self.curtype == 'NEWLINE':
+            self.eat('NEWLINE', 'INDENT')
         if self.curtype != 'RBRACK':
             node.elements.extend(self.arglist())
+        if self.curtype == 'NEWLINE':
+            self.eat('NEWLINE', 'DEDENT')
         self.eat('RBRACK')
         return node
 

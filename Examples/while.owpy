@@ -2,5 +2,6 @@ Rule "While Loop"
     Event
         On Global
     Actions
-        while x < 5:
-            x += 1
+        n = 0
+        while n < 5:
+            n += 1

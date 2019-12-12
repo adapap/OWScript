@@ -589,6 +589,11 @@ class Transpiler:
             raise Errors.NotImplementedError('Unexpected Var type {}'.format(var._type), pos=node._pos)
         return code
 
+    def visitCustomString(self, node, scope):
+        """A custom string field."""
+        code = 'Custom String("' + node.value.title() + '", Null, Null, Null)'
+        return code
+        
     def visitString(self, node, scope):
         """A string has three children which can be strings, but each one defaults to null."""
         code = 'String("' + node.value.title() + '", '
